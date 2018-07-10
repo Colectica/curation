@@ -7,12 +7,12 @@ node {
 
     stage('Build') {
         echo("Building")
-        bat "${WORKSPACE}/curation/build/BuildCuration-WithColecticaSDK.bat"
+        bat "${WORKSPACE}/build/BuildCuration-WithColecticaSDK.bat"
     }
 
     stage('Results') {
         echo("Archiving artifacts")
-        archiveArtifacts artifacts: "curation/dist/artifacts/*"
+        archiveArtifacts artifacts: "${WORKSPACE}/dist/artifacts/*"
     }
 
 }
