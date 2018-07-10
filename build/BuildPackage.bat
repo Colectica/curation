@@ -11,6 +11,8 @@ IF "%computername%"=="MARGOT" (
   powershell -Command "(gc %WORKSPACE%\src\Colectica.Curation.Data\RevisionInfo.cs) -replace 'LOCAL_BUILD', $Env:BUILD_NUMBER | Out-File %WORKSPACE%\src\Colectica.Curation.Data\RevisionInfo.cs"
 )
 
+PUSHD build
+
 REM Clear any existing output.
 rmdir /Q /S ..\dist
 mkdir ..\dist
@@ -67,3 +69,5 @@ REM ZIP everything
 REM Copy to the output directory
 mkdir ..\dist\artifacts
 move ..\dist\ColecticaCurationPackage-%revisionNumber%.zip ..\dist\artifacts\
+
+POPD
