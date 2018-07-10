@@ -1,0 +1,170 @@
+﻿@model Colectica.Curation.Common.ViewModels.ICatalogRecordNavigator
+
+@using Colectica.Curation.Common.Utility
+
+@{
+    string generalClass = string.Empty;
+    string methodsClass = string.Empty;
+    string filesClass = string.Empty;
+    string reviewClass = string.Empty;
+    string notesClass = string.Empty;
+    string submitClass = string.Empty;
+    string historyClass = string.Empty;
+    string permissionsClass = string.Empty;
+
+    bool canNavigate = !Request.Path.Contains("/Create");
+
+    if (Request.Path.Contains("/General/") ||
+        Request.Path.Contains("/Create"))
+    {
+        generalClass = "active";
+    }
+
+    if (Request.Path.Contains("/Methods/"))
+    {
+        methodsClass = "active";
+    }
+
+    if (Request.Path.Contains("/Files/") ||
+        Request.Path.Contains("/Deposit/"))
+    {
+        filesClass = "active";
+    }
+
+    if (Request.Path.Contains("/Status/"))
+    {
+        reviewClass = "active";
+    }
+
+    if (Request.Path.Contains("/Notes/"))
+    {
+        notesClass = "active";
+    }
+
+    if (Request.Path.Contains("/Submit/"))
+    {
+        submitClass = "active";
+    }
+
+    if (Request.Path.Contains("/History/"))
+    {
+        historyClass = "active";
+    }
+
+    if (Request.Path.Contains("/Permissions/"))
+    {
+        permissionsClass = "active";
+    }
+
+    string submitText = string.Empty;
+    switch (Model.CatalogRecord.Status)
+    {
+        case Colectica.Curation.Data.CatalogRecordStatus.New:
+            submitText = "Submit for Curation";
+            break;
+        case Colectica.Curation.Data.CatalogRecordStatus.Rejected:
+            submitText = "Submit";
+            break;
+        case Colectica.Curation.Data.CatalogRecordStatus.Processing:
+            submitText = "Request Publication";
+            break;
+        case Colectica.Curation.Data.CatalogRecordStatus.PublicationRequested:
+        case Colectica.Curation.Data.CatalogRecordStatus.PublicationApproved:
+            submitText = "Publish and Archive";
+            break;
+        case Colectica.Curation.Data.CatalogRecordStatus.Published:
+            submitText = "Published";
+            break;
+        default:
+            break;
+    }
+
+}
+
+<ul class="nav nav-pills nav-wizard">
+    <li class="@generalClass">
+        @if (canNavigate)
+        {
+            @Html.ActionLink("General", "General", "CatalogRecord", new { id = Model.CatalogRecordId }, null)
+        }
+        else
+        {
+            <span class="inactive-link">General</span>
+        }
+        <div class="nav-arrow"></div>
+    </li>
+    <li class="@methodsClass">
+        <div class="nav-wedge"></div>
+        @if (canNavigate)
+        {
+            @Html.ActionLink("Methods", "Methods", "CatalogRecord", new { id = Model.CatalogRecordId }, null)
+        }
+        else
+        {
+            <span class="inactive-link">Methods</span>
+        }
+        <div class="nav-arrow"></div>
+    </li>
+    <li class="@filesClass">
+        <div class="nav-wedge"></div>
+        @if (canNavigate)
+        {
+            @Html.ActionLink("Files", "Files", "CatalogRecord", new { id = Model.CatalogRecordId }, null)
+        }
+        else
+        {
+            <span class="inactive-link">Files</span>
+        }
+        <div class="nav-arrow"></div>
+    </li>
+
+    @if (Model.IsUserCurator ||
+                Model.IsUserApprover)
+    {
+        <li class="@reviewClass">
+            <div class="nav-wedge"></div>
+            @if (canNavigate)
+            {
+                <a href="/CatalogRecord/Status/@Model.CatalogRecordId">Review <span class="badge">@Model.TaskCount</span></a>
+            }
+            else
+            {
+                <span class="inactive-link">Review</span>
+            }
+            <div class="nav-arrow"></div>
+        </li>
+    }
+
+    @* For the creator, show a Notes link. *@
+    @if (Model.CatalogRecord.CreatedBy != null &&
+        Model.CatalogRecord.CreatedBy.UserName == User.Identity.Name && 
+        canNavigate)
+    {
+        <li class="@notesClass">
+            <div class="nav-wedge"></div>
+            <a href="/CatalogRecord/Editor/Notes/@Model.CatalogRecordId">Notes</a>
+            <div class="nav-arrow"></div>
+        </li>
+    }
+
+    @if (Model.IsUserCurator || Model.IsUserApprover || Model.CatalogRecord.Status == Colectica.Curation.Data.CatalogRecordStatus.New)
+    {
+        <li class="@submitClass">
+            <div class="nav-wedge"></div>
+            @if (canNavigate)
+            {
+                @Html.ActionLink(submitText, "Submit", "CatalogRecord", new { id = Model.CatalogRecordId }, null)
+            }
+            else
+            {
+                <span class="inactive-link">@submitText</span>
+            }
+        </li>
+    }
+
+    <li>
+        @Html.Partial("_CatalogRecordDropdown", Model)
+
+    </li>
+
+</ul>

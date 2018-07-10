@@ -1,0 +1,120 @@
+﻿@model Colectica.Curation.Web.Models.RegisterViewModel
+@{
+    Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+    ViewBag.Title = "Register";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <hr />
+
+    if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+    {
+        <img src="@Model.ImageUrl" alt="@Model.OrganizationName logo" style="margin-bottom: 20px;" />
+    }
+
+    <p>Your new account is just clicks away.</p>
+
+    <p>As a registered user, you can add studies and files and review studies and files you have previously added.</p>
+
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+
+    if (Model.SkippedTermsOfService)
+    {
+        <div class="text-danger validation-summary-errors">
+            <ul>
+                <li>Please read and agree to the terms of service.</li>
+            </ul>
+        </div>
+    }
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.FirstName)
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.LastName)
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <div class="checkbox">
+                <label>
+                    @Html.EditorFor(model => model.IsTermsOfServiceAgreed, new { @class = "form-control" })
+                    I agree to the <a href="#" data-toggle="modal" data-target="#tosModal">@Model.OrganizationName Terms of Service</a>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-primary btn-lg btn-block" value="Register" />
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+@section bottom
+{
+    <!-- Terms of Service Modal -->
+    <div class="modal" id="tosModal" tabindex="-1" role="dialog" aria-labelledby="tosModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="tosModalLabel">Terms of Service</h4>
+                </div>
+                <div class="modal-body">
+                    @if (string.IsNullOrWhiteSpace(Model.TermsOfService))
+                    {
+                        <p>The site has not specified any terms of service.</p>
+                    }
+                    else
+                    {
+                        @Html.Raw(Model.TermsOfService)
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

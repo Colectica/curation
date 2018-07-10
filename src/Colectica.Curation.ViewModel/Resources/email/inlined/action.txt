@@ -1,0 +1,13 @@
+﻿@paragraph1
+
+@paragraph2
+
+@actionText
+---------------------------------------
+
+  @actionUrl
+
+@closing
+
+--
+Manage your notifications at @mailPreferencesUrl

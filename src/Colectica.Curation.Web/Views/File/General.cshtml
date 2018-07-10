@@ -1,0 +1,237 @@
+﻿@model Colectica.Curation.Web.Models.FileViewModel
+
+@using Colectica.Curation.Web.Resources
+
+@using Colectica.Curation.Web.Utility
+
+@{
+    ViewBag.Title = Model.Name;
+    string url = "/File/General";
+}
+
+@section breadcrumb
+{
+    <a href="@Url.Action("Files", "CatalogRecord", new { id = Model.File.CatalogRecord.Id })">&laquo; @Model.File.CatalogRecord.Title</a>
+
+    @FormHelpers.CatalogRecordStatusLabel(Model.File.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+    @if (Model.IsUserApprover)
+    {
+        <span class="label label-info">Approver</span>
+    }
+}
+
+@Html.Partial("_FileNavigation", Model)
+
+<h2>General</h2>
+
+@if (Model.IsLocked)
+{
+    @Html.Partial("_CatalogRecordLocked", Model.OperationStatus)
+}
+
+<div class="btn-group" style="margin-bottom: 10px;">
+
+    @if (Model.File.HasPendingMetadataUpdates)
+    {
+        <div class="label label-info">Pending metadata updates must be applied before downloading this file.</div>
+        <div>
+            <a class="btn btn-primary" href="@Url.Action("ApplyMetadataUpdates", "File", new { id = Model.File.Id })" style="margin-right: 3px;">
+                <span class="glyphicon glyphicon-cog"></span> Apply Pending Metadata Updates
+            </a>
+        </div>
+    }
+    else
+    {
+        <a class="btn btn-primary" href="@Url.Action("Download","File",new { id = Model.File.Id })" title="Download"><span class="glyphicon glyphicon-download"></span> Download</a>
+
+        if (!Model.IsLocked &&
+            !Model.IsReadOnly)
+        {
+            <a href="/CatalogRecord/Deposit/@Model.File.CatalogRecord.Id" class="btn btn-primary" style="margin-left: 3px;"><span class="glyphicon glyphicon-cloud-upload"></span> Add or Update Files</a>
+        }
+
+    }
+
+
+</div>
+
+@using (Html.BeginForm())
+{
+
+    <div class="form-horizontal" role="form">
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+
+        @FormHelpers.ReadOnlyField("File Unique ID", Model.File.Id.ToString(), FieldDefinitions.UniqueID)
+
+        <!-- File Name -->
+        @FormHelpers.ReadOnlyField("File Name", Model.File.Name, FieldDefinitions.FileName)
+
+        <!-- Public File Name -->
+        @FormHelpers.EditableField(url, Model.File.Id, "PublicName", "text", "Public File Name", Model.File.PublicName, FieldDefinitions.PublicName, isRequired: true, isReadOnly: Model.IsReadOnly)
+
+        <!-- Title -->
+        @FormHelpers.EditableField(url, Model.File.Id, "Title", "text", "Description", Model.File.Title, FieldDefinitions.Description, isRequired: true, isReadOnly: Model.IsReadOnly)
+
+        <!-- File Type -->
+        @FormHelpers.SelectField(url, Model.File.Id, "Type", "File Type", Model.File.Type,
+            FieldDefinitions.FileType, false,
+            Model.IsReadOnly || Model.IsFileTypeAutoDetected,
+            "Data", "Program", "Output", "Codebook", "Treatment Materials", "Supplementary Materials")
+
+        <!-- Number -->
+        @FormHelpers.EditableField(url, Model.File.Id, "Number", "text", "Number", Model.File.Number, FieldDefinitions.Number, isRequired: false, isReadOnly: Model.IsReadOnly)
+
+        <!-- Persistent Link -->
+        @FormHelpers.ReadOnlyField("Persistent Link", Model.File.PersistentLink, FieldDefinitions.PersistentLink)
+
+        <!-- Date Persistent Link Issued -->
+        @FormHelpers.ReadOnlyField("Date of Persistent Link", Model.File.PersistentLinkDate.ToString(), FieldDefinitions.PersistentLinkDate)
+
+
+        <!-- Version -->
+        @FormHelpers.ReadOnlyField("Version", Model.File.Version, FieldDefinitions.FileVersion)
+
+        <!-- File Format Name -->
+        @FormHelpers.ReadOnlyField("Format Name", Model.File.FormatName, FieldDefinitions.FormatName)
+
+        <!-- Format ID -->
+        @FormHelpers.ReadOnlyField("Format ID", Model.File.FormatId, FieldDefinitions.FormatID)
+
+        <!-- File Size -->
+        @FormHelpers.ReadOnlyField("Size", Model.File.Size.BytesToSize(), FieldDefinitions.FileSize)
+
+        <!-- Software -->
+        @FormHelpers.EditableField(url, Model.File.Id, "Software", "text", "Software", Model.File.Software, FieldDefinitions.Software, 
+           isRequired: Model.File.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+           isReadOnly: Model.IsReadOnly)
+
+        <!-- Software Version -->
+        @FormHelpers.EditableField(url, Model.File.Id, "SoftwareVersion", "text", "Software Version", Model.File.SoftwareVersion, FieldDefinitions.SoftwareVersion, isRequired: false, isReadOnly: Model.IsReadOnly)
+
+        <!-- Hardware -->
+        @FormHelpers.EditableField(url, Model.File.Id, "Hardware", "textarea", "Hardware", Model.File.Hardware, FieldDefinitions.Hardware, isReadOnly: Model.IsReadOnly)
+
+        <!-- Data Type / Kind of Data -->
+        @if (Model.File.Type == "Data")
+        {
+            @FormHelpers.SelectField(url, Model.File.Id, "KindOfData", "Data Type", Model.File.KindOfData, FieldDefinitions.KindOfData, true,
+                Model.IsReadOnly,
+                "Administrative (e.g., voting records)", "Survey/interview (e.g., ANES)", "Web (e.g,. page views, game)", "Social media (e.g., Twitter)", "Observed behavior", "Other")
+        }
+
+        <!-- Checksum value -->
+        @FormHelpers.ReadOnlyField("Checksum", Model.File.Checksum, FieldDefinitions.Checksum)
+
+        <!-- Checksum method -->
+        @FormHelpers.ReadOnlyField("Checksum method", Model.File.ChecksumMethod, FieldDefinitions.ChecksumMethod)
+
+        <!-- Checksum date -->
+        @FormHelpers.ReadOnlyField("Checksum date", Model.File.ChecksumDate != null ? Model.File.ChecksumDate.ToString() : string.Empty, FieldDefinitions.ChecksumDate)
+
+        @FormHelpers.ReadOnlyField("Virus Check Outcome", Model.File.VirusCheckOutcome, FieldDefinitions.VirusCheckOutcome)
+
+        @FormHelpers.ReadOnlyField("Virus Check Method", Model.File.VirusCheckMethod, FieldDefinitions.VirusCheckMethod)
+
+        @FormHelpers.ReadOnlyField("Virus Check Date", Model.File.VirusCheckDate, FieldDefinitions.VirusCheckDate)
+
+        <!-- Archive Contributor -->
+        <div class="form-group">
+            @FormHelpers.ControlLabel("Contributor", FieldDefinitions.Contributor)
+
+            <div class="col-md-10">
+                @if (Model.File.Owner != null)
+                {
+                    @Html.ActionLink(Model.File.Owner.FullName, "History", "User", new { id = Model.File.Owner.UserName }, null)
+                }
+                else
+                {
+                    <text>Not available</text>
+                }
+            </div>
+        </div>
+
+        <!-- Dates -->
+        @FormHelpers.ReadOnlyField("Creation Date", Model.File.CreationDate, FieldDefinitions.CreationDate)
+
+        @FormHelpers.ReadOnlyField("Deposit Date", Model.File.UploadedDate, FieldDefinitions.UploadedDate)
+
+        @FormHelpers.ReadOnlyField("Accepted Date", Model.File.AcceptedDate, FieldDefinitions.AcceptedDate)
+
+        @FormHelpers.ReadOnlyField("Certified as Curated Date", Model.File.CatalogRecord.CertifiedDate, FieldDefinitions.CertifiedDate)
+
+        @FormHelpers.ReadOnlyField("Archive Date", Model.File.CatalogRecord.ArchiveDate, FieldDefinitions.ArchiveDate)
+
+        @FormHelpers.ReadOnlyField("Publish Date", Model.File.CatalogRecord.PublishDate, FieldDefinitions.PublishDate)
+
+
+        <!-- Source -->
+        @FormHelpers.EditableField(url, Model.File.Id, "Source", "text", "Source", Model.File.Source, FieldDefinitions.Source, isReadOnly: Model.IsReadOnly)
+
+        <!-- Source Information -->
+        @FormHelpers.EditableField(url, Model.File.Id, "SourceInformation", "textarea", "Source Information", Model.File.SourceInformation, FieldDefinitions.SourceInformation, isReadOnly: Model.IsReadOnly)
+
+        <!-- Rights -->
+        @FormHelpers.EditableField(url, Model.File.Id, "Rights", "text", "Rights", Model.File.Rights, FieldDefinitions.Rights, isReadOnly: Model.IsReadOnly)
+
+        <!-- Public access? -->
+        @FormHelpers.SelectField(url, Model.File.Id, "IsPublicAccess", "Public Access", Model.IsPublicAccess, FieldDefinitions.IsPublicAccess, false,
+            Model.IsReadOnly,
+            "Yes", "No")
+
+        @if (!Model.IsReadOnly)
+        {
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-lg btn-primary">
+                    Save
+                </button>
+            </div>
+        }
+
+    </div>
+
+}
+
+
+@section scripts
+{
+    <script src="/Scripts/bootstrap3-editable/js/bootstrap-editable.js"></script>
+    <script src="/Scripts/moment.min.js"></script>
+    <script src="/Scripts/select2/select2.js"></script>
+
+    @if (!Model.IsLocked &&
+        Model.IsUserCurator)
+    {
+        <text>
+            <script>
+                $(document).ready(function () {
+                    $.fn.editable.defaults.mode = 'inline';
+                    $('.editable-field').editable({
+                        inputclass: 'editable-input-wide'
+                    });
+                });
+
+                $('.select-field').editable({
+                    mode: 'inline',
+                    inputclass: 'input-large editable-input-wide',
+                    select2: {
+                        tags: [],
+                        tokenSeparators: [",", " "]
+                    }
+                });
+            </script>
+        </text>
+    }
+
+    <script>
+        $(".info-tip").tooltip({
+            'placement': 'top',
+            'container': 'body'
+        });
+    </script>
+}

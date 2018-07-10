@@ -1,0 +1,317 @@
+﻿@using System.Web.Mvc.Html
+
+@helper ControlLabel(string title, string definition, bool isRequired = false)
+{
+    string infoTipClass = "";
+    if (!string.IsNullOrWhiteSpace(definition))
+    {
+        infoTipClass = "info-tip";
+    }
+
+    <div class="col-md-2 control-label">
+        <span class="@infoTipClass" title="@definition">@title</span>@if (isRequired)
+        { <text>*</text> }
+    </div>
+}
+
+@helper EditableField(string url, Guid key, string id, string type, string title, string content, string definition = null, bool isRequired = false, bool isReadOnly = false, string messageBelowControl = null)
+{
+    var html = ((System.Web.Mvc.WebViewPage)CurrentPage).Html;
+
+    string classStr = "";
+    if (type == "select2")
+    {
+        classStr = "select-field";
+    }
+
+    string infoTipClass = "";
+    if (!string.IsNullOrWhiteSpace(definition))
+    {
+        infoTipClass = "info-tip";
+    }
+
+    if (content == null)
+    {
+        content = "";
+    }
+
+    <div class="form-group">
+        <div class="col-md-2 control-label">
+            <span class="@infoTipClass" title="@definition">@title</span>@if (isRequired)
+            { <text>*</text> }
+        </div>
+
+        <div class="col-md-10">
+            @if (isReadOnly)
+            {
+                if (!string.IsNullOrWhiteSpace(content))
+                {
+                    <span class="form-readonly-control">
+                        @html.Raw(content.Replace("\n", "<br/>"))
+                    </span>
+                }
+            }
+            else
+            {
+                if (type == "textarea")
+                {
+                    @html.TextArea(id, content, new { @class = "form-control" })
+                }
+                else if (type == "checkbox")
+                {
+                    @html.CheckBox(id, content == "true", new { @class = "form-control", style = "width: 100px;" })
+                }
+                else
+                {
+                    @html.TextBox(id, content, new { @class = "form-control" })
+                }
+
+                if (!string.IsNullOrWhiteSpace(messageBelowControl))
+                {
+                    <p>@messageBelowControl</p>
+                }
+
+                @html.ValidationMessage(id)
+            }
+        </div>
+    </div>
+}
+
+@helper Select(string id, string content, params string[] choices)
+{
+        var html = ((System.Web.Mvc.WebViewPage)CurrentPage).Html;
+        var selectList = new List<System.Web.Mvc.SelectListItem>();
+        selectList.Add(new System.Web.Mvc.SelectListItem
+        {
+            Value = "Not Selected",
+            Text = "Not Selected"
+        });
+        foreach (string choice in choices)
+        {
+            selectList.Add(new System.Web.Mvc.SelectListItem
+                {
+                    Value = choice,
+                    Text = choice,
+                    Selected = content == choice
+                });
+        }
+
+        @html.DropDownList(id, selectList, new { @class = "form-control" })
+}
+
+@helper SelectField(string url, Guid key, string id, string title, string content, string definition, bool isRequired, bool isReadOnly, params string[] choices)
+{
+    @SelectField(url, key, id, title, content, definition, isRequired, isReadOnly, false, string.Empty, choices)
+}
+
+@helper SelectField(string url, Guid key, string id, string title, string content, string definition, bool isRequired, bool isReadOnly, bool includeOtherTextBox, string otherSpecifyContent, params string[] choices)
+{
+    if (isReadOnly)
+    {
+        @ReadOnlyField(title, content, definition)
+        <input type="hidden" name="@id" id="@id" value="@content" />
+    }
+    else
+    {
+        var html = ((System.Web.Mvc.WebViewPage)CurrentPage).Html;
+
+        string infoTipClass = "";
+        if (!string.IsNullOrWhiteSpace(definition))
+        {
+            infoTipClass = "info-tip";
+        }
+
+        var selectList = new List<System.Web.Mvc.SelectListItem>();
+        selectList.Add(new System.Web.Mvc.SelectListItem
+        {
+            Value = "Not Selected",
+            Text = "Not Selected"
+        });
+        foreach (string choice in choices)
+        {
+            selectList.Add(new System.Web.Mvc.SelectListItem
+                {
+                    Value = choice,
+                    Text = choice,
+                    Selected = content == choice
+                });
+        }
+
+        <div class="form-group">
+            <div class="col-md-2 control-label">
+                <span class="@infoTipClass" title="@definition">@title</span>@if (isRequired)
+                { <text>*</text> }
+            </div>
+            <div class="col-md-10">
+                @html.DropDownList(id, selectList, new { @class = "form-control" })
+
+                @if (includeOtherTextBox)
+                {
+                    @html.TextBox(id + "OtherSpecify", otherSpecifyContent, new { @class = "form-control" })
+                }
+            </div>
+        </div>
+    }
+}
+
+@helper MultipleSelectField(string url, Guid key, string id, string title, string content, string definition, bool isRequired, bool isReadOnly, params string[] choices)
+{
+    if (isReadOnly)
+    {
+        @ReadOnlyField(title, content, definition)
+    }
+    else
+    {
+        var html = ((System.Web.Mvc.WebViewPage)CurrentPage).Html;
+        
+        if (content == null)
+        {
+            content = "";
+        }
+        var selectedChoices = content.Split(new char[] { ',' });
+
+        string infoTipClass = "";
+        if (!string.IsNullOrWhiteSpace(definition))
+        {
+            infoTipClass = "info-tip";
+        }
+
+        <div class="form-group">
+            <div class="col-md-2 control-label">
+                <span class="@infoTipClass" title="@definition">@title</span>@if (isRequired)
+                { <text>*</text> }
+            </div>
+            <div class="col-md-10">
+                <select id="@id" name="@id" multiple class="form-control">
+                    @foreach (string choice in choices)
+                    {
+                        bool isSelected = selectedChoices.Contains(choice);
+                        <option value="@choice" @if (isSelected) { <text>selected="selected"</text> }>@choice</option>
+                    }
+
+                </select>
+            </div>
+        </div>
+    }
+}
+
+@helper ReadOnlyField(string title, string content, string definition = null, bool transformMarkdown = true)
+{
+    var html = ((System.Web.Mvc.WebViewPage)CurrentPage).Html;
+
+    var markdown = new MarkdownDeep.Markdown();
+
+    string renderedContent = string.Empty;
+
+    if (transformMarkdown)
+    {
+        renderedContent = markdown.Transform(content);
+    }
+    else
+    {
+        renderedContent = content;
+    }
+
+    string infoTipClass = "";
+    if (!string.IsNullOrWhiteSpace(definition))
+    {
+        infoTipClass = "info-tip";
+    }
+
+    <div class="form-group">
+        <div class="col-md-2 control-label">
+            <span class="@infoTipClass" title="@definition">@title</span>
+        </div>
+        <div class="col-md-10">
+            <span class="form-readonly-control">
+                @if (!string.IsNullOrWhiteSpace(renderedContent))
+                {
+                    @html.Raw(content.Replace("\n", "<br/>"))
+                    <span class="label label-default">Auto</span>
+                }
+                else
+                {
+                    <text>Not available</text>
+                    <span class="label label-default">Auto</span>
+                }
+            </span>
+        </div>
+    </div>
+}
+
+@helper ReadOnlyField(string title, DateTime? content, string definition = null)
+{
+    @ReadOnlyField(title, content.HasValue ? content.Value.ToShortDateString() : string.Empty, definition)
+}
+
+@helper ReadOnlyField(string title, long content, string definition = null)
+{
+    @ReadOnlyField(title, content.ToString(), definition)
+}
+
+@helper CatalogRecordStatusLabel(Colectica.Curation.Data.CatalogRecord record)
+{
+    string status = string.Empty;
+    string labelType = "label-default";
+    switch (record.Status)
+    {
+        case Colectica.Curation.Data.CatalogRecordStatus.New:
+            status = "Draft";
+            labelType = "label-default";
+            break;
+        case Colectica.Curation.Data.CatalogRecordStatus.Rejected:
+            status = "Rejected";
+            labelType = "label-danger";
+            break;
+        case Colectica.Curation.Data.CatalogRecordStatus.Processing:
+            status = "Processing";
+            labelType = "label-primary";
+            break;
+        case Colectica.Curation.Data.CatalogRecordStatus.PublicationRequested:
+            status = "Publication Requested";
+            labelType = "label-warning";
+            break;
+        case Colectica.Curation.Data.CatalogRecordStatus.PublicationApproved:
+            status = "Publication Approved";
+            labelType = "label-warning";
+            break;
+        case Colectica.Curation.Data.CatalogRecordStatus.Published:
+            status = "Published";
+            labelType = "label-success";
+            break;
+        default:
+            break;
+    }
+
+    <span class="label @labelType">@status</span>
+}
+
+@helper OperationStatusLabel(Colectica.Curation.Web.Models.OperationModel operation)
+{
+    string status = string.Empty;
+    string labelType = "label-default";
+
+    switch (operation.Status)
+    {
+        case Colectica.Curation.Data.OperationStatus.Queued:
+            status = "Queued";
+            labelType = "label-default";
+            break;
+        case Colectica.Curation.Data.OperationStatus.Working:
+            status = "Working";
+            labelType = "label-primary";
+            break;
+        case Colectica.Curation.Data.OperationStatus.Completed:
+            status = "Complete";
+            labelType = "label-success";
+            break;
+        case Colectica.Curation.Data.OperationStatus.Error:
+            status = "Error";
+            labelType = "label-danger";
+            break;
+        default:
+            break;
+    }
+
+    <span class="label @labelType">@status</span>
+}

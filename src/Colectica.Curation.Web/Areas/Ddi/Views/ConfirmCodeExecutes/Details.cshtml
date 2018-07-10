@@ -1,0 +1,33 @@
+﻿@model Colectica.Curation.Models.ScriptedTaskModel
+
+@{
+    ViewBag.Title = Model.Task.Name;
+}
+
+@section breadcrumb
+{
+    <a href="@Url.Action("Files", "CatalogRecord", new { id = Model.CatalogRecordId })">&laquo; @Model.CatalogRecordTitle</a>
+
+    @FormHelpers.CatalogRecordStatusLabel(Model.File.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+}
+
+@section sidebar
+{
+    @Html.Partial("~/Areas/Ddi/Views/Shared/_TaskPageNavigation.cshtml")
+}
+
+@* Instructions *@
+<div class="alert alert-info">
+    <p>@Model.Task.Instructions</p>
+    <p>When finished, <a href="#" data-toggle="modal" data-target="#approve-modal">approve or reject</a> the task.</p>
+</div>
+
+
+@section bottom
+{
+    @Html.Partial("~/Areas/Ddi/Views/Shared/_TaskPageActions.cshtml")
+}

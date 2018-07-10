@@ -1,0 +1,25 @@
+﻿@{
+    var routeData = Html.ViewContext.RouteData;
+    var currentController = routeData.GetRequiredString("controller").ToLower();
+
+    string dashboardClass = currentController == "dashboard" ? "active" : string.Empty;
+    string catalogRecordClass = currentController == "catalogrecord" ? "active" : string.Empty;
+    string adminClass = currentController == "admin" || currentController == "user" || currentController == "organization" ? "active" : string.Empty;
+    string userClass = currentController == "account" ? "active" : string.Empty;
+}
+
+<li class="sidebar-list">
+    <a href="/dashboard">
+        Dashboard
+        <span class="menu-icon glyphicon glyphicon-dashboard"></span>
+    </a>
+</li>
+
+<li class="sidebar-list">
+    <a href="/CatalogRecord">
+        Catalog Records
+        <span class="menu-icon glyphicon glyphicon-search"></span>
+    </a>
+</li>
+
+@Html.Action("UserSpecificNavigation")

@@ -1,0 +1,71 @@
+﻿@model Colectica.Curation.Web.Models.WaitForLockedRecordModel
+
+@{
+    ViewBag.Title = Model.CatalogRecordName;
+    //Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="widget">
+            <div class="widget-header">
+                Waiting
+            </div>
+            <div class="widget-body">
+                <p>@Model.Message</p>
+
+                @* HACK *@
+                @if (Model.Message == "Adding files")
+                {
+                    <p>
+                        The curation system is ingesting your files, checking for viruses, and extracting metadata.
+                        For large data files, this may take a significant amount of time.
+                    </p>
+                }
+
+                <div id="loading-div" class="loading"><div class="double-bounce1"></div><div class="double-bounce2"></div></div>
+                <div id="timeout-div" class="hide">
+                    <p>The operation is taking longer than expected. You can try the link below, or contact the administrator if the operation does not complete.</p>
+                    <p>
+                        <a href="@Model.ReturnUrl" class="btn btn-primary">Try again</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        var checkForUnlock = function (attempt) {
+            $.get("/CatalogRecord/IsUnlocked/" + "@Model.CatalogRecordId", {}, function (result) {
+                var isUnlocked = result == "true";
+                if (isUnlocked) {
+                    window.location = "@Model.ReturnUrl";
+                }
+                else {
+                    if (attempt > 3) {
+                        // Give up.
+                        $("#loading-div").addClass("hide");
+                        $("#timeout-div").removeClass("hide");
+                    }
+                    else {
+                        var timeout = 2000;
+                        if (attempt == 3) {
+                            timeout = 4000;
+                        }
+
+                        window.setTimeout(function () {
+                            checkForUnlock(attempt + 1);
+                        }, timeout)
+                    }
+                }
+            })
+        };
+
+        window.setTimeout(function () {
+            checkForUnlock(1);
+        }, 1000);
+    </script>
+}

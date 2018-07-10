@@ -1,0 +1,77 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Colectica.Curation.Web", "Colectica.Curation.Web\Colectica.Curation.Web.csproj", "{6F97CCAB-A532-4421-BA18-7B2BDE66D8F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Colectica.Curation.Data", "Colectica.Curation.Data\Colectica.Curation.Data.csproj", "{AAAC1795-727A-4920-BCA8-644E96240604}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Colectica.Curation.Contracts", "Colectica.Curation.Contracts\Colectica.Curation.Contracts.csproj", "{4F74CD1C-0913-4F68-9BF2-DF6F786CA916}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Colectica.Curation.Common", "Colectica.Curation.ViewModel\Colectica.Curation.Common.csproj", "{08221A63-12C2-4635-9F37-C301A247379F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Colectica.Curation.Service", "Colectica.Curation.Service\Colectica.Curation.Service.csproj", "{76B51742-5530-4EF6-BBBA-32C836D6D7C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Colectica.Curation.Operations", "Colectica.Curation.Operations\Colectica.Curation.Operations.csproj", "{0FF82B35-8F25-408F-9713-AA0418815CDC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8AF96E35-8ADA-4638-85E3-11A94B9C4F1F}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YaleIsps.HandleService", "YaleIsps.HandleService\YaleIsps.HandleService.csproj", "{FE6C23CE-76BA-41AC-9FAE-7EEDC6FC8366}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Addins", "Addins", "{EF40C9AF-06ED-4EBF-8BBD-A64E985D761E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Colectica.Curation.BaseAddins", "Colectica.Curation.BaseAddins\Colectica.Curation.BaseAddins.csproj", "{A628A42C-6B4F-41D0-BA2B-F5BBBDC10611}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6F97CCAB-A532-4421-BA18-7B2BDE66D8F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F97CCAB-A532-4421-BA18-7B2BDE66D8F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F97CCAB-A532-4421-BA18-7B2BDE66D8F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F97CCAB-A532-4421-BA18-7B2BDE66D8F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAAC1795-727A-4920-BCA8-644E96240604}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAAC1795-727A-4920-BCA8-644E96240604}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAAC1795-727A-4920-BCA8-644E96240604}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAAC1795-727A-4920-BCA8-644E96240604}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F74CD1C-0913-4F68-9BF2-DF6F786CA916}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F74CD1C-0913-4F68-9BF2-DF6F786CA916}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F74CD1C-0913-4F68-9BF2-DF6F786CA916}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F74CD1C-0913-4F68-9BF2-DF6F786CA916}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08221A63-12C2-4635-9F37-C301A247379F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08221A63-12C2-4635-9F37-C301A247379F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08221A63-12C2-4635-9F37-C301A247379F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08221A63-12C2-4635-9F37-C301A247379F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76B51742-5530-4EF6-BBBA-32C836D6D7C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76B51742-5530-4EF6-BBBA-32C836D6D7C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76B51742-5530-4EF6-BBBA-32C836D6D7C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76B51742-5530-4EF6-BBBA-32C836D6D7C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FF82B35-8F25-408F-9713-AA0418815CDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FF82B35-8F25-408F-9713-AA0418815CDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FF82B35-8F25-408F-9713-AA0418815CDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FF82B35-8F25-408F-9713-AA0418815CDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE6C23CE-76BA-41AC-9FAE-7EEDC6FC8366}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE6C23CE-76BA-41AC-9FAE-7EEDC6FC8366}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE6C23CE-76BA-41AC-9FAE-7EEDC6FC8366}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE6C23CE-76BA-41AC-9FAE-7EEDC6FC8366}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A628A42C-6B4F-41D0-BA2B-F5BBBDC10611}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A628A42C-6B4F-41D0-BA2B-F5BBBDC10611}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A628A42C-6B4F-41D0-BA2B-F5BBBDC10611}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A628A42C-6B4F-41D0-BA2B-F5BBBDC10611}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FE6C23CE-76BA-41AC-9FAE-7EEDC6FC8366} = {EF40C9AF-06ED-4EBF-8BBD-A64E985D761E}
+		{A628A42C-6B4F-41D0-BA2B-F5BBBDC10611} = {EF40C9AF-06ED-4EBF-8BBD-A64E985D761E}
+	EndGlobalSection
+EndGlobal

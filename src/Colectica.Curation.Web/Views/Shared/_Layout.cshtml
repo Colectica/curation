@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Curator</title>
+
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <link href="/Scripts/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
+    <link href="/Scripts/select2/select2.css" rel="stylesheet" type="text/css">
+    <link href="/Scripts/select2/select2-bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/nav-wizard.bootstrap.css" rel="stylesheet" media="screen">
+
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    @RenderSection("styles", required: false)
+
+
+</head>
+<body>
+
+    <div id="wrapper">
+        <div id="sidebar-wrapper">
+            @Html.Partial("_MainNavigation")
+        </div>
+        <div id="page-content-wrapper">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-9">
+                        <div class="title-breadcrumb">
+                            @RenderSection("breadcrumb", required: false)
+                        </div>
+                        <div class="titleWrapper">
+                            
+                            <button id="menu-toggle" class="btn btn-default">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+
+                            <h1>@ViewBag.Title</h1>
+
+                            @if (IsSectionDefined("title"))
+                            { 
+                                <div class="pull-right" style="margin-left: 10px;">
+                                    @RenderSection("title", required: false)
+                                </div>
+                            }
+                            
+                        </div>
+
+                    </div>
+                    <div class="col-lg-3" id="user-badge">
+                        <div class="dropdown">
+                            <button class="btn btn-default" data-toggle="dropdown">
+                                <span class="glyphicon glyphicon-user headshot"></span>
+                                <span class="user-name">@User.Identity.Name</span>
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("Edit", "User", new { id = User.Identity.Name })"><span class="glyphicon glyphicon-user"></span> User Profile</a></li>
+                                <li><a href="@Url.Action("EmailPreferences", "User", new { id = User.Identity.Name })"><span class="glyphicon glyphicon-envelope"></span> Email Preferences</a></li>
+                                <li class="divider"></li>
+                                <li><a href="@Url.Action("LogOff", "Account")"><span class="glyphicon glyphicon-log-out"></span> Log off</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <!-- content of page -->
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @RenderSection("bottom", required: false)
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <!-- Menu Toggle Script -->
+    <script>
+
+        $(document).ready(function () {
+            $("#menu-toggle").click(function (e) {
+                e.preventDefault();
+                $("#wrapper").toggleClass("toggled");
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+﻿@model Colectica.Curation.Web.Models.OrganizationIndexModel
+
+@{
+    ViewBag.Title = "Curator Administration"; 
+}
+
+@section breadcrumb
+{
+    <a href="/Admin/">&laquo; Administration</a>
+}
+
+@section sidebar
+{
+    @if (Model.IsSiteAdministrator)
+    {
+        @Html.Partial("_AdminNavigation")
+    }
+}
+
+
+<h2>Organization Management</h2>
+
+<table class="table">
+    <tr>
+        <th width="20"></th>
+        <th>Organization</th>
+        <th>Host Name</th>
+    </tr>
+
+    <tbody>
+        @foreach (var org in Model.Organizations)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(org.Organization.ImageUrl))
+                    {
+                        <img src="@org.Organization.ImageUrl" style="max-width: 100px; max-height: 100px;" />
+                    }
+                </td>
+                <td>@Html.ActionLink(org.Organization.Name, "Details", new { id = org.Organization.Id })</td>
+                <td>
+                    <a href="http://@org.Organization.Hostname">@org.Organization.Hostname</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="/Organization/Create" class="btn btn-primary">Create a New Organization</a>
+

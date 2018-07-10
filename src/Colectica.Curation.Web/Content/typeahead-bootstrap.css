@@ -1,0 +1,62 @@
+﻿.tt-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0;
+  list-style: none;
+  font-size: 14px;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  background-clip: padding-box;
+}
+.tt-suggestion > div:hover > div,
+.tt-suggestion > div:focus > div,
+.tt-suggestion.tt-cursor div > div {
+  color: #ffffff;
+  text-decoration: none;
+  outline: 0;
+  background-color: #428bca;
+}
+
+.tt-suggestion > p {
+    margin-bottom: 0;
+}
+
+.tt-hint {
+    visibility: hidden;
+}
+
+#scrollable-dropdown-menu .tt-dropdown-menu {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.tt-dropdown-menu {
+    background: white;
+}
+
+.twitter-typeahead {
+    width: 100%;
+}
+
+.tt-dropdown-menu {
+    width: 100%;
+}
+
+.tt-hint {
+    width: 100%;
+}
+
+.author-suggestion {
+    margin: 0px 20px;
+    padding: 2px 0px;
+}

@@ -1,0 +1,44 @@
+﻿@model Colectica.Curation.Models.NotesModel
+
+@using Colectica.Curation.Common.Utility
+
+@{
+    ViewBag.Title = Model.File.Name;
+}
+
+@section breadcrumb
+{
+    <a href="@Url.Action("Files", "CatalogRecord", new { id = Model.File.CatalogRecord.Id })">&laquo; @Model.File.CatalogRecord.Title</a>
+
+    @FormHelpers.CatalogRecordStatusLabel(Model.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+    @if (Model.IsUserApprover)
+    {
+        <span class="label label-info">Approver</span>
+    }
+}
+
+@section scripts
+{
+    @Html.Partial("~/Areas/Ddi/Views/Shared/_EditorScripts.cshtml")
+
+    @Scripts.Render("~/bundles/knockout")
+
+    <script src="/Areas/Ddi/js/Notes.js"></script>
+
+    <script>
+        var vm = new NotesViewModel("@Model.File.Id", "/File/AddNote");
+        ko.applyBindings(vm);
+    </script>
+
+}
+
+@Html.Partial("_FileNavigation", Model)
+
+@Html.Partial("~/Areas/Ddi/Views/Shared/_NotesPartial.cshtml", Model)
+
+
+

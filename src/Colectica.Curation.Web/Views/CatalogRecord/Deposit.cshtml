@@ -1,0 +1,312 @@
+﻿@model Colectica.Curation.Web.Models.DepositFilesViewModel
+
+@{
+    ViewBag.Title = Model.CatalogRecord.Title;
+    
+    string hasAgreement = string.IsNullOrWhiteSpace(Model.DepositAgreement) ? "false" : "true";
+}
+
+@section scripts{
+    
+    @Scripts.Render("~/bundles/knockout")
+    @Scripts.Render("~/bundles/dropzone/js")
+
+    <script src="~/Scripts/underscore-min.js"></script>
+
+    <script src="~/js/Utility.js"></script>
+    <script src="~/js/FileDeposit.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            ko.applyBindings(new FileDepositViewModel('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.AvailableExistingFileNames))', @hasAgreement));
+        });
+    </script>
+}
+
+@section styles {
+    @Styles.Render("~/Scripts/dropzone/css/basic")
+    @Styles.Render("~/Scripts/dropzone/css/standard")
+
+
+    <style>
+        /* The total progress gets shown by event listeners */
+        #total-progress {
+            transition: opacity 0.3s linear;
+        }
+
+        /* Hide the progress bar when finished */
+        #previews .file-row.dz-success .progress {
+            opacity: 0;
+            transition: opacity 0.3s linear;
+        }
+
+        /* Hide the delete button initially */
+        #previews .file-row .delete {
+            display: none;
+        }
+
+        /* Hide the start and cancel buttons and show the delete button */
+
+        #previews .file-row.dz-success .start,
+        #previews .file-row.dz-success .cancel {
+            display: none;
+        }
+
+        #previews .file-row.dz-success .delete {
+            display: block;
+        }
+
+        .dropzone {
+            border: 1px solid #aaa;
+        }
+    </style>
+}
+
+@Html.Partial("_CatalogRecordNavigation", Model)
+
+<h2>Upload Files</h2>
+
+@if (Model.IsLocked)
+{
+    @Html.Partial("_CatalogRecordLocked", Model.OperationStatus)
+}
+else
+{
+
+
+    <form id="myDropzone"
+          action="CatalogRecord/Deposit"
+          class="dropzone form-horizontal"
+          method="post"
+          enctype="multipart/form-data"
+          style="background-color: white;">
+
+        @Html.HiddenFor(x => x.CatalogRecordId)
+
+        <div class="dz-message"></div>
+
+        <div id="actions" class="">
+            <div class="col-lg-7">
+                <!-- The fileinput-button span is used to style the file input field as button -->
+                <span class="btn btn-success fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>Add files...</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="table table-striped files" id="previews">
+            <div id="template" class="file-row">
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div>
+
+            <h3>File Details</h3>
+            <hr />
+
+            <div data-bind="visible: files().length > 0">
+                <div>
+                    <div data-bind="foreach: files">
+                        <h4 data-bind="text: name"></h4>
+
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Created</label>
+                                <div class="col-md-10">
+                                    <input type="hidden" data-bind="value: date, attr: { name: 'CreationDates[' + $index() + ']' }" />
+                                    <span class="form-readonly-control" data-bind="text: date"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Size</label>
+                                <div class="col-md-10">
+                                    <span class="form-readonly-control" data-bind="text: friendlySize"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group" data-bind="visible: existingFileNames().length > 0">
+                                <label class="control-label col-md-2">Replace Existing File</label>
+                                <div class="col-md-10" data-bind="visible: !isNameAlreadyPresent()">
+                                    <select class="form-control"
+                                            data-bind="options: existingFileNames,
+                                                    value: selectedExistingFileName,
+                                                    optionsCaption: 'Select...',
+                                                    attr: { name: 'SelectedExistingFileNames[' + $index() + ']' }"></select>
+                                </div>
+                                <div class="col-md-10" data-bind="visible: isNameAlreadyPresent">
+                                    <span class="form-control" data-bind="text: name"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Type</label>
+                                <div class="col-md-10">
+                                    <select data-bind="value: type, attr: { name: 'Types[' + $index() + ']' }, visible: !isTypeAutoDetected()"
+                                            class="form-control">
+                                        <option value="Data">Data</option>
+                                        <option value="Program">Program</option>
+                                        <option value="Output">Output</option>
+                                        <option value="Codebook">Codebook</option>
+                                        <option value="Treatment Materials">Treatment Materials</option>
+                                        <option value="Supplementary Materials">Supplementary Materials</option>
+                                    </select>
+                                    <span class="form-readonly-control" data-bind="text: type, visible: isTypeAutoDetected"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Public File Name</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control"
+                                           data-bind="value: title, attr: { name: 'Titles[' + $index() + ']' }" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Source</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control"
+                                           data-bind="value: source, attr: { name: 'Sources[' + $index() + ']' }" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Source Information</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control"
+                                           data-bind="value: sourceInformation, attr: { name: 'SourceInformations[' + $index() + ']' }" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Rights</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control"
+                                           data-bind="value: rights, attr: { name: 'Rights[' + $index() + ']' }" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Public Access</label>
+                                <div class="col-md-10">
+                                    <select data-bind="value: publicAccess, attr: { name: 'PublicAccesses[' + $index() + ']' }"
+                                            class="form-control">
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="alert alert-warning" data-bind="visible: shouldShowLargeDataFileWarning">
+                            <span>Please note that when uploading large data files like this one, ingesting the file may
+                            take some time. Until processing is complete, your catalog record will remain locked.</span>
+                        </div>
+
+                        <hr />
+                    </div>
+                </div>
+
+                <h3>Message</h3>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ActionType, "Action Type", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        <select id="ActionType" name="ActionType" class="form-control">
+                            <option value="Initial Upload" selected="selected">Initial Upload</option>
+                            <option value="Update Metadata">Update Metadata</option>
+                            <option value="Anonymize">Anonymize</option>
+                            <option value="New Version">New Version</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        @Html.ValidationMessageFor(m => m.ActionType)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Notes, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(m => m.Notes, new { @class = "form-control", data_bind="value: notes" })
+                        @Html.ValidationMessageFor(m => m.Notes)
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <!-- The global file processing state -->
+                <div class="fileupload-process" data-bind="visible: isUploading">
+                    <div id="total-progress" class="progress progress-striped active"
+                         role="progressbar"
+                         aria-valuemin="0"
+                         aria-valuemax="100"
+                         aria-valuenow="0">
+                        <div class="progress-bar progress-bar-success"
+                             style="width: 0%;"
+                             data-dz-uploadprogress>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alert -->
+                <div class="alert alert-danger" data-bind="visible: errorMessage()">
+                    <p data-bind="text: errorMessage"></p>
+                </div>
+
+                <!-- Upload button -->
+                <button id="submitButton" type="submit" class="btn btn-primary btn-lg"
+                        data-bind="disable: !canUpload()">
+                    Upload
+                </button>
+            </div>
+        </div>
+
+
+        <div data-bind="visible: files().length == 0">
+            <p>Drop files here or use the button above.</p>
+        </div>
+    </form>
+}
+
+@section bottom {
+
+    <!-- Terms of Service Modal -->
+    <div class="modal" id="tosModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Terms of Service</h4>
+                </div>
+                <div class="modal-body">
+                    @Model.TermsOfService
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Policy Modal -->
+    <div class="modal" id="policyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Data Archive Policy</h4>
+                </div>
+                <div class="modal-body">
+                    @Model.Policy
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

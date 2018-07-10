@@ -1,0 +1,136 @@
+﻿@{
+    string themeName = string.Empty;
+    string siteName = "Curation";
+
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>@ViewBag.Title - Colectica Curation</title>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <link href="~/Content/nav-wizard.bootstrap.css" rel="stylesheet" media="screen">
+    <link href="~/Content/rdash.css" rel="stylesheet">
+
+
+    @RenderSection("styles", required: false)
+
+    <link href="/Scripts/select2/select2.css" rel="stylesheet" type="text/css">
+    <link href="~/Content/select2overrides.css" rel="stylesheet">
+
+</head>
+<body class="hamburg">
+    <div id="page-wrapper" class="open">
+
+        <!-- Sidebar -->
+
+        <div id="sidebar-wrapper" style="overflow-x: hidden;">
+            <ul class="sidebar">
+                <li class="sidebar-main">
+                    <a href="javascript: toggleSidebar();">
+                        @siteName
+                        <span class="menu-icon glyphicon glyphicon-transfer"></span>
+                    </a>
+                </li>
+
+                @Html.Partial("_MainNavigation")
+
+                @RenderSection("sidebar", required: false)
+            </ul>
+            @*<div class="sidebar-footer">
+                    <div class="col-xs-4">
+                        <a href="https://github.com/rdash/rdash-barebones" target="_blank">
+                            Github
+                        </a>
+                    </div>
+                    <div class="col-xs-4">
+                        <a href="#" target="_blank">
+                            About
+                        </a>
+                    </div>
+                    <div class="col-xs-4">
+                        <a href="#">
+                            Support
+                        </a>
+                    </div>
+                </div>*@
+        </div>
+
+        <!-- End Sidebar -->
+
+        <div id="content-wrapper">
+            <div class="page-content">
+
+                <!-- Header Bar -->
+                <div class="row header">
+                    <div class="col-xs-12">
+                        <div class="user pull-right">
+                            <div class="item dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <span class="glyphicon glyphicon-user" style="font-size: 28px; margin-top: 15px;"></span>
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li class="dropdown-header">
+                                        @User.Identity.Name
+                                    </li>
+                                    <li class="link"><a href="@Url.Action("Details", "User", new { id = User.Identity.Name })"><span class="glyphicon glyphicon-user"></span> User Profile</a></li>
+                                    <li class="link"><a href="@Url.Action("EmailPreferences", "User", new { id = User.Identity.Name })"><span class="glyphicon glyphicon-envelope"></span> Email Preferences</a></li>
+                                    <li class="divider"></li>
+                                    <li class="link"><a href="@Url.Action("LogOff", "Account")"><span class="glyphicon glyphicon-log-out"></span> Log off</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="meta">
+                            <div class="page">
+                                @RenderSection("beforeTitle", required: false)
+                                <h1>@ViewBag.Title</h1>
+                            </div>
+
+                            @RenderSection("breadcrumb", required: false)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- End Header Bar -->
+                <!-- Main Content -->
+                <div class="row" style="background: white; margin-top: -15px; padding-top: 30px; border-top: 1px solid #ccc;">
+                    <div class="col-lg-12">
+                        @RenderBody()
+                    </div>
+                </div>
+
+                @*<footer>
+                        <nav class="">
+                            <div class="@containerClass">
+                                @Html.Raw(footer)
+                            </div>
+                        </nav>
+                    </footer>*@
+            </div><!-- End Content Wrapper -->
+        </div><!-- End Page Wrapper -->
+    </div>
+
+    @RenderSection("bottom", required: false)
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    @*@Html.RenderResources("js")*@
+
+    <script>
+        function toggleSidebar() {
+            $("#page-wrapper").toggleClass("open");
+        }
+    </script>
+
+</body>
+</html>

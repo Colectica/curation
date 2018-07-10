@@ -1,0 +1,33 @@
+﻿@model Colectica.Curation.Common.ViewModels.DateModel
+
+@{ 
+    string dateTypeId = Model.Id + ".dateType";
+    string dateId = Model.Id + ".date";
+    string isRangeId = Model.Id + ".isRange";
+    string endDateId = Model.Id + ".endDate";
+
+    string rangeValue = Model.isRange ? "on" : "";
+}
+
+<div class="form-inline" style="padding-left: 15px;">
+    <div class="form-group" style="margin-right: 20px;">
+        @FormHelpers.Select(dateTypeId, Model.dateType, "Date", "Year", "Year/Month")
+    </div>
+
+    <div class="form-group">
+        <input class="form-control" id="@dateId" name="@dateId" value="@Model.date" />
+    </div>
+
+    <div class="form-group" style="margin: 0 20px 0 20px;">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" id="@isRangeId" name="@isRangeId" value="@isRangeId" @if (Model.isRange){<text>checked</text>} /> range
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <input class="form-control" id="@endDateId" name="@endDateId" value="@Model.endDate" @if (!Model.isRange) { <text>style="display: none;"</text> } />
+    </div>
+
+</div>

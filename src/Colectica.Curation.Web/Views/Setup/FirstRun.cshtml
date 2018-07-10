@@ -1,0 +1,118 @@
+﻿@model Colectica.Curation.Web.Models.FirstRunViewModel
+
+@{
+    ViewBag.Title = "Welcome";
+    Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <div class="alert alert-danger">
+        <p>@Model.Message</p>
+    </div>
+}
+
+<h1>Get Started</h1>
+
+@if (Model.HasNoConnectionStrings)
+{
+    <div class="alert alert-danger">
+        <p>
+            No database connection strings were found, or the database could not be accessed
+            with the provided connection strings. Please edit the <code>ConnectionStrings.config</code>
+            file and set the DefaultConnection connection string.
+        </p>
+    </div>
+    <h3>Example ConnectionStrings.config</h3>
+    <pre><code>&lt;?xml version="1.0" ?&gt;
+&lt;connectionstrings&gt;
+    &lt;add name="DefaultConnection" connectionstring="Data Source=.;Initial Catalog=curation;Integrated Security=True" providername="System.Data.SqlClient" /&gt;
+    &lt;add name="ColecticaRepository" connectionstring="Data Source=.;Initial Catalog=colectica;Integrated Security=True" providername="System.Data.SqlClient" /&gt;
+&lt;/connectionstrings&gt;</code></pre>
+}
+else
+{
+    <div role="tabpanel" style="margin-top: 20px;">
+        <ul class="nav nav-pills" role="tablist">
+            <li role="presentation" class="active"><a href="#status" aria-controls="status" role="tab" data-toggle="tab">System Component Status</a></li>
+            <li role="presentation"><a href="#config" aria-controls="config" role="tab" data-toggle="tab">Initial Configuration</a></li>
+        </ul>
+
+        <div class="tab-content" style="margin-top: 20px;">
+            <div role="tabpanel" class="tab-pane active" id="status">
+                <div>
+                    @Html.Partial("_SystemStatus", Model.SystemStatus)
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="config">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        <hr />
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.SiteName, htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.SiteName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.SiteName)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.OrganizationName, htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.OrganizationName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.OrganizationName)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.AgencyId, htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.AgencyId, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.AgencyId)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.UserName)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Password)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label col-md-3" })
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.ConfirmPassword)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <input type="submit" value="Get Started" class="btn btn-success btn-lg btn-block btn-default" />
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

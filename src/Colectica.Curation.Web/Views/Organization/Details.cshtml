@@ -1,0 +1,256 @@
+﻿@model Colectica.Curation.Web.Models.OrganizationDetailsModel
+
+@{
+    ViewBag.Title = Model.Organization.Name;
+}
+
+@section breadcrumb
+{
+    <a href="/Organization/">&laquo; Organizations</a>
+}
+
+@section sidebar
+{
+    @if (Model.IsSiteAdministrator)
+    {
+        @Html.Partial("_AdminNavigation")
+    }
+}
+
+
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#general" aria-controls="general" role="tab" data-toggle="tab">General</a></li>
+    <li role="presentation"><a href="#users" aria-controls="users" role="tab" data-toggle="tab">Users</a></li>
+    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+</ul>
+
+<div class="tab-content">
+
+    <div role="tabpanel" class="tab-pane active" id="general">
+        <h4>General Information</h4>
+
+        <dl class="dl-horizontal">
+            <dt> @Html.DisplayNameFor(model => model.Organization.Name) </dt>
+            <dd> @Html.DisplayFor(model => model.Organization.Name) </dd>
+
+            <dt> @Html.DisplayNameFor(model => model.Organization.Hostname) </dt>
+            <dd> @Html.DisplayFor(model => model.Organization.Hostname) </dd>
+
+            <dt> Users </dt>
+            <dd> @Html.DisplayFor(model => model.Organization.ApplicationUsers.Count) </dd>
+
+        </dl>
+    </div>
+
+    <!-- Users -->
+    <div role="tabpanel" class="tab-pane" id="users">
+
+        <h4>Users</h4>
+
+        @if (Model.Organization.ApplicationUsers.Count == 0)
+        {
+            <p>No users are assigned to this organization.</p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var user in Model.Organization.ApplicationUsers)
+                {
+                    <li>@Html.ActionLink(user.UserName, "Details", "User", new { id = user.UserName }, null)</li>
+                }
+            </ul>
+        }
+
+    </div>
+
+    <!-- Settings -->
+    <div role="tabpanel" class="tab-pane" id="settings">
+
+        @using (Html.BeginForm("Edit", "Organization"))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.Organization.Id)
+
+                <h4>General</h4>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Organization.Name, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Organization.Name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.ImageUrl, "Image URL", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Organization.ImageUrl, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Organization.ImageUrl, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.Hostname, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Organization.Hostname, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Organization.Hostname, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.AgencyID, "Agency ID", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Organization.AgencyID, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Organization.AgencyID, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.DepositAgreement, "Contact Information", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(model => model.Organization.ContactInformation, new { @class = "form-control col-md-10", rows = 6 })
+                        @Html.ValidationMessageFor(model => model.Organization.ContactInformation, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <h4>Storage Locations</h4>
+                <hr />
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.IngestDirectory, "Ingest Directory", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Organization.IngestDirectory, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Organization.IngestDirectory, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.ProcessingDirectory, "Processing Directory", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Organization.ProcessingDirectory, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Organization.ProcessingDirectory, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.ArchiveDirectory, "Archive Directory", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Organization.ArchiveDirectory, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Organization.ArchiveDirectory, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <h4>Policies</h4>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.DepositAgreement, "Deposit Agreement", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(model => model.Organization.DepositAgreement, new { @class = "form-control col-md-10", rows = 6 })
+                        @Html.ValidationMessageFor(model => model.Organization.DepositAgreement, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.TermsOfService, "Terms of Service", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(model => model.Organization.TermsOfService, new { @class = "form-control col-md-10", rows = 6 })
+                        @Html.ValidationMessageFor(model => model.Organization.TermsOfService, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.OrganizationPolicy, "Organization Citation Policy", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(model => model.Organization.OrganizationPolicy, new { @class = "form-control col-md-10", rows = 6 })
+                        @Html.ValidationMessageFor(model => model.Organization.OrganizationPolicy, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <h4>Email</h4>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.ReplyToAddress, "Reply-to Address", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Organization.ReplyToAddress, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Organization.ReplyToAddress, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.NotificationEmailClosing, "Notification Email Closing", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(model => model.Organization.NotificationEmailClosing, new { @class = "form-control col-md-10", rows = 6 })
+                        @Html.ValidationMessageFor(model => model.Organization.NotificationEmailClosing, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <h4>Handle Service</h4>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.HandleServerEndpoint, "Handle Server Address", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Organization.HandleServerEndpoint, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Organization.HandleServerEndpoint, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.HandleGroupName, "Handle Group Name", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Organization.HandleGroupName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Organization.HandleGroupName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.HandleUserName, "Handle Username", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Organization.HandleUserName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Organization.HandleUserName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.HandlePassword, "Handle Password", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Organization.HandlePassword, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Organization.HandlePassword, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <h4>Security</h4>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.IPAddressesAllowedToDownloadFiles, "IP addresses allowed to download files", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Organization.IPAddressesAllowedToDownloadFiles, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Organization.IPAddressesAllowedToDownloadFiles, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <h4>Account Creation</h4>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.IsAnonymousRegistrationAllowed, "Allow Anonymous Registration", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            @Html.EditorFor(model => model.Organization.IsAnonymousRegistrationAllowed)
+                            @Html.ValidationMessageFor(model => model.Organization.IsAnonymousRegistrationAllowed, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Save" class="btn btn-lg btn-primary" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>

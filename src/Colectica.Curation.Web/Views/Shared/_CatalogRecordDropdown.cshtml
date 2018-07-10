@@ -1,0 +1,24 @@
+﻿@model Colectica.Curation.Common.ViewModels.ICatalogRecordNavigator
+
+@if (Model.IsUserCurator || Model.IsUserApprover || Model.CanAssignCurators)
+{
+        <button class="dropdown-toggle btn" data-toggle="dropdown" style="margin-top: 2px;">
+            <span class="glyphicon glyphicon-cog"></span> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            @if (Model.IsUserCurator ||
+                Model.IsUserApprover)
+            {
+                <li>
+                    @Html.ActionLink("History", "History", "CatalogRecord", new { id = Model.CatalogRecordId }, null)
+                </li>
+            }
+
+            @if (Model.CanAssignCurators)
+            {
+                <li>
+                    @Html.ActionLink("Assign Curators", "Permissions", new { id = Model.CatalogRecordId }, null)
+                </li>
+            }
+        </ul>
+}

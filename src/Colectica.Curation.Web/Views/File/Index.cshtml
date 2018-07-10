@@ -1,0 +1,129 @@
+﻿@model Colectica.Curation.Web.Models.PendingFilesModel
+
+@using Colectica.Curation.Web.Utility
+
+@{
+    ViewBag.Title = "Pending Files";
+}
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/knockout")
+    <script src="/Scripts/knockout.mapping-latest.js"></script>
+
+    <script src="/Scripts/bootstrap3-editable/js/bootstrap-editable.js"></script>
+
+    <script src="~/js/PendingFiles.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $.fn.editable.defaults.mode = 'inline';
+            $('.editable-field').editable({
+                success: function (response, newValue) {
+                    if (response.length > 0) {
+                        var obj = JSON.parse(response);
+                        if (obj.Status == 'error') {
+                            return obj.Message; //msg will be shown in editable form
+                        }
+                    }
+                }
+            });
+
+            ko.applyBindings(new PendingFilesViewModel('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model))'));
+
+        });
+    </script>
+}
+
+<p data-bind="visible: catalogRecords().length == 0">No files to display.</p>
+
+<div data-bind="visible: catalogRecords().length > 0">
+    <div data-bind="foreach: catalogRecords">
+        <h3 data-bind="text: CatalogRecordTitle"></h3>
+
+        <div class="alert alert-warning"
+             data-bind="visible: IsLocked()">
+            <p>
+                <span class="glyphicon glyphicon-ban-circle"></span>
+                This record is locked. Try refreshing the page in a few seconds.
+            </p>
+        </div>
+
+        <table class="table">
+            <tr>
+                <th></th>
+                <th>Date</th>
+                <th>Submitter</th>
+                <th>File</th>
+                <th>Size</th>                
+            </tr>
+
+            <tbody data-bind="foreach: Files">
+                <tr data-bind="click: $root.clickRow, css: { active: IsChecked() }">
+                    <td>
+                        <input type="checkbox" 
+                               data-bind="visible: !IsLocked(), checked: IsChecked,
+                                          click: function() { return true; }, clickBubble: false" />
+                    </td>
+                    <td data-bind="text: UploadedDate"></td>
+                    <td data-bind="text: OwnerUserName"></td>
+                    <td>
+                        <a class="editable-field"
+                           data-bind="text: Name, attr: { 'data-pk': Id }, visible: !IsLocked()"
+                           href="#"
+                           data-name="FileName"
+                           data-type="text"
+                           data-url="File/Update"
+                           data-title="FileName"></a>
+                        <br data-bind="visible: Name() != Title()" />
+                        <span data-bind="text: Title, visible: Name() != Title()"></span>
+                    </td>
+                    <td data-bind="text: Size"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <button class="btn" data-bind="click: $root.accept"><span title="Accept" class="glyphicon glyphicon-ok"></span> Accept</button>
+        <button class="btn" data-bind="click: $root.promptToReject"><span title="Reject" class="glyphicon glyphicon-remove"></span> Reject</button>
+    </div>
+</div>
+
+@section bottom
+{
+<div class="modal" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Reject File</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to reject these files?</p>
+
+                <div>
+                    Reason
+                    <select data-bind="value: $root.rejectReason" class="form-control">
+                        <option value="Irrelevant">Irrelevant</option>
+                        <option value="Duplicate">Duplicate</option>
+                        <option value="Virus">Virus</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div>
+                    Message
+                    <textarea class="form-control" name="reason"
+                              data-bind="value: $root.rejectMessage"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger"
+                       data-bind="click: reject">Reject</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+}

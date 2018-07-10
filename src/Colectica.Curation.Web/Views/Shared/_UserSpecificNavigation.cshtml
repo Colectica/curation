@@ -1,0 +1,20 @@
+﻿@model Colectica.Curation.Web.Models.UserInfoModel
+
+@if (Model.IsOrgAdmin ||
+    Model.IsSiteAdministrator &&
+    Model.Organization != null)
+{
+    <li class="sidebar-list">
+        <a href="@Url.Action("Details", "Organization", new { id = Model.Organization.Id } )">Organization Admin <span class="menu-icon glyphicon glyphicon-tower"></span></a>
+    </li>
+}
+
+@if (Model.IsSiteAdministrator)
+{
+    <li class="sidebar-list">
+        <a href="/Admin">
+            Site Admin
+            <span class="menu-icon glyphicon glyphicon-cog"></span>
+        </a>
+    </li>
+}

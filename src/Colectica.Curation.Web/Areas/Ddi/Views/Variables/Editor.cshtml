@@ -1,0 +1,69 @@
+﻿@model Colectica.Curation.Addins.Editors.Models.VariableEditorViewModel
+
+@{
+    ViewBag.Title = Model.File.Name;
+
+    string encodedVariablesJson = Model.VariablesJson.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "").Replace("\n", "\\n");
+}
+
+@section breadcrumb
+{
+    <a href="@Url.Action("Files", "CatalogRecord", new { id = Model.File.CatalogRecord.Id })">&laquo; @Model.File.CatalogRecord.Title</a>
+
+    @FormHelpers.CatalogRecordStatusLabel(Model.File.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+}
+
+@section scripts{
+    @Scripts.Render("~/bundles/knockout")
+    <script src="/Scripts/knockout.mapping-latest.js"></script>
+    <script src="/Scripts/knockout.x-editable.min.js"></script>
+
+    <script src="/Areas/Ddi/js/VariableEditor.js"></script>
+
+    <script src="/Scripts/bootstrap3-editable/js/bootstrap-editable.js"></script>
+    <script src="/Scripts/moment.min.js"></script>
+    <script src="/Scripts/select2/select2.js"></script>
+
+    <script>
+        
+        $(document).ready(function () {
+            $.fn.editable.defaults.mode = 'inline';
+            $.fn.editable.defaults.url = "/Variables/Update"
+            $.fn.editable.defaults.inputclass = "editable-input-wide";
+
+            @if (!Model.IsUserCurator)
+            {
+                <text>
+                $.fn.editable.defaults.disabled = true;
+                </text>
+            }
+        });
+
+    </script>
+
+    <script>
+        var vm = new VariableEditorViewModel("@Model.File.Id", false, "@Html.Raw(encodedVariablesJson) ");
+        ko.applyBindings(vm);
+    </script>
+
+
+}
+
+
+
+@Html.Partial("_FileNavigation", Model)
+
+@if (Model.IsLocked)
+{
+    @Html.Partial("_CatalogRecordLocked", Model.OperationStatus)
+}
+
+<div class="row variableEditorWrapper">
+    @Html.Partial("~/Areas/Ddi/Views/Shared/_VariableEditor.cshtml")    
+</div>
+
+

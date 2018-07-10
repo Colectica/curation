@@ -1,0 +1,384 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptedDate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AccessStatement" xml:space="preserve">
+    <value>Any restrictions on access to or use of the collection such as privacy certification or distribution restrictions is indicated here.</value>
+  </data>
+  <data name="AnalysisUnit" xml:space="preserve">
+    <value>The entity being analyzed in the study or in the variable</value>
+  </data>
+  <data name="ArchiveDate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Authors" xml:space="preserve">
+    <value>Name of the Principal Investigator or lead author and Name(s) of additional author(s)</value>
+  </data>
+  <data name="CatalogRecordCreator" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CertifiedDate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Checksum" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ChecksumDate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ChecksumMethod" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Collection" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ConfidentialityStatement" xml:space="preserve">
+    <value>Please include a note about whether all or only some uploaded materials should be restricted. If some, indicate which files and the reason. E.g., “restrict access to “data.dta” because of geospatial information included or because of personally identified information (PII).</value>
+  </data>
+  <data name="Contributor" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CreatedDate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CreationDate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DataSource" xml:space="preserve">
+    <value>Original sources or documents from which data were obtained, e.g., Authors, U.S. Census (Dublin Core: Source)</value>
+  </data>
+  <data name="DataSourceInformation" xml:space="preserve">
+    <value>Data source contact information</value>
+  </data>
+  <data name="DataType" xml:space="preserve">
+    <value>Nature of the data; kind of data documented in the logical product(s) of a study unit.</value>
+  </data>
+  <data name="DepositAgreement" xml:space="preserve">
+    <value>Please sign</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Brief description or abstract of the study, project, published article, or data collection; Include a brief statement of the study hypotheses</value>
+  </data>
+  <data name="EmbargoStatement" xml:space="preserve">
+    <value>Please include a note about whether all or only some uploaded materials should be restricted due to a request for embargo, along with the month/year at which materials may be released.</value>
+  </data>
+  <data name="ExternalDatabase" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FieldDate" xml:space="preserve">
+    <value>Date(s) of data collection</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FileSize" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FileTitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FileType" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FileVersion" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FormatID" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FormatName" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FundingInformation" xml:space="preserve">
+    <value>Name of the funding agency and any additional information: date grant was received, grant number, etc.</value>
+  </data>
+  <data name="Hardware" xml:space="preserve">
+    <value />
+  </data>
+  <data name="InclusionExclusionCriteria" xml:space="preserve">
+    <value>Criteria for participant selection, or study sample construction, including eligibility, inclusion and exclusion criteria</value>
+  </data>
+  <data name="Intervention" xml:space="preserve">
+    <value>Describe key details of the intervention and include all treatment groups. Include the number of intervention groups (enter 1 for single-arm study). Must be sufficiently detailed to distinguish between arms of a study and/or among similar interventions, and to describe any combinations of interventions; link to chart in cases where the intervention design is complicated.</value>
+  </data>
+  <data name="InterventionAdministration" xml:space="preserve">
+    <value>Describe how interventions were administered</value>
+  </data>
+  <data name="IsPublicAccess" xml:space="preserve">
+    <value />
+  </data>
+  <data name="IsRestrictedConfidential" xml:space="preserve">
+    <value>Restricted due to confidential information</value>
+  </data>
+  <data name="IsRestrictedEmbargo" xml:space="preserve">
+    <value>Restricted due to embargo if materials should be embargoed for specified time period</value>
+  </data>
+  <data name="IsRestrictedOther" xml:space="preserve">
+    <value>Restricted due to another reason</value>
+  </data>
+  <data name="Keywords" xml:space="preserve">
+    <value>Words or phrases that best describe the study, project, published article, or data collection. Keywords help users find studies in the database. Use controlled vocabulary terms where appropriate. Be as specific and precise as possible. Avoid acronyms and abbreviations.</value>
+  </data>
+  <data name="KindOfData" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Label" xml:space="preserve">
+    <value />
+  </data>
+  <data name="LastUpdatedDate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location about which data were collected</value>
+  </data>
+  <data name="LocationDetails" xml:space="preserve">
+    <value>Please enter more specific information such as country/countries. Only include information that may be made public in a catalog record; geospatial units at the level of small geographic areas such as villages may not be shared here.</value>
+  </data>
+  <data name="ModeOfDataCollection" xml:space="preserve">
+    <value>Describe how data were collected</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>An organization-defined number for the item</value>
+  </data>
+  <data name="Organization" xml:space="preserve">
+    <value>Name of Institution with which the Author(s) is/are affiliated</value>
+  </data>
+  <data name="OutcomeMeasures" xml:space="preserve">
+    <value>Key measurement(s) or observation(s) used to measure the effect of experimental variables in a study, or for observational studies, measurement(s) or observation(s) that are a focus of the study (or the "dependent variable"); Include secondary and other measurements used to evaluate interventions, or, for observational studies, that are a focus of the study, excluding post-hoc measures.</value>
+  </data>
+  <data name="Owner" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OwnerContact" xml:space="preserve">
+    <value>Contact information for Author</value>
+  </data>
+  <data name="PersistentID" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PersistentLink" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PersistentLinkDate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PublicName" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PublishDate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RandomizationProcedure" xml:space="preserve">
+    <value>Describe how participants are allocated to intervention arms</value>
+  </data>
+  <data name="RelatedDatabase" xml:space="preserve">
+    <value>Data also deposited elsewhere (e.g., journal repository, institutional repository); Please provide a citation, DOI, or link</value>
+  </data>
+  <data name="RelatedProjects" xml:space="preserve">
+    <value>Registration of this study in a pre-analysis database (e.g., ClinicalTrials.gov, socialscienceregistry.org, http://egap.org/design-registration, etc.); Please provide a citation, DOI, or link</value>
+  </data>
+  <data name="RelatedPublications" xml:space="preserve">
+    <value>Scientific publication using the data deposited here (journal articles, books, book chapters, government and agency reports, working papers, dissertations, conference papers, meeting presentations, unpublished manuscripts, magazine and newspaper articles, and audiovisual materials); Please provide a citation, DOI, or link</value>
+  </data>
+  <data name="RepresentationType" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ResearchDesign" xml:space="preserve">
+    <value>The overall strategy for addressing the research problem(s)</value>
+  </data>
+  <data name="ResponseUnit" xml:space="preserve">
+    <value>The entity that provided the information carried by the variable</value>
+  </data>
+  <data name="ReviewType" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Rights" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SampleSize" xml:space="preserve">
+    <value>Number of subjects in the study or number of observations (actual); Sample size; Number of cases in the final public dataset</value>
+  </data>
+  <data name="Software" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SoftwareVersion" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Source" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SourceInformation" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StudyID" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StudyTimePeriod" xml:space="preserve">
+    <value>Date(s) covered in the study, project, published article, or data collection</value>
+  </data>
+  <data name="TermsOfUse" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Name of this study, project, published article, or data collection</value>
+  </data>
+  <data name="TotalObservations" xml:space="preserve">
+    <value>Number of subjects in the study or number of observations (actual); Sample size; Number of cases in the final public dataset</value>
+  </data>
+  <data name="UniqueID" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UnitOfObservation" xml:space="preserve">
+    <value>Who or what is being studied</value>
+  </data>
+  <data name="UnitOfRandomization" xml:space="preserve">
+    <value>Which units were randomized</value>
+  </data>
+  <data name="UploadedDate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VariableCategories" xml:space="preserve">
+    <value>Label each value for categorical variables</value>
+  </data>
+  <data name="VariableDescription" xml:space="preserve">
+    <value>Question wording or more information</value>
+  </data>
+  <data name="VariableLastUpdated" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VariableVersion" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VirusCheckDate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VirusCheckMethod" xml:space="preserve">
+    <value />
+  </data>
+  <data name="VirusCheckOutcome" xml:space="preserve">
+    <value />
+  </data>
+</root>

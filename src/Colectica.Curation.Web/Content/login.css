@@ -1,0 +1,35 @@
+﻿.anonymousBody {
+    background: #333;
+}
+
+.anonymousContent {
+    max-width: 660px;
+    padding: 15px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #666;
+    border-radius: 3px;
+}
+
+.userBadgeWrapper {
+    position: absolute;
+    right: 20px;
+}
+
+.userBadge {
+    position: relative;
+    color: #333;    
+}
+
+.userBadgeWrapper > button {
+    border: 0;
+}
+
+.userBadgeImage {
+    height: 35px;
+    border: 0;
+    border-left: 3px solid #7fba00;
+    padding-left: 6px;
+    margin-left: 12px;
+    font-size: 32px;
+}

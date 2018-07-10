@@ -1,0 +1,309 @@
+﻿@model Colectica.Curation.Web.Models.UserDetailsModel
+
+@{
+    ViewBag.Title = Model.User.UserName;
+}
+
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#history" aria-controls="history" role="tab" data-toggle="tab">History</a></li>
+
+    @if (Model.CanEditUser)
+    {
+        <li role="presentation"><a href="#details" aria-controls="details" role="tab" data-toggle="tab">Details</a></li>
+        <li role="presentation"><a href="#organizations" aria-controls="organizations" role="tab" data-toggle="tab">Organizations</a></li>
+        <li role="presentation"><a href="#edit" aria-controls="edit" role="tab" data-toggle="tab">Edit</a></li>
+    }
+
+    @if (Model.CanEditPermissions)
+    {
+        <li role="presentation"><a href="#permissions" aria-controls="permisssion" role="tab" data-toggle="tab">Permissions</a></li>
+    }
+
+</ul>
+
+
+<div class="tab-content">
+
+    <div role="tabpanel" class="tab-pane active" id="history">
+        @Html.Partial("_History", Model.Events)
+    </div>
+
+    @if (Model.CanEditUser)
+    {
+        <div role="tabpanel" class="tab-pane" id="details">
+            <div>
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.UserName)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.User.UserName)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.Email)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.User.Email)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.EmailConfirmed)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.User.EmailConfirmed)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.PhoneNumber)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.User.PhoneNumber)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.PhoneNumberConfirmed)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.User.PhoneNumberConfirmed)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.TwoFactorEnabled)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.User.TwoFactorEnabled)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.LockoutEndDateUtc)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.User.LockoutEndDateUtc)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.LockoutEnabled)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.User.LockoutEnabled)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.AccessFailedCount)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.User.AccessFailedCount)
+                    </dd>
+
+                </dl>
+
+            </div>
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="organizations">
+            @foreach (var org in Model.Organizations)
+                {
+            <h4>@Html.ActionLink(org.OrganizationName, "Details", "Organization", new { id = org.OrganizationId }, null)</h4>
+
+                    if (!org.HasAnySpecialRights)
+                    {
+            <p>This user is a member of this organization.</p>
+                    }
+                    else
+                    {
+            <ul>
+                @if (org.CanAssignRights)
+                            {
+                <li>This user can assign permissions to other users.</li>
+                            }
+                @if (org.CanAssignCurators)
+                            {
+                <li>This user can assign curators to catalog records.</li>
+                            }
+                @if (org.CanViewAllCatalogRecords)
+                            {
+                <li>This user can view all catalog records.</li>
+                            }
+            </ul>
+                    }
+                }
+
+        </div>
+
+        <div role="tabpanel" class="tab-pane" id="edit">
+
+        @using (Html.BeginForm("Edit", "User"))
+        {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <input type="hidden" name="Id" id="Id" value="@Model.Id" />
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.HiddenFor(model => model.UserName)
+                <div class="col-md-10">
+                    @Html.DisplayFor(model => model.UserName, new { htmlAttributes = new { @class = "form-readonly-control" } })
+                    @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Affiliation, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Affiliation, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Affiliation, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.PhoneNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ContactInformation, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.ContactInformation, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ContactInformation, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Orcid, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Orcid, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Orcid, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    }
+
+    @if (Model.CanEditPermissions)
+    {
+        <div role="tabpanel" class="tab-pane" id="permissions">
+        @using (Html.BeginForm("Permissions", "User"))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                @Html.HiddenFor(model => model.UserName)
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsSiteAdministrator, "Site Administrator", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            @Html.EditorFor(model => model.IsSiteAdministrator)
+                            @Html.ValidationMessageFor(model => model.IsSiteAdministrator, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CanAssignRights, "Assign Permissions", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            @Html.EditorFor(model => model.CanAssignRights)
+                            @Html.ValidationMessageFor(model => model.CanAssignRights, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CanViewAllCatalogRecords, "View All Catalog Records", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            @Html.EditorFor(model => model.CanViewAllCatalogRecords)
+                            @Html.ValidationMessageFor(model => model.CanViewAllCatalogRecords, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CanAssignCurator, "Assign Curators", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            @Html.EditorFor(model => model.CanAssignCurator)
+                            @Html.ValidationMessageFor(model => model.CanAssignCurator, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CanEditOrganization, "Edit Organization", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            @Html.EditorFor(model => model.CanEditOrganization)
+                            @Html.ValidationMessageFor(model => model.CanEditOrganization, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CanApprove, "Approver", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            @Html.EditorFor(model => model.CanApprove)
+                            @Html.ValidationMessageFor(model => model.CanApprove, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    }
+
+</div>

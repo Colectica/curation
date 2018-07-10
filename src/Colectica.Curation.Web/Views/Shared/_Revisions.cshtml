@@ -1,0 +1,34 @@
+﻿@model List<Colectica.Curation.Web.Models.RevisionModel>
+
+@using Colectica.Curation.Web.Utility
+
+<div class="revision">
+    <table class="table">
+        <tr>
+            <th>Filename</th>
+            <th>Size</th>
+            <th>Date</th>
+            <th>Revision</th>
+            <th>User</th>
+        </tr>
+        <tbody>
+            @foreach (var log in Model)
+            {
+                // TODO convert this to the user's local time, not the server local time.
+                DateTime timestamp = log.Timestamp.ToLocalTime();
+                string name = string.Format("{0} <{1}>",log.CommitterName ,log.CommitterEmail);
+
+                <tr>
+                    <td rowspan="2">@Html.ActionLink(log.FileName, "DownloadVersion", "File", new { id = log.FileId, sha = log.Sha }, null)</td>
+                    <td>@log.FileSize.BytesToSize()</td>
+                    <td><time>@timestamp.ToLongDateString() @timestamp.ToShortTimeString()</time></td>
+                    <td>Rev. @log.Sha.Substring(0, 7)</td>
+                    <td>@Html.ActionLink(name, "History", "User", new { id = log.CommitterId }, null)</td>
+                </tr>
+                <tr>
+                    <td colspan="4"><em>@log.Message</em></td>
+                </tr>                                
+            }
+        </tbody>
+</table>
+</div>

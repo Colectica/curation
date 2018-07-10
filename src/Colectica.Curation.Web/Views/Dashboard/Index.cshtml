@@ -1,0 +1,134 @@
+﻿@model Colectica.Curation.Web.Models.DashboardViewModel
+
+@using Colectica.Curation.Web.Utility
+
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+@if (Model.IsOrganizationAmbiguous)
+{
+    <p>Welcome. No sites are configured at this URL. However, you can visit the following sites.</p>
+
+    <ul>
+        @foreach (var org in Model.Organizations)
+        {
+            <li>
+                @if (!string.IsNullOrWhiteSpace(org.Hostname))
+                {
+                    <a href="http://@org.Hostname">@org.Name</a>
+                }
+                else
+                {
+                    @org.Name <span class="label label-danger">Requires host name configuration</span>
+                }
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <div class="dashboardTitleRow">
+        <h2>Catalog Records</h2>
+        <a href="/CatalogRecord/Create" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></a>
+        <a href="/CatalogRecord" class="btn btn-default"><span class="glyphicon glyphicon-list"></span></a>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div class="dashboardTitleRow">
+        <a href="/CatalogRecord/Create" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Create a new catalog record</a>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <!-- Catalog Records - New -->
+    <div class="col-lg-3 col-md-6 col-xs-12">
+        <div class="widget">
+            <div class="widget-body">
+                <div class="widget-content">
+                    <div class="widget-icon red pull-left"><span class="glyphicon glyphicon-new-window"></span></div>
+                    <div class="title">@Model.NewCatalogRecordCount.ToString("N0")</div>
+                    <div class="content">New</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Catalog Records - Processing -->
+    <div class="col-lg-3 col-md-6 col-xs-12">
+        <div class="widget">
+            <div class="widget-body">
+                <div class="widget-content">
+                    <div class="widget-icon orange pull-left"><span class="glyphicon glyphicon-cog"></span></div>
+                    <div class="title">@Model.ProcessingCatalogRecordCount.ToString("N0")</div>
+                    <div class="content">Processing</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Catalog Records - Published -->
+    <div class="col-lg-3 col-md-6 col-xs-12">
+        <div class="widget">
+            <div class="widget-body">
+                <div class="widget-content">
+                    <div class="widget-icon green pull-left"><span class="glyphicon glyphicon-pushpin"></span></div>
+                    <div class="title">@Model.PublishedCatalogRecordCount.ToString("N0")</div>
+                    <div class="content">Published</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div class="dashboardTitleRow" style="margin-top: 40px;">
+        <h2>Files</h2>
+    </div>
+
+    <div class="clearfix"></div>
+
+
+    <!-- Catalog Records - Published -->
+    <div class="col-lg-3 col-md-6 col-xs-12">
+        <div class="widget">
+            <div class="widget-body">
+                <div class="widget-content">
+                    <div class="widget-icon green pull-left"><span class="glyphicon glyphicon-file"></span></div>
+                    <div class="title">@Model.FileCount.ToString("N0")</div>
+                    <div class="content">@Model.FileSize.BytesToSize()</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+
+    if (Model.IsAdmin)
+    {
+        <div class="" style="margin-top: 40px;">
+
+            <div class="dashboardTitleRow">
+                <h2>Users</h2>
+                <a href="/User/Create" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span></a>
+                <a href="/User" class="btn btn-default"><span class="glyphicon glyphicon-list"></span></a>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="col-lg-3 col-md-6 col-xs-12">
+                <div class="widget">
+                    <div class="widget-body">
+                        <div class="widget-content">
+                            <div class="widget-icon blue pull-left"><span class="glyphicon glyphicon-user"></span></div>
+                            <div class="title">@Model.UserCount.ToString("N0")</div>
+                            <div class="content">Users</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+}

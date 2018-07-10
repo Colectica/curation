@@ -1,0 +1,208 @@
+﻿@model Colectica.Curation.Common.ViewModels.CatalogRecordSubmitViewModel
+
+@using Colectica.Curation.Data
+
+@{
+    ViewBag.Title = Model.CatalogRecord.Title;
+}
+
+@section breadcrumb {
+    @FormHelpers.CatalogRecordStatusLabel(Model.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+    @if (Model.IsUserApprover)
+    {
+        <span class="label label-info">Approver</span>
+    }
+}
+
+@Html.Partial("_CatalogRecordNavigation", Model)
+
+@if (Model.IsLocked)
+{
+    @Html.Partial("_CatalogRecordLocked", Model.OperationStatus)
+}
+
+@if (Model.CatalogRecord.Status == CatalogRecordStatus.New)
+{
+    <h2>Submit for Curation</h2>
+
+    if (Model.IsOkayToSubmit)
+    {
+        <p>Your record is ready for curation. Click the button below to submit it.</p>
+
+        using (Html.BeginForm("SubmitForCuration", "CatalogRecord", new { id = Model.CatalogRecord.Id }))
+        {
+            if (!string.IsNullOrWhiteSpace(Model.DepositAgreement))
+            {
+                <h3>Deposit Agreement</h3>
+                <div class="deposit-agreement">
+                    @Html.Raw(Model.DepositAgreement)
+                </div>
+            }
+
+            <input type="submit" class="btn btn-primary btn-lg" value="Submit for Curation" />
+        }
+    }
+    else
+    {
+        <p>Please complete the following fields before submitting your record for curation.</p>
+
+        <ul>
+            @foreach (var message in Model.Messages)
+            {
+                <li><a href="@message.Link">@message.Text</a></li>
+            }
+        </ul>
+    }
+}
+else if (Model.CatalogRecord.Status == CatalogRecordStatus.Processing)
+{
+    <h2>Request Publication</h2>
+
+    <div class="btn-group">
+
+        @if (Model.IsUserCurator)
+        {
+            <p>
+                When curation is complete, you can request publication.
+            </p>
+            
+            if (Model.IsOkayToSubmit)
+            {
+                using (Html.BeginForm("RequestPublish", "CatalogRecord", new { id = Model.CatalogRecord.Id }))
+                {
+                    <button type="submit" class="btn btn-primary" value="Request Publication">Request Publication</button>
+                }
+            }
+            else
+            {
+                <p>Please complete the following fields before requesting publication.</p>
+
+                <ul>
+                    @foreach (var message in Model.Messages)
+                    {
+                        <li><a href="@message.Link">@message.Text</a></li>
+                    }
+                </ul>
+            }
+        }
+
+        @if (Model.IsUserApprover)
+        {
+            <h2>Approval</h2>
+            <p>If the record does not belong in this system you can reject it.</p>
+            <p>Once curation is complete, you will be able to review and accept the record for publication.</p>
+
+            using (Html.BeginForm("RejectRecord", "CatalogRecord", new { id = Model.CatalogRecord.Id }))
+            {
+                <button type="submit" class="btn btn-danger" value="Reject Catalog Record">Reject Catalog Record</button>
+            }
+
+        }
+
+    </div>
+
+    if (!Model.IsUserCurator && !Model.IsUserApprover)
+    {
+        <p>Only curators can request publication.</p>
+    }
+}
+else if (Model.CatalogRecord.Status == CatalogRecordStatus.PublicationRequested ||
+        Model.CatalogRecord.Status == CatalogRecordStatus.PublicationApproved)
+{
+    <h2>Publish and Archive</h2>
+
+    if (Model.IsUserApprover)
+    {
+        <div class="btn-group">
+
+            @using (Html.BeginForm("ApprovePublish", "CatalogRecord", new { id = Model.CatalogRecord.Id }))
+            {
+                <button type="submit" class="btn btn-success" value="Approve Publication">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    Approve Publication
+                </button>
+            }
+
+            @using (Html.BeginForm("RejectPublish", "CatalogRecord", new { id = Model.CatalogRecord.Id }))
+            {
+                <button type="submit" class="btn btn-danger" value="Reject Publication" style="margin-top: 20px;">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Reject Publication
+                </button>
+            }
+        </div>
+    }
+    else
+    {
+        <p>Sorry, you do not have permission to approve this record.</p>
+    }
+}
+else if (Model.CatalogRecord.Status == CatalogRecordStatus.Published)
+{
+    <h2>Published</h2>
+
+    <p>This record is already published and archived.</p>
+    using (Html.BeginForm("RevertToProcessing", "CatalogRecord", new { id = Model.CatalogRecord.Id }))
+    {
+        <button type="submit" class="btn btn-warning" value="Approve Publication">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            Send back to Curation
+        </button>
+    }
+}
+else if (Model.CatalogRecord.Status == CatalogRecordStatus.Rejected)
+{
+    <p>This catalog record was rejected.</p>
+    using (Html.BeginForm("RevertToProcessing", "CatalogRecord", new { id = Model.CatalogRecord.Id }))
+    {
+        <button type="submit" class="btn btn-warning" value="Approve Publication">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            Send back to Curation
+        </button>
+    }
+}
+
+
+
+@section bottom
+{
+    <!-- Terms of Service Modal -->
+    <div class="modal" id="tosModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Terms of Service</h4>
+                </div>
+                <div class="modal-body">
+                    @Model.TermsOfService
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Policy Modal -->
+    <div class="modal" id="policyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Data Archive Policy</h4>
+                </div>
+                <div class="modal-body">
+                    @Model.Policy
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

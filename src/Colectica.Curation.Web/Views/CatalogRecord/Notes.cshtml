@@ -1,0 +1,47 @@
+﻿@model Colectica.Curation.Models.NotesModel
+
+@using Colectica.Curation.Common.Utility
+
+@{
+    ViewBag.Title = Model.CatalogRecord.Title;
+}
+
+@section breadcrumb {
+    @FormHelpers.CatalogRecordStatusLabel(Model.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+    @if (Model.IsUserApprover)
+    {
+        <span class="label label-info">Approver</span>
+    }
+}
+
+@section scripts
+{
+    @Html.Partial("~/Areas/Ddi/Views/Shared/_EditorScripts.cshtml")
+
+    @Scripts.Render("~/bundles/knockout")
+
+    <script src="/Areas/Ddi/js/Notes.js"></script>
+
+    <script>
+        var vm = new NotesViewModel("@Model.CatalogRecord.Id", "/CatalogRecord/AddNote");
+        ko.applyBindings(vm);
+    </script>
+
+}
+
+
+@Html.Partial("_CatalogRecordNavigation", Model)
+
+<div class="clearfix"></div>
+
+<div class="btn-group" style="margin-bottom: 20px; margin-top: 20px;">
+    @Html.ActionLink("Status", "Status", "CatalogRecord", new { id = Model.CatalogRecord.Id }, new { @class = "btn btn-default" })
+    @Html.ActionLink("Notes", "Notes", "CatalogRecord", new { id = Model.CatalogRecord.Id }, new { @class = "btn btn-default active" })
+</div>
+
+@Html.Partial("~/Areas/Ddi/Views/Shared/_NotesPartial.cshtml", Model)
+

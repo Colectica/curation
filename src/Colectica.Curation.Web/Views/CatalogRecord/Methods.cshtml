@@ -1,0 +1,313 @@
+﻿@model Colectica.Curation.Common.ViewModels.CatalogRecordMethodsViewModel
+
+@using Colectica.Curation.Common.Utility
+@using Colectica.Curation.Web.Resources
+
+@{
+    string url = "/CatalogRecord/General";
+    ViewBag.Title = Model.CatalogRecord.Title;
+}
+
+@section breadcrumb {
+    @FormHelpers.CatalogRecordStatusLabel(Model.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+    @if (Model.IsUserApprover)
+    {
+        <span class="label label-info">Approver</span>
+    }
+}
+
+@Html.Partial("_CatalogRecordNavigation", Model)
+
+@if (Model.IsLocked)
+{
+    @Html.Partial("_CatalogRecordLocked", Model.OperationStatus)
+}
+
+@using (Html.BeginForm("Methods", "CatalogRecord"))
+{
+    @Html.HiddenFor(m => m.CatalogRecordId)
+
+    <div class="form-horizontal" role="form">
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+
+        <h3>Methods</h3>
+
+        <!-- Research design -->
+        @FormHelpers.SelectField(url, Model.CatalogRecord.Id, "ResearchDesign", "Research Design",
+            Model.ResearchDesign, FieldDefinitions.ResearchDesign, true, Model.IsReadOnly,
+            includeOtherTextBox:true, 
+            otherSpecifyContent: Model.ResearchDesignOtherSpecify,
+            choices:Model.ResearchDesignChoices)
+
+        <!-- Mode of Data Collection -->
+        @FormHelpers.MultipleSelectField(url, Model.CatalogRecord.Id,
+        "ModeOfDataCollection", "Mode of Data Collection", Model.ModeOfDataCollection,
+            FieldDefinitions.ModeOfDataCollection, true, Model.IsReadOnly,
+            "Interview", "Interview: Face to Face", "Interview: Phone", "Interview: email", "Interview: web based", "Self administered questionnaire", "Focus group", "Self-administered writing or diaries", "Observation", "Experiment: Lab", "Experiment: Field", "Experiment: Web", "Recording", "Content coding", "Transcription", "Compilation", "Summary", "Aggregation", "Simulation", "Measurement and Tests", "Other")
+
+        <!-- Field date(s) -->
+        <div class="form-group">
+            @FormHelpers.ControlLabel("Field Dates", FieldDefinitions.FieldDate, isRequired: true)
+            <div class="col-md-10" data-bind="with: fieldDates">
+                @if (Model.IsReadOnly)
+                {
+                    <span data-bind="text: date" class="form-readonly-control;" style="display: inline"></span>
+                    <span data-bind="visible: isRange()" style="display: inline"> - </span>
+                    <span data-bind="text: endDate, visible: isRange()" style="display: inline" class="form-readonly-control"></span>
+                }
+                else
+                {
+                    @Html.Partial("_DateInput", Model.FieldDates)
+                }
+            </div>
+        </div>
+
+        <!-- Study time period -->
+        <div class="form-group">
+            @FormHelpers.ControlLabel("Study Time Period", FieldDefinitions.StudyTimePeriod, isRequired: true)
+            <div class="col-md-10" data-bind="with: studyTimePeriod">
+                @if (Model.IsReadOnly)
+                {
+                    <span data-bind="text: date" class="form-readonly-control;" style="display: inline"></span>
+                    <span data-bind="visible: isRange()" style="display: inline"> - </span>
+                    <span data-bind="text: endDate, visible: isRange()" style="display: inline" class="form-readonly-control"></span>
+                }
+                else
+                {
+                    @Html.Partial("_DateInput", Model.StudyTimePeriod)
+                }
+            </div>
+        </div>
+
+        <!-- Location -->
+        @FormHelpers.SelectField(url, Model.CatalogRecord.Id, "Location", "Location", Model.Location,
+            FieldDefinitions.Location,
+            true,
+            Model.IsReadOnly,
+            "Africa", "Asia and Pacific Islands", "Europe", "International", "Latin America", "Middle East", "United States", "N/A")
+
+        <!-- Location details -->
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "LocationDetails", "textarea", "Location Details", Model.LocationDetails, FieldDefinitions.LocationDetails,
+            isRequired: Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+            isReadOnly: Model.IsReadOnly)
+
+        <!-- Unit of observation -->
+        @FormHelpers.SelectField(url, Model.CatalogRecord.Id, "UnitOfObservation", "Unit of Observation", Model.UnitOfObservation, FieldDefinitions.UnitOfObservation,
+            Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+            Model.IsReadOnly,
+            includeOtherTextBox:true, 
+            otherSpecifyContent: Model.UnitOfObservationOtherSpecify,
+            choices: Model.UnitOfObservationChoices)
+
+        <!-- Sample size -->
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "SampleSize", "text", "Sample Size", Model.SampleSize, FieldDefinitions.SampleSize,
+             isRequired: Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+             isReadOnly: Model.IsReadOnly)
+
+        <!-- Inclusion/exclusion criteria -->
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "InclusionExclusionCriteria", "text", "Inclusion/Exclusion Criteria", Model.InclusionExclusionCriteria, FieldDefinitions.InclusionExclusionCriteria,
+            isRequired: Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+            isReadOnly: Model.IsReadOnly)
+
+        <!-- Randomization procedure -->
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "RandomizationProcedure", "text", "Randomization Procedure", Model.RandomizationProcedure, FieldDefinitions.RandomizationProcedure,
+            isRequired: Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+            isReadOnly: Model.IsReadOnly)
+
+        <!-- Unit of randomization -->
+        @FormHelpers.SelectField(url, Model.CatalogRecord.Id, "UnitOfRandomization", "Unit of Randomization", Model.UnitOfRandomization, FieldDefinitions.UnitOfRandomization,
+            Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+            Model.IsReadOnly,
+            "Not randomized", "Individual", "Organization", "Family", "Household: unit", "Household: family", "Housing unit", "Geo: village", "Geo: district", "Geo: school", "Geo: DMA", "Geo: region", "Geo: country", "Geo: Census track", "Event/process", "Other")
+
+        <!-- Intervention -->
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "Treatment", "text", "Intervention", Model.Treatment, FieldDefinitions.Intervention,
+            isRequired: Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+            isReadOnly: Model.IsReadOnly)
+
+        <!-- Intervention administration -->
+        @FormHelpers.SelectField(url, Model.CatalogRecord.Id, "TreatmentAdministration", "Intervention Administration", Model.TreatmentAdministration, FieldDefinitions.InterventionAdministration,
+            Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+            Model.IsReadOnly,
+            includeOtherTextBox:true, 
+            otherSpecifyContent: Model.TreatmentAdministrationOtherSpecify,
+            choices: Model.TreatmentAdministrationChoices)
+
+        <!-- Outcome measure(s) -->
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "OutcomeMeasures", "text", "Outcome Measures", Model.OutcomeMeasures, FieldDefinitions.OutcomeMeasures,
+            isRequired: Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+            isReadOnly: Model.IsReadOnly,
+            messageBelowControl: "Separate multiple outcome measures with a comma.")
+
+        <h3>Data</h3>
+        <!-- Collection size -->
+        @FormHelpers.ReadOnlyField("Collection", Model.FileCount.ToString(), FieldDefinitions.Collection)
+
+        <!-- Data Type -->
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "CatalogRecordDataType", "text", "Data Type", Model.CatalogRecordDataType, FieldDefinitions.DataType,
+            false,
+            isReadOnly: Model.IsReadOnly)
+
+        @FormHelpers.ReadOnlyField("Data Type (from files)", Model.DataType, FieldDefinitions.DataType)
+
+        <!-- Data Source -->
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "CatalogRecordDataSource", "text", "Data Source", Model.CatalogRecordDataSource, FieldDefinitions.DataSource,
+            false,
+            isReadOnly: Model.IsReadOnly)
+        @FormHelpers.ReadOnlyField("Data Source (from files)", Model.DataSource, FieldDefinitions.DataSource)
+
+        <!-- Data Source Information -->
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "CatalogRecordDataSourceInformation", "text", "Data Source Information", Model.CatalogRecordDataSourceInformation, FieldDefinitions.DataSourceInformation,
+            false,
+            isReadOnly: Model.IsReadOnly)
+        @FormHelpers.ReadOnlyField("Data Source Information (from files)", Model.DataSourceInformation, FieldDefinitions.DataSourceInformation, transformMarkdown: false)
+
+        @if (!Model.IsReadOnly)
+        {
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    Save
+                </button>
+            </div>
+        }
+
+    </div>
+}
+
+@section styles
+{
+    <link rel="stylesheet" href="~/Scripts/daterangepicker/daterangepicker.css">
+}
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="/Scripts/bootstrap3-editable/js/bootstrap-editable.js"></script>
+    <script src="/Scripts/select2/select2.js"></script>
+    <script src="~/Scripts/inputmask/jquery.inputmask.js"></script>
+    <script src="~/Scripts/inputmask/jquery.inputmask.date.extensions.js"></script>
+    <script src="~/Scripts/inputmask/jquery.inputmask.extensions.js"></script>
+    <script src="~/Scripts/moment-with-locales.min.js"></script>
+    <script src="~/Scripts/daterangepicker/daterangepicker.js"></script>
+
+
+    @Html.Partial("~/Areas/Ddi/Views/Shared/_EditorScripts.cshtml")
+
+    <script>
+
+        $(".info-tip").tooltip({
+            'placement': 'top',
+            'container': 'body'
+        });
+
+        $("#ModeOfDataCollection").select2();
+        $("#OutcomeMeasures").select2({
+            tags: [ @foreach (string x in Model.AvailableOutcomeMeasures) { <text>"@x",</text> } ],
+            tokenSeparators: [","]
+        });
+
+        $(".date-picker").daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true
+        });
+
+        function setDateControl(name) {
+
+                $("#" + name + "\\.date").inputmask("remove");
+                $("#" + name + "\\.endDate").inputmask("remove");
+
+                var startPicker = $("#" + name + "\\.date").data("daterangepicker");
+                if (startPicker) {
+                    startPicker.remove();
+                }
+
+                var endPicker = $("#" + name + "\\.endDate").data("daterangepicker");
+                if (endPicker) {
+                    endPicker.remove();
+                }
+
+                var dateType = $("#" + name + "_dateType").val();
+                var startDateValue = $("#" + name + "\\.date").val();
+                var endDateValue = $("#" + name + "\\.endDate").val();
+
+                if (startDateValue === "") {
+                    startDateValue = moment().format('YYYY-MM-DD');
+                }
+                if (endDateValue === "") {
+                    endDateValue = moment().format('YYYY-MM-DD');
+                }
+
+                if (dateType == "Date") {
+                    $("#" + name + "\\.date").daterangepicker({
+                        singleDatePicker: true,
+                        showDropdowns: true,
+                        startDate: startDateValue,
+                        locale: {
+                            format: 'YYYY-MM-DD'
+                        }
+                    });
+                    $("#" + name + "\\.endDate").daterangepicker({
+                        singleDatePicker: true,
+                        showDropdowns: true,
+                        startDate: endDateValue,
+                        locale: {
+                            format: 'YYYY-MM-DD'
+                        }
+                    });
+                }
+                else if (dateType == "Year") {
+                    $("#" + name + "\\.date").inputmask("9999", { "placeholder": "yyyy" });
+                    $("#" + name + "\\.endDate").inputmask("9999", { "placeholder": "yyyy" });
+                }
+                else if (dateType == "Year/Month") {
+                    $("#" + name + "\\.date").inputmask("9999-99", { "placeholder": "yyyy-mm" });
+                    $("#" + name + "\\.endDate").inputmask("9999-99", { "placeholder": "yyyy-mm" });
+                }
+
+        };
+
+
+        $(document).ready(function () {
+            $("#FieldDates\\.isRange").bind('change', function () {
+                if (this.checked) {
+                    $("#FieldDates\\.endDate").show();
+                }
+                else {
+                    $("#FieldDates\\.endDate").hide();
+                    $("#FieldDates\\.endDate").val("");
+                }
+            });
+
+
+            $("#StudyTimePeriod\\.isRange").bind('change', function () {
+                if (this.checked) {
+                    $("#StudyTimePeriod\\.endDate").show();
+                }
+                else {
+                    $("#StudyTimePeriod\\.endDate").hide();
+                    $("#StudyTimePeriod\\.endDate").val("");
+                }
+            });
+
+            $("#FieldDates_dateType").bind("change", function () {
+                setDateControl("FieldDates");
+            });
+            $("#StudyTimePeriod_dateType").bind("change", function () {
+                setDateControl("StudyTimePeriod");
+            });
+
+
+            setDateControl("FieldDates");
+            setDateControl("StudyTimePeriod");
+
+        });
+
+    </script>
+}

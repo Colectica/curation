@@ -1,0 +1,32 @@
+﻿@model Colectica.Curation.Web.Areas.Ddi.Models.MissingPhysicalInstanceModel
+
+@{
+    ViewBag.Title = Model.File.Name;    
+}
+
+@section breadcrumb
+{
+    <a href="@Url.Action("Files", "CatalogRecord", new { id = Model.File.CatalogRecord.Id })">&laquo; @Model.File.CatalogRecord.Title</a>
+
+    @FormHelpers.CatalogRecordStatusLabel(Model.File.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+}
+
+@Html.Partial("_FileNavigation", Model)
+
+@if (Model.IsLocked)
+{
+    @Html.Partial("_CatalogRecordLocked", Model.OperationStatus)
+}
+
+<h2>Missing Metadata</h2>
+
+<p>Variable-level metadata is not available for this file.</p>
+
+@using (Html.BeginForm("CreatePhysicalInstance", "Variables", new { id = Model.File.Id }, FormMethod.Post, null))
+{
+    <button type="submit" class="btn btn-lg btn-primary">Create Variable-level Metadata</button>
+}

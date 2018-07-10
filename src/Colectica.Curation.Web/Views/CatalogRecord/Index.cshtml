@@ -1,0 +1,151 @@
+﻿@model IEnumerable<Colectica.Curation.Web.Models.CatalogRecordStatusViewModel>
+
+@{
+    var first = Model.FirstOrDefault();
+
+    bool isLockedPage = Request.Path.ToLower().Contains("/locked");
+    
+    if (isLockedPage)
+    {
+        ViewBag.Title = "Locked Catalog Records";
+    }
+    else
+    {
+        ViewBag.Title = "Catalog Records";
+    }
+}
+
+@section styles {
+    <link href="~/Content/bootstrap-sortable.css" rel="stylesheet" />
+}
+
+@if (first == null && !isLockedPage)
+{
+    <p>Use the button below to create your first catalog record.</p>
+}
+else if (first == null && isLockedPage)
+{
+    <p>No records are locked.</p>
+}
+else
+{
+
+
+    <table class="table sortable">
+        <thead>
+
+            <tr>
+                <th>Status</th>
+
+                <th>Title</th>
+                <th>Number</th>
+                <th>Created</th>
+                <th>Updated</th>
+
+                @foreach (var stage in first.Stages)
+                {
+                    <th data-defaultsort="disabled">@stage.Name</th>
+                }
+
+            </tr>
+        </thead>
+        
+        <tbody>
+
+
+            @foreach (var item in Model)
+            {
+                string number = item.CatalogRecord.Number;
+
+                <tr>
+                    <td width="10%">
+                        @FormHelpers.CatalogRecordStatusLabel(item.CatalogRecord)
+
+                        @if (item.CuratorCount == 0)
+                        {
+                            <span class="label label-warning">Needs curator</span>
+                        }
+
+                        @if (item.CatalogRecord.IsLocked)
+                        {
+                            <span class="label label-danger">Locked</span>
+                        }
+                    </td>
+
+                    <td>
+                        @Html.ActionLink(@item.CatalogRecord.Title, "General", new { id = item.CatalogRecord.Id })
+                    </td>
+
+                    <td>
+                        @number
+                    </td>
+
+                    <td data-value="@item.CatalogRecord.CreatedDate.Value.ToString("s")">
+                        @if (item.CatalogRecord.CreatedDate.HasValue)
+                        {
+                            <time datetime="@item.CatalogRecord.CreatedDate.Value.ToString("s")-0000">@item.CatalogRecord.CreatedDate</time>
+                        }
+                    </td>
+                    <td data-value="@item.CatalogRecord.LastUpdatedDate?.Value.ToString("s")">
+                        @if (item.CatalogRecord.LastUpdatedDate.HasValue)
+                        {
+                            <time datetime="@item.CatalogRecord.LastUpdatedDate.Value.ToString("s")-0000">@item.CatalogRecord.LastUpdatedDate</time>
+                        }
+                    </td>
+
+                    @foreach (var stageFromFirstItem in first.Stages)
+                    {
+                        // Get the corresponding stage for this item.
+                        var stage = item.Stages.Where(x => x.Name == stageFromFirstItem.Name).FirstOrDefault();
+
+                        <td>
+                            @if (stage != null)
+                            {
+                                if (stage.IsComplete)
+                                {
+                                    <span title="All steps are complete" class="glyphicon glyphicon-check status" data-toggle="tooltip"></span>
+                                }
+                                else
+                                {
+                                    foreach (var step in stage.Steps)
+                                    {
+                                        if (step.IsComplete)
+                                        {
+                                            <span title="@step.Name" class="glyphicon glyphicon-check status" data-toggle="tooltip" data-placement="top"></span>
+                                        }
+                                        else
+                                        {
+                                            <span title="@step.Name" class="glyphicon glyphicon-unchecked status" data-toggle="tooltip"></span>
+                                        }
+                                    }
+                                }
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+}
+
+@if (!isLockedPage)
+{
+    <a href="/CatalogRecord/Create" class="btn btn-primary">Create a New Catalog Record</a>
+}
+
+
+@section scripts {
+    <script src="~/Scripts/moment.min.js"></script>
+    <script src="~/Scripts/bootstrap-sortable.js"></script>
+
+    <script>
+        $(".status").tooltip();
+
+        $("time").each(function (i, e) {
+            var time = moment($(e).attr('datetime'));
+            $(e).html("<span>" + time.calendar() + "</span>");
+        });
+    </script>
+}

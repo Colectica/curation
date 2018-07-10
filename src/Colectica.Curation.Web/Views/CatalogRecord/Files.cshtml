@@ -1,0 +1,139 @@
+﻿@model Colectica.Curation.Web.Models.CatalogRecordFilesViewModel
+
+@{
+    ViewBag.Title = Model.CatalogRecord.Title;
+}
+
+@section breadcrumb {
+    @FormHelpers.CatalogRecordStatusLabel(Model.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+    @if (Model.IsUserApprover)
+    {
+        <span class="label label-info">Approver</span>
+    }
+}
+
+@section styles {
+    <link href="~/Content/bootstrap-sortable.css" rel="stylesheet" />
+}
+
+@section scripts {
+    <script src="~/Scripts/bootstrap-sortable.js"></script>
+
+    <script>
+        $(".info-tip").tooltip({
+            'placement': 'top',
+            'container': 'body'
+        });
+    </script>
+}
+
+@Html.Partial("_CatalogRecordNavigation", Model)
+
+@if (Model.IsLocked)
+{
+    @Html.Partial("_CatalogRecordLocked", Model.OperationStatus)
+}
+
+<h3>Files</h3>
+
+@if (Model.Files.Count == 0)
+{
+    <p>No files to display.</p>
+}
+else
+{
+    <table class="table sortable">
+        <thead>
+            <tr>
+                <th width="60" data-defaultsort="disabled"></th>
+                <th>File</th>
+                <th>Version</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th width="60" data-defaultsort="disabled"></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var file in Model.Files)
+            {
+                if (file.Status == Colectica.Curation.Data.FileStatus.Removed)
+                {
+                    continue;
+                }
+
+                <tr>
+                    <td>
+                        <a class="btn btn-default" href="@Url.Action("Download","File",new { id = file.Id })" title="Download"><span class="glyphicon glyphicon-download"></span></a>
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrWhiteSpace(file.Name))
+                        {
+                            @Html.ActionLink(file.Name, "General", "File", new { id = file.Id }, null)
+                        }
+                    </td>
+                    <td>@file.Version</td>
+                    <td>@file.Type</td>
+                    <td>
+                        @if (file.Status == Colectica.Curation.Data.FileStatus.Accepted)
+                        {
+                            <span class="info-tip" title="The file passed a virus check and was accepted by a curator.">Accepted</span>
+                        }
+                        else if (file.Status == Colectica.Curation.Data.FileStatus.Pending)
+                        {
+                            <span class="info-tip" title="The file is awaiting review by a curator.">Pending</span>
+                        }
+                        else if (file.Status == Colectica.Curation.Data.FileStatus.Rejected)
+                        {
+                            <span class="info-tip" title="The file was rejected by a curator.">Rejected</span>
+                        }
+
+                        <div>
+                            @foreach (var task in file.TaskStatus.Tasks)
+                            {
+                                if (task.IsComplete)
+                                {
+                                    <span title="@task.TaskType" class="info-tip glyphicon glyphicon-check status" data-toggle="tooltip" data-placement="top"></span>
+                                }
+                                else
+                                {
+                                    <span title="@task.TaskType" class="info-tip glyphicon glyphicon-unchecked status" data-toggle="tooltip"></span>
+                                }
+                            }
+                        </div>
+
+
+                        @if (file.File.HasPendingMetadataUpdates)
+                        {
+                            <div>
+                                <span class="label label-primary">Pending Metadata Updates</span>
+                            </div>
+                        }
+                    </td>
+                    <td>
+                        @using (Html.BeginForm("Delete", "File", FormMethod.Post))
+                        {
+                            <input type="hidden" id="@file.Id" name="id" value="@file.Id" />
+                            <button type="submit" class="btn btn-default" title="Delete"><span class="glyphicon glyphicon-remove"></span></button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (!Model.IsLocked &&
+                !Model.IsReadOnly)
+{
+    <a href="/CatalogRecord/Deposit/@Model.CatalogRecord.Id" class="btn btn-primary"><span class="glyphicon glyphicon-cloud-upload"></span> Add or Update Files</a>
+}
+
+@if (Model.Files.Count > 0)
+{
+    <a href="@Url.Action("DownloadArchive", "File", new { catalogRecordId = Model.CatalogRecord.Id })" class="btn btn-primary"><span class="glyphicon glyphicon-download-alt"></span> Download All Files</a>
+}

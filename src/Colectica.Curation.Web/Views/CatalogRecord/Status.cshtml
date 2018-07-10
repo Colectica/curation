@@ -1,0 +1,137 @@
+﻿@model Colectica.Curation.Web.Models.CatalogRecordStatusViewModel
+
+@{
+    ViewBag.Title = Model.CatalogRecord.Title;
+}
+
+@section breadcrumb {
+    @FormHelpers.CatalogRecordStatusLabel(Model.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+    @if (Model.IsUserApprover)
+    {
+        <span class="label label-info">Approver</span>
+    }
+}
+
+@Html.Partial("_CatalogRecordNavigation", Model)
+
+<div class="clearfix"></div>
+
+<div class="btn-group" style="margin-bottom: 20px; margin-top: 20px;">
+    @Html.ActionLink("Status", "Status", "CatalogRecord", new { id = Model.CatalogRecord.Id }, new { @class = "btn btn-default active" })
+    @Html.ActionLink("Notes", "Notes", "CatalogRecord", new { id = Model.CatalogRecord.Id }, new { @class = "btn btn-default" })
+</div>
+
+<div style="margin-bottom: 12px;">
+    <div>
+        <span>Status: </span>
+        @FormHelpers.CatalogRecordStatusLabel(Model.CatalogRecord)
+    </div>
+
+    <div>
+        <span>Review Type: </span>
+        <span>@Model.CatalogRecord.ReviewType</span>
+    </div>
+
+    @if (Model.CatalogRecord.CertifiedDate.HasValue)
+    {
+        <div>
+            <span>Date Certified as Curated: </span>
+            <span>@Model.CatalogRecord.CertifiedDate.Value.ToShortDateString()</span>
+        </div>
+    }
+    
+    <div>
+        <span>Curators: </span>
+        <span>
+            @if (Model.CatalogRecord.Curators.Count == 0)
+            {
+                <text>No curators are assigned.</text>
+            }
+            else
+            {
+                foreach (var curator in Model.CatalogRecord.Curators)
+                {
+                    @Html.ActionLink(curator.FullName, "History", "User", new { id = curator.UserName }, null)
+                    <br/>
+                }
+            }
+        </span>
+    </div>
+
+</div>
+
+<table class="table">
+    <tr>
+        <th>Task</th>
+        <th>Status</th>
+        <th>Completed</th>
+    </tr>
+
+    <tbody>
+        @foreach (var stage in Model.Stages)
+        {
+            <tr>
+                <td colspan="3"><strong>@stage.Name</strong></td>
+            </tr>
+
+            foreach (var step in stage.Steps)
+            {
+                <tr>
+                    <td>
+                        @if (step.Files.Count > 0)
+                        {
+                            <div class="dropdown">
+                                <a href="" class="dropdown-toggle" data-toggle="dropdown">
+                                    @step.Name <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" id="files-@step.Name">
+                                    @foreach (var file in step.Files.OrderBy(x => x.Name))
+                                    {
+                                        <li>
+                                            @Html.ActionLink(file.Name, "Status", "File", new { id = file.Id }, null)
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            
+                        }
+                        else
+                        {
+                            @step.Name
+                        }
+                    </td>
+                    <td>
+                        @if (step.IsComplete)
+                        {
+                            <span class="glyphicon glyphicon-check"></span>
+                        }
+                        else
+                        {
+                            if (step.TotalUnits > 1)
+                            {
+                                <span>@step.CompletedUnits / @step.TotalUnits</span>
+                            }
+                            else 
+                            {
+                                <span class="glyphicon glyphicon-unchecked"></span>
+                            }
+                        }
+                    </td>
+                    <td>
+                        @if (step.IsComplete)
+                        {
+                            <span>
+                                @step.CompletedByUser on @step.CompletedDate.ToShortDateString() <br />
+                                @step.Message
+                            </span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

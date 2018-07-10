@@ -1,0 +1,105 @@
+﻿@model IEnumerable<Colectica.Curation.Web.Models.OperationModel>
+
+@{
+    ViewBag.Title = "Operations";
+
+    string allClass = string.Empty;
+    string incompleteClass = string.Empty;
+    string errorsClass = string.Empty;
+
+    string path = Request.Path.ToLower();
+    if (path.Contains("/incomplete"))
+    {
+        incompleteClass = "active";
+    }
+    else if (path.Contains("/errors"))
+    {
+        errorsClass = "active";
+    }
+    else
+    {
+        allClass = "active";
+    }
+}
+
+@section styles {
+    <link href="~/Content/bootstrap-sortable.css" rel="stylesheet" />
+}
+
+@section sidebar
+{
+    @Html.Partial("_AdminNavigation")
+}
+
+<div class="btn-group" style="margin-bottom: 20px;">
+    @Html.ActionLink("All", "All", "Operation", null, new { @class = "btn btn-default " + allClass })
+    @Html.ActionLink("Incomplete", "Incomplete", "Operation", null, new { @class = "btn btn-default " + incompleteClass })
+    @Html.ActionLink("Errors", "Errors", "Operation", null, new { @class = "btn btn-default " + errorsClass })
+</div>
+
+<table class="table sortable">
+    <thead>
+        <tr>
+            <th>Status</th>
+            <th>Catalog Record</th>
+            <th>User</th>
+            <th>Operation</th>
+            <th>Queued</th>
+            <th>Started</th>
+            <th>Complete</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @FormHelpers.OperationStatusLabel(item)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CatalogRecordName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestingUserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <time datetime="@item.QueuedOn.ToString("s")-0000">@item.QueuedOn</time>
+                </td>
+                <td>
+                    @if (item.StartedOn.HasValue)
+                    {
+                        <time datetime="@item.StartedOn.Value.ToString("s")-0000">@item.StartedOn</time>
+                    }
+                </td>
+                <td>
+                    @if (item.CompletedOn.HasValue)
+                    {
+                        <time datetime="@item.CompletedOn.Value.ToString("s")-0000">@item.CompletedOn</time>
+                    }
+                </td>
+                <td>
+                    @*            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |*@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts {
+    <script src="~/Scripts/moment.min.js"></script>
+    <script src="~/Scripts/bootstrap-sortable.js"></script>
+
+    <script>
+        $(".status").tooltip();
+
+        $("time").each(function (i, e) {
+            var time = moment($(e).attr('datetime'));
+            $(e).html("<span>" + time.calendar() + "</span>");
+        });
+    </script>
+}

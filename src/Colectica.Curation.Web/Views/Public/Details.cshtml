@@ -1,0 +1,285 @@
+﻿@model Colectica.Curation.Data.CatalogRecord
+
+@{
+    Layout = "/Views/Shared/_PublicLayout.cshtml";
+    ViewBag.Title = "Details";
+    string yaleRoot = "http://isps.yale.edu";
+}
+
+<div id="breadcrumb" class="grid-12"><h2 class="element-invisible">You are here</h2><div class="breadcrumb"><a href="@yaleRoot/">Home</a><span class="tic"> > </span><a href="@yaleRoot/research">Research</a><span class="tic"> > </span><a href="/research/data" class="active">Data</a></div><div class="moved-sidenav" data-set="append-sidenav"></div></div>
+<div class="grid-12 region region-content" id="region-content">
+    <div class="region-inner region-content-inner">
+        <a id="main-content"></a>
+        <h1 class="title" id="page-title">
+            @Model.Title
+        </h1>
+        <section class="block block-block block-24 block-block-24 odd" id="block-block-24">
+            <div class="block-inner clearfix">
+                <h2 class="block-title">ISPS Data Archive: Terms of Use</h2>
+
+                <div class="content clearfix">
+                    <p>By using, contributing, and/or downloading files associated with scholarly studies available on the ISPS Data Archive, you agree to these terms and conditions.</p>
+                    <p>Please read the ISPS Data Archive <a href="http://isps.yale.edu/research/data/terms-of-use">Terms of Use.</a></p>
+                </div>
+            </div>
+        </section>
+        <div class="block block-system block-main block-system-main even block-without-title" id="block-system-main">
+            <div class="block-inner clearfix">
+
+                <div class="content clearfix">
+                    <div class="panel-display panel-isps-2col-66 clearfix">
+                        <div class="panel-panel panel-col-first">
+                            <div class="panel-row">
+                                <div class="panel-panel panel-col-full">
+                                    <div class="panel-pane pane-node-content" class="panel-pane pane-node-content">
+
+                                        <div class="pane-content">
+                                            <article about="/research/data/@Model.StudyId" typeof="sioc:Item foaf:Document" class="node node-data node-published node-not-promoted node-not-sticky author-697 odd clearfix" id="node-data-22096">
+                                                <!--    -->
+                                                <span property="dc:title" content="" class="rdf-meta element-hidden"></span><span property="sioc:num_replies" content="0" datatype="xsd:integer" class="rdf-meta element-hidden"></span>
+                                                <div class="content clearfix">
+                                                    <div class="field field-name-field-data-authors field-type-text-long field-label-inline clearfix">
+                                                        <div class="field-label">Author(s):&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">
+                                                                <p>@Html.Raw(@Model.AuthorsText)</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-isps-id field-type-text field-label-inline clearfix">
+                                                        <div class="field-label">ISPS ID:&nbsp;</div>
+                                                        <div class="field-items">
+                                                            <div class="field-item even">@Model.StudyId</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-related-publications field-type-entityreference field-label-inline clearfix">
+                                                        <div class="field-label">Related publications:&nbsp;</div>
+                                                        <div class="field-items">
+                                                            <div class="field-item even">
+                                                                <a href="/research/publications/isps15-015">@Model.RelatedPublications</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-related-projects field-type-entityreference field-label-inline clearfix">
+                                                        <div class="field-label">Related projects:&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even"><a href="/research/projects/p12-006">@Model.RelatedProjects</a></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-keywords field-type-taxonomy-term-reference field-label-inline clearfix">
+                                                        <div class="field-label">Keyword(s):&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">
+                                                                <a href="@yaleRoot/keywords/@Model.Keywords" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">@Model.Keywords</a>
+                                                            </div>
+                                                        </div>
+                                                    </div><div class="field field-name-field-data-research-design field-type-taxonomy-term-reference field-label-inline clearfix">
+                                                        <div class="field-label">Research design:&nbsp;</div>
+                                                        <div class="field-items">
+                                                            <div class="field-item even">
+                                                                <a href="@yaleRoot/research-design/#" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">@Model.ResearchDesign</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-type field-type-text field-label-inline clearfix">
+                                                        <div class="field-label">Data type:&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">@Model.DataType</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-sources field-type-text-long field-label-inline clearfix">
+                                                        <div class="field-label">Data source(s):&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">
+                                                                <p>@Html.Raw(@Model.DataSource)</p>
+                                                            </div>
+                                                        </div>
+                                                    </div><div class="field field-name-field-data-source-information field-type-text-long field-label-inline clearfix">
+                                                        <div class="field-label">Data source information:&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">
+                                                                <p>@Html.Raw(Model.DataSourceInformation)</p>
+                                                                <p>Suggested citation: Butler, Daniel M. et al. (2015) Replication Materials for ‘Ideology, Learning and Policy Diffusion: Experimental Evidence.’ <a href="http://hdl.handle.net/10079/1zcrjs8.&quot;">http://hdl.handle.net/10079/1zcrjs8.”</a> ISPS Data Archive.</p>
+                                                            </div>
+                                                        </div>
+                                                    </div><div class="field field-name-field-data-field-date field-type-datetime field-label-inline clearfix">
+                                                        <div class="field-label">Field date:&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">
+                                                                <span class="date-display-single" property="dc:date" datatype="xsd:dateTime" content="2012-06-15T00:00:00-04:00">@Model.PublishDate</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-location field-type-taxonomy-term-reference field-label-inline clearfix">
+                                                        <div class="field-label">Location:&nbsp;</div>
+                                                        <div class="field-items">
+                                                            <div class="field-item even">
+                                                                <a href="location/#" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">@Model.Location</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-observation-unit field-type-text field-label-inline clearfix">
+                                                        <div class="field-label">Unit of observation:&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">@Model.UnitOfObservation</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-sample-size field-type-text field-label-inline clearfix">
+                                                        <div class="field-label">Sample size:&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">@Model.SampleSize</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-inclusion-exclusion field-type-text-long field-label-inline clearfix">
+                                                        <div class="field-label">Inclusion/exclusion:&nbsp;</div>
+                                                        <div class="field-items">
+                                                            <div class="field-item even">@Model.InclusionExclusionCriteria</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-randomization field-type-text-long field-label-inline clearfix">
+                                                        <div class="field-label">Randomization procedure:&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">@Model.RandomizationProcedure</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-treatment field-type-text-long field-label-inline clearfix">
+                                                        <div class="field-label">Treatment:&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">@Model.Treatment</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-treatment-admin field-type-text field-label-inline clearfix">
+                                                        <div class="field-label">Treatment administration:&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">@Model.TreatmentAdministration</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-outcome-measures field-type-text field-label-inline clearfix">
+                                                        <div class="field-label">Outcome measures:&nbsp;</div>
+                                                        <div class="field-items">
+                                                            <div class="field-item even">@Model.OutcomeMeasures</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-archive-date field-type-datetime field-label-inline clearfix">
+                                                        <div class="field-label">Archive date:&nbsp;</div>
+                                                        <div class="field-items">
+                                                            <div class="field-item even">
+                                                                <span class="date-display-single" property="dc:date" datatype="xsd:dateTime" content="2016-02-29T00:00:00-05:00">@Model.ArchiveDate.Value.Year.ToString()</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-archive-contributor field-type-text field-label-inline clearfix">
+                                                        <div class="field-label">Archive contributor:&nbsp;</div>
+                                                        <div class="field-items">
+                                                            <div class="field-item even">TO BE FILLED (Archive contributor)</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-owner field-type-text field-label-inline clearfix">
+                                                        <div class="field-label">Owner:&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">@Model.OwnerText</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-owner-contact field-type-text-long field-label-inline clearfix">
+                                                        <div class="field-label">Owner contact:&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">
+                                                                <p>@Model.Owner</p>
+                                                            </div>
+                                                        </div>
+                                                    </div><div class="field field-name-field-data-tou field-type-text-long field-label-inline clearfix">
+                                                        <div class="field-label">Terms of use:&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">
+                                                                <p>TO BE FILLED (Term of use)</p>
+                                                            </div>
+                                                        </div>
+                                                    </div><div class="field field-name-field-data-related-database field-type-text field-label-inline clearfix">
+                                                        <div class="field-label">Related database:&nbsp;</div>
+                                                        <div class="field-items">
+                                                            <div class="field-item even">@Model.RelatedDatabase</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-subject field-type-taxonomy-term-reference field-label-inline clearfix">
+                                                        <div class="field-label">Discipline:&nbsp;</div><div class="field-items">
+                                                            <div class="field-item even">
+                                                                <a href="/disciplines/#" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">TO BE FILLED (DISCIPLINE)</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="field field-name-field-data-policy-area field-type-taxonomy-term-reference field-label-inline clearfix">
+                                                        <div class="field-label">Area of study:&nbsp;</div>
+                                                        <div class="field-items">
+                                                            <div class="field-item even">
+                                                                <a href="/research/areas-of-study/#" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">TO BE FILLED (AREA OF STUDY)</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="clearfix">
+                                                    <nav class="links node-links clearfix"></nav>
+
+                                                </div>
+                                            </article>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="panel-separator"></div><div class="panel-pane pane-views-panes pane-data-files-panel-pane-1" class="panel-pane pane-views-panes pane-data-files-panel-pane-1">
+
+
+
+                                        <div class="pane-content">
+                                            <div class="view view-data-files view-id-data_files view-display-id-panel_pane_1 view-dom-id-d7c972fcffc269f94cd885fd0bd42c1e">
+
+
+
+                                                <div class="view-content">
+                                                    <table class="views-table cols-5" class="views-table cols-5">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">
+                                                                    <a href="/research/data/d134?order=field_data_file_number&amp;sort=desc" title="sort by Data file number" class="active">Data file number<img typeof="foaf:Image" src="http://dev.isps.yale.edu/misc/arrow-desc.png" width="13" height="13" alt="sort descending" title="sort descending" /></a>
+                                                                </th>
+                                                                <th scope="col">
+                                                                    <a href="/research/data/d134?order=field_data_file_description&amp;sort=asc" title="sort by Description" class="active">Description</a>
+                                                                </th>
+                                                                <th scope="col">
+                                                                    <a href="/research/data/d134?order=field_data_file_format&amp;sort=asc" title="sort by File format" class="active">File format</a>
+                                                                </th>
+                                                                <th scope="col">
+                                                                    <a href="/research/data/d134?order=field_data_file_size&amp;sort=asc" title="sort by Size" class="active">Size</a>
+                                                                </th>
+                                                                <th scope="col">
+                                                                    File url
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var file in Model.Files.OrderBy(x => x.Number))
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        <span title="@file.Name">@file.Number</span>
+                                                                    </td>
+                                                                    <td>
+                                                                        @file.Title
+                                                                    </td>
+                                                                    <td>
+                                                                        @file.FormatName
+                                                                    </td>
+                                                                    <td>
+                                                                        @file.Size.ToString("N0")
+                                                                    </td>
+                                                                    <td>
+                                                                        @{ 
+                                                                            string link = file.PersistentLink;
+                                                                        }
+                                                                        @if (!string.IsNullOrWhiteSpace(link))
+                                                                        {
+                                                                            <a title="@file.Name" href="@link">Download file</a>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
