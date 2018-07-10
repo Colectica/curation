@@ -7,7 +7,7 @@ node {
 
     stage('Build') {
         echo("Building")
-        bat "${WORKSPACE}/build/BuildCuration-WithColecticaSDK.bat"
+        bat "${WORKSPACE}/build/BuildPackage-WithColecticaSDK.bat"
     }
 
     stage('Results') {
