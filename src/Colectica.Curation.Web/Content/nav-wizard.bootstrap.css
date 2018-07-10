@@ -1,0 +1,85 @@
+﻿.nav-pills.nav-wizard > li {
+  position: relative;
+  overflow: visible;
+  border-right: 15px solid #fff;
+  border-left: 15px solid #fff;
+}
+.nav-pills.nav-wizard > li:first-child {
+  border-left: 0;
+}
+.nav-pills.nav-wizard > li:first-child a,
+.nav-pills.nav-wizard > li:first-child .inactive-link
+ {
+  border-radius: 5px 0 0 5px;
+  display: block;
+  padding: 10px 15px;
+}
+.nav-pills.nav-wizard > li:last-child {
+  border-right: 0;
+}
+.nav-pills.nav-wizard > li:last-child a,
+.nav-pills.nav-wizard > li:last-child .inactive-link {
+  border-radius: 0 5px 5px 0;
+}
+.nav-pills.nav-wizard > li > a,
+.nav-pills.nav-wizard > li .inactive-link {
+  border-radius: 0;
+  background-color: #eee;
+  display: block;
+  padding: 10px 15px;
+}
+.nav-pills.nav-wizard > li .nav-arrow {
+  position: absolute;
+  top: 0px;
+  right: -20px;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 20px 0 20px 20px;
+  border-color: transparent transparent transparent #eee;
+  z-index: 150;
+}
+.nav-pills.nav-wizard > li .nav-wedge {
+  position: absolute;
+  top: 0px;
+  left: -20px;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 20px 0 20px 20px;
+  border-color: #eee #eee #eee transparent;
+  z-index: 150;
+}
+.nav-pills.nav-wizard > li:hover .nav-arrow {
+  border-color: transparent transparent transparent #aaa;
+}
+.nav-pills.nav-wizard > li:hover .nav-wedge {
+  border-color: #aaa #aaa #aaa transparent;
+}
+.nav-pills.nav-wizard > li:hover > a {
+  background-color: #aaa;
+  color: #fff;
+}
+
+.nav-pills.nav-wizard > li:hover .inactive-link {
+    cursor: not-allowed;
+}
+
+.nav-pills.nav-wizard > li.active .nav-arrow {
+  border-color: transparent transparent transparent #428bca;
+}
+.nav-pills.nav-wizard > li.active .nav-wedge {
+  border-color: #428bca #428bca #428bca transparent;
+}
+.nav-pills.nav-wizard > li.active > a,
+.nav-pills.nav-wizard > li.active .inactive-link
+ {
+  background-color: #428bca;
+  color: white;
+}
+
+.nav-pills.nav-wizard > li:hover > a,
+.nav-pills.nav-wizard > li:hover .inactive-link {
+    background-color: #aaa;
+    color: #fff;
+}

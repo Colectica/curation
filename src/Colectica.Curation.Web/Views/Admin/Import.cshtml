@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewBag.Title = "Import";
+}
+
+@section breadcrumb
+{
+    <a href="/Admin/">&laquo; Administration</a>
+}
+
+@section sidebar
+{
+    @Html.Partial("_AdminNavigation")
+}
+
+<p>
+    To ingest catalog records, upload a DDI 3.2 XML file. 
+    The file should contain a DDI Group as the top level item. 
+    The Group should contain one StudyUnit per catalog record.
+</p>
+
+<div class="row">
+
+    @using (Html.BeginForm("Import", "Admin", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div>
+            @Html.TextBox("file", "", new { type = "file" }) 
+            <br />
+            <input type="submit" value="Upload" />
+
+
+        </div>
+    }
+</div>
+
+@if (!string.IsNullOrWhiteSpace(ViewBag.Message))
+{
+<div class="row" style="margin-top: 12px;">
+    <div class="alert alert-info">
+        @ViewBag.Message
+    </div>
+</div>
+}

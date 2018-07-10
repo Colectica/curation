@@ -1,0 +1,21 @@
+.node-type-isps-in-the-news .field-name-field-date {
+  font-style: normal;
+}
+.node-type-isps-in-the-news .field {
+  margin: 1.25em 0;
+}
+
+.page-isps-in-the-news .field-name-field-date {
+  font-style: normal;
+  text-transform: uppercase;
+  font-family: "TheSans";
+  letter-spacing: 1px;
+  color: #303030;
+  font-size: 13px;
+  margin-bottom: 0;
+}
+.page-isps-in-the-news .field-name-field-news-source {
+  font-size: 16px;
+  color: #7d7d7d;
+  margin-bottom: 10px;
+}

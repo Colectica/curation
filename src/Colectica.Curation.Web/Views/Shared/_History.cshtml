@@ -1,0 +1,101 @@
+﻿@model List<Colectica.Curation.Web.Models.HistoryEventModel>
+
+@{
+    var icons = new Dictionary<Guid, string>
+    {
+        { Colectica.Curation.Common.Utility.EventTypes.CreateUser , "glyphicon-user" },
+        { Colectica.Curation.Common.Utility.EventTypes.Upload , "glyphicon-upload" },
+        { Colectica.Curation.Common.Utility.EventTypes.AcceptFile , "glyphicon-thumbs-up" },
+        { Colectica.Curation.Common.Utility.EventTypes.RejectFile , "glyphicon-thumbs-down" },
+        { Colectica.Curation.Common.Utility.EventTypes.AcceptTask , "glyphicon-thumbs-up" },
+        { Colectica.Curation.Common.Utility.EventTypes.RejectTask , "glyphicon-thumbs-down" },
+        { Colectica.Curation.Common.Utility.EventTypes.CreateCatalogRecord , "glyphicon-plus" },
+        { Colectica.Curation.Common.Utility.EventTypes.SubmitForCuration , "glyphicon-plus" },
+        { Colectica.Curation.Common.Utility.EventTypes.EditCatalogRecord , "glyphicon-edit" },
+        { Colectica.Curation.Common.Utility.EventTypes.AddNote , "glyphicon-comment" },
+        { Colectica.Curation.Common.Utility.EventTypes.EditManagedFile , "glyphicon-edit" },
+        { Colectica.Curation.Common.Utility.EventTypes.GitCommit, "glyphicon-upload" },
+        { Colectica.Curation.Common.Utility.EventTypes.AddOrganizationalPermission, "glyphicon-lock" },
+        { Colectica.Curation.Common.Utility.EventTypes.AddCatalogRecordPermission, "glyphicon-lock" },
+        { Colectica.Curation.Common.Utility.EventTypes.RequestPublication, "glyphicon-send" },
+        { Colectica.Curation.Common.Utility.EventTypes.ApprovePublication, "glyphicon-thumbs-up" },
+        { Colectica.Curation.Common.Utility.EventTypes.Publish, "glyphicon-ok" },
+        { Colectica.Curation.Common.Utility.EventTypes.RejectPublication, "glyphicon-thumbs-down" },
+        { Colectica.Curation.Common.Utility.EventTypes.FinalizeCatalogRecordFailed, "glyphicon-warning-sign" },
+        { Colectica.Curation.Common.Utility.EventTypes.CreatePreservationFormat, "glyphicon-ok" },
+        { Colectica.Curation.Common.Utility.EventTypes.CreatePersistentIdentifier, "glyphicon-ok" },
+        { Colectica.Curation.Common.Utility.EventTypes.GenerateChecksums, "glyphicon-ok" },
+        { Colectica.Curation.Common.Utility.EventTypes.GenerateMetadata, "glyphicon-ok" },
+        { Colectica.Curation.Common.Utility.EventTypes.CreateArchivePackage, "glyphicon-ok" },
+        { Colectica.Curation.Common.Utility.EventTypes.RemoveFile, "glyphicon-remove" },
+        { Colectica.Curation.Common.Utility.EventTypes.ApplyMetadataUpdates, "glyphicon-cog" }
+    };
+
+    var markdown = new MarkdownDeep.Markdown();
+}
+
+<div class="history">
+
+    @foreach (var log in Model)
+    {
+        string eventTypeClass = "glyphicon-time";
+        if (icons.ContainsKey(log.EventType))
+        {
+            eventTypeClass = icons[log.EventType];
+        }
+
+        // TODO convert this to the user's local time, not the server local time.
+        DateTime timestamp = log.Timestamp.ToLocalTime();
+
+
+        <div class="history-event">
+            <div class="history-event-body">
+
+                <div class="history-event-icon">
+                    <span class="glyphicon @eventTypeClass"></span>
+                </div>
+
+                <div class="history-event-summary">
+                    <div class="history-event-whowhen">
+                        <time>@timestamp.ToLongDateString() @timestamp.ToShortTimeString()</time>
+                        by @log.UserName
+                    </div>
+
+                    <h4>@log.Title</h4>
+
+                    @if (!string.IsNullOrWhiteSpace(log.Details))
+                    {
+                        string[] lines = log.Details.Split(new char[] { '\n' });
+                        foreach (string line in lines)
+                        {
+                            <p>@line</p>
+                        }
+                    }
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(log.CatalogRecordTitle))
+                {
+                    <div>
+                        @Html.ActionLink(log.CatalogRecordTitle, "General", "CatalogRecord", new { id = log.CatalogRecordId }, null)
+                    </div>
+                }
+
+                @if (log.RelatedFiles.Count > 0)
+                {
+                    <div>
+                        <ul>
+
+                            @foreach (var file in log.RelatedFiles)
+                            {
+                                <li>
+                                    @Html.ActionLink(file.FileName, "General", "File", new { id = file.FileId }, null)
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+</div>

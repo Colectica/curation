@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewBag.Title = "Curator Administration";
+    }
+
+@section styles {
+    <style>
+
+        .setting .glyphicon {
+            margin-top: 12px;
+            font-size: 64px;
+            color: #444;
+        }
+
+        .setting .text {
+            margin-left: 12px;
+        }
+
+
+    </style>
+}
+
+@section sidebar
+{
+    @Html.Partial("_AdminNavigation")
+}
+
+<div class="">
+    <p>@Colectica.Curation.RevisionInfo.ProgramName @Colectica.Curation.RevisionInfo.FullVersionString</p>
+
+    <p>Use the navigation on the left to configure the site.</p>
+
+    
+</div>

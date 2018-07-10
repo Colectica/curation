@@ -1,0 +1,243 @@
+﻿@using Colectica.Curation.Web.Resources
+
+<div data-bind="if: variables().length == 0">
+    <p>There are no variables to display.</p>
+</div>
+
+<div class="variableListWrapper col-md-3 col-sm-3 col-xs-3">
+    <div class="list-group" data-bind="foreach: variables()">
+        <a href="#" class="list-group-item" data-bind="click: $root.selectNode, css: { active: $root.selectedVariableId() == Id() }">
+            <h4 data-bind="text: Name"></h4>
+            <p data-bind="text: Label"></p>
+            <span class="glyphicon glyphicon-ok pull-right" data-bind="visible: IsLabelOk() == 'true'" style="margin-top: -40px;"></span>
+        </a>
+    </div>
+</div>
+
+<div class="variableContentWrapper col-md-9 col-sm-9 col-xs-9">
+
+    <div id="variable-progress" class="progress progress-striped active hidden">
+        <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+        </div>
+    </div>
+
+    <div data-bind="if: selectedVariable">
+
+        <div class="widget">
+            <div class="widget-header">
+                <h3 data-bind="text: selectedVariableName"></h3>
+            </div>
+            <div class="widget-body">
+                <form class="form-horizontal" role="form">
+
+                    <dl class="dl-horizontal variableEditor">
+                        <!-- Name -->
+                        <dt>
+                            <span class="info-tip" style="padding-top: 5px;" title="@FieldDefinitions.Name">Name</span>
+                        </dt>
+                        <dd>
+                            <span data-bind="editable: selectedVariable().Name, editableOptions: { pk: selectedVariableId, params: { agency: selectedVariable().Agency }, name: 'ItemName'}"></span>
+                        </dd>
+
+                        <!-- Label -->
+                        <dt>
+                            <span class="info-tip" style="padding-top: 5px;" title="@FieldDefinitions.Label">Label</span>
+                        </dt>
+                        <dd>
+                            <span data-bind="editable: selectedVariable().Label, editableOptions: { pk: selectedVariableId, params: { agency: selectedVariable().Agency }, name: 'Label', success: onUpdateLabelSuccess }"></span>
+                        </dd>
+
+                        <!-- Version -->
+                        <dt>
+                            <span class="info-tip" style="padding-top: 5px;" title="@FieldDefinitions.VariableVersion">Version</span>
+                        </dt>
+                        <dd>
+                            <span data-bind="text: selectedVariable().Version"></span>
+                        </dd>
+
+                        <!-- Last Updated -->
+                        <dt>
+                            <span class="info-tip" style="padding-top: 5px;" title="@FieldDefinitions.VariableLastUpdated">Last Updated</span>
+                        </dt>
+                        <dd>
+                            <span data-bind="text: selectedVariable().LastUpdated"></span>
+                        </dd>
+
+                        <!-- Description -->
+                        <dt>
+                            <span class="info-tip" style="padding-top: 5px;" title="@FieldDefinitions.Description">Description</span>
+                        </dt>
+                        <dd>
+                            <span data-bind="editable: selectedVariable().Description, editableOptions: { type: 'textarea', pk: selectedVariableId, params: { agency: selectedVariable().Agency }, name: 'Description' }"></span>
+                        </dd>
+
+                        <!-- ResponseUnit -->
+                        <dt>
+                            <span class="info-tip" style="padding-top: 5px;" title="@FieldDefinitions.ResponseUnit">Response Unit</span>
+                        </dt>
+                        <dd>
+                            <span data-bind="editable: selectedVariable().ResponseUnit,
+                                             editableOptions: {
+                                                    pk: selectedVariableId,
+                                                    type: 'select',
+                                                    params: { agency: selectedVariable().Agency },
+                                                    name: 'ResponseUnit',
+                                                    source: responseUnits }">
+                            </span>
+                        </dd>
+
+                        <!-- AnalysisUnit -->
+                        <dt>
+                            <span class="info-tip" style="padding-top: 5px;" title="@FieldDefinitions.AnalysisUnit">Analysis Unit</span>
+                        </dt>
+                        <dd>
+                            <span data-bind="editable: selectedVariable().AnalysisUnit,
+                                             editableOptions: {
+                                                 pk: selectedVariableId,
+                                                 type: 'select',
+                                                 params: { agency: selectedVariable().Agency },
+                                                 name: 'AnalysisUnit',
+                                                 source: analysisUnits }">
+
+                            </span>
+                        </dd>
+
+                        <!-- Variable type (ClassificationLevel) -->
+                        <dt>
+                            <span class="info-tip" style="padding-top: 5px;" title="@FieldDefinitions.ResponseUnit">Variable Type</span>
+                        </dt>
+                        <dd>
+                            <span data-bind="text: selectedVariable().ClassificationLevel"></span>
+                        </dd>
+
+                        <!-- Representation Type -->
+                        <dt>
+                            <span class="info-tip" style="padding-top: 5px;" title="@FieldDefinitions.RepresentationType">Representation</span>
+                        </dt>
+                        <dd>
+                            <span data-bind="editable: selectedVariable().RepresentationType,
+                                    editableOptions: {
+                                        type: 'select',
+                                        source: $root.dataTypes,
+                                        pk: selectedVariableId,
+                                        params: { agency: selectedVariable().Agency },
+                                        name: 'RepresentationType',
+                                        success: onUpdateRepresentationTypeSuccess
+                                    }"></span>
+                        </dd>
+
+                        <!-- MissingValues, if appropriate -->
+
+
+                    </dl>
+                </form>
+            </div>
+        </div>
+
+        <!-- Frequencies -->
+        <div class="widget" data-bind="visible: selectedVariable().Frequencies().length > 0"
+             style="margin-top: 20px;">
+            <div class="widget-header">
+                <h4>Frequencies</h4>
+            </div>
+            <div class="widget-body">
+                <table class="table">
+                    <tr>
+                        <th>Value</th>
+                        <th>Label</th>
+                        <th>Frequency</th>
+                        <th></th>
+                    </tr>
+
+                    <tbody data-bind="foreach: selectedVariable().Frequencies">
+                        <tr>
+                            <td data-bind="text: CategoryValue"></td>
+                            <td>
+                                <span data-bind="editable: CategoryLabel, 
+                                      editableOptions: {
+                                        pk: CategoryId,
+                                        params: { 
+                                            agency: $root.selectedVariable().Agency,
+                                            physicalInstanceId: $root.fileId },
+                                        name: 'Label',
+                                        url: '/Variables/UpdateCategory' }"></span>
+                            </td>
+                            <td data-bind="text: Frequency"></td>
+                            <td><div data-bind="style: { width: NormalizedWidth }" style="background-color: steelBlue; color: white;">&nbsp;</div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="widget" style="margin-top: 20px;">
+            <div class="widget-header">
+                <h4>Statistics</h4>
+            </div>
+            <div class="widget-body">
+
+                <dl>
+                    <dt><span class="info-tip" title="@FieldDefinitions.TotalObservations">Total Observations</span></dt>
+                    <dd data-bind="text: selectedVariable().Valid() + selectedVariable().Invalid()"></dd>
+                </dl>
+
+                <!-- Summary Statistics -->
+                <div data-bind="visible: selectedVariable().RepresentationType() !== 'Text'">
+                    <table style="width: 90%; margin-top: 12px;">
+                        <tr>
+                            <th>Valid</th>
+                            <th>Invalid</th>
+                            <th>Min</th>
+                            <th>Max</th>
+                            <th>Mean</th>
+                            <th>StdDev</th>
+                        </tr>
+
+                        <tr>
+                            <td data-bind="text: selectedVariable().Valid"></td>
+                            <td data-bind="text: selectedVariable().Invalid"></td>
+                            <td data-bind="text: selectedVariable().Minimum"></td>
+                            <td data-bind="text: selectedVariable().Maximum"></td>
+                            <td data-bind="text: selectedVariable().Mean"></td>
+                            <td data-bind="text: selectedVariable().StandardDeviation"></td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="widget" style="margin-top: 20px;">
+            <div class="widget-header">
+                <h4>Notes</h4>
+            </div>
+            <div class="widget-body">
+                <p data-bind="visible: selectedVariable().Comments().length == 0">Nobody has commented on this item yet.</p>
+
+                <div data-bind="foreach: selectedVariable().Comments">
+                    <blockquote>
+                        <p data-bind="text: Comment"></p>
+                        <small>
+                            <span data-bind="text: UserName"></span> -
+                            <span data-bind="text: Date"></span>
+                        </small>
+                    </blockquote>
+                </div>
+
+                <div id="comment-progress" class="progress progress-striped active hidden">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                    </div>
+                </div>
+
+                <form role="form">
+                    <div class="form-group">
+                        <textarea class="form-control" id="note" name="note" data-bind="value: $root.newNoteText"></textarea>
+                    </div>
+
+                    <button class="btn btn-lg btn-primary" id="new-note" data-bind="click: $root.newNote">Add Comment</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>

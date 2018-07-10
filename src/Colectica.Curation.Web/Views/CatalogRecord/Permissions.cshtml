@@ -1,0 +1,49 @@
+﻿@model Colectica.Curation.Web.Models.CatalogRecordPermissionsModel
+
+@{
+    ViewBag.Title = Model.CatalogRecord.Title;
+}
+
+@Html.Partial("_CatalogRecordNavigation", Model)
+
+@section breadcrumb {
+    @FormHelpers.CatalogRecordStatusLabel(Model.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+    @if (Model.IsUserApprover)
+    {
+        <span class="label label-info">Approver</span>
+    }
+}
+
+<div class="clearfix"></div>
+
+@using (Html.BeginForm("Permissions", "CatalogRecord", FormMethod.Post))
+{
+    @Html.HiddenFor(x => x.CatalogRecordId)
+
+    <table class="table">
+        <tr>
+            <th>User Name</th>
+            <th>Full Name</th>
+            <th>Curator</th>
+            <th>Approver</th>
+        </tr>
+
+        @for (int i = 0; i < Model.Users.Count; i++)
+        {
+            <tr>
+                <td>@Model.Users[i].UserName @Html.HiddenFor(x => Model.Users[i].UserName)</td>
+                <td>@Model.Users[i].FullName</td>
+                <td>@Html.CheckBoxFor(x => Model.Users[i].IsCurator)</td>
+                <td>@Html.CheckBoxFor(x => Model.Users[i].IsApprover)</td>
+            </tr>
+        }
+    </table>
+
+    <div class="">
+        <input type="submit" class="btn btn-primary" value="Save Permissions" />
+    </div>
+}

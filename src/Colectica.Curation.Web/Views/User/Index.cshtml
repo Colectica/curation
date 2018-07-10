@@ -1,0 +1,61 @@
+﻿@model Colectica.Curation.Web.Models.UsersViewModel
+
+@{
+    ViewBag.Title = "Curator Administration";
+}
+
+@section breadcrumb
+{
+    <a href="/Admin/">&laquo; Administration</a>
+}
+
+@section sidebar
+{
+    @Html.Partial("_AdminNavigation")
+}
+
+<h2>User Management</h2>
+
+<a href="/User/Create" class="btn btn-primary">Create a New User</a>
+
+<table class="table">
+    <tr>
+        <th>User</th>
+        <th></th>
+    </tr>
+
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            string userOrganizations = string.Join(", ", user.Organizations.Select(x => x.Name));
+
+            <tr>
+                <td>@Html.ActionLink(user.UserName, "Details", new { id = user.UserName })</td>
+                <td>
+                    @userOrganizations
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Placeholder Users</h2>
+
+<table class="table">
+    <tr>
+        <th>User</th>
+        <th></th>
+    </tr>
+
+    <tbody>
+        @foreach (var user in Model.PlaceholderUsers)
+        {
+            <tr>
+                <td>@Html.ActionLink(user.UserName, "Details", new { id = user.UserName })</td>
+                <td>
+                   @* <button class="btn"><span title="Reject" class="glyphicon glyphicon-remove"></span></button>*@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

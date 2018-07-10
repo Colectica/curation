@@ -1,0 +1,109 @@
+﻿@model Colectica.Curation.Web.Models.FileStatusModel
+
+@{
+    ViewBag.Title = Model.FileName;
+}
+
+@section breadcrumb
+{
+    <a href="@Url.Action("Files", "CatalogRecord", new { id = Model.File.CatalogRecord.Id })">&laquo; @Model.File.CatalogRecord.Title</a>
+
+    @FormHelpers.CatalogRecordStatusLabel(Model.File.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+    @if (Model.IsUserApprover)
+    {
+        <span class="label label-info">Approver</span>
+    }
+}
+
+@Html.Partial("_FileNavigation", Model)
+
+<h2>Curation Status</h2>
+
+<div class="btn-group" style="margin-bottom: 10px;">
+
+    @if (Model.File.HasPendingMetadataUpdates)
+    {
+        <div class="label label-info">Pending metadata updates must be applied before downloading this file.</div>
+        <div>
+            <a class="btn btn-primary" href="@Url.Action("ApplyMetadataUpdates", "File", new { id = Model.File.Id })" style="margin-right: 3px;">
+                <span class="glyphicon glyphicon-cog"></span> Apply Pending Metadata Updates
+            </a>
+        </div>
+    }
+    else
+    {
+        <a class="btn btn-primary" href="@Url.Action("Download","File",new { id = Model.File.Id })" title="Download"><span class="glyphicon glyphicon-download"></span> Download @Model.FileName</a>
+        <a href="@Url.Action("DownloadArchive", "File", new { catalogRecordId = Model.File.CatalogRecord.Id })" class="btn btn-primary" style="margin-left: 3px;"><span class="glyphicon glyphicon-download-alt"></span> Download All Files</a>
+    }
+</div>
+
+@if (!Model.IsUserCurator)
+{
+    <p class="alert alert-info">
+        You are not a curator for this catalog record.
+        In order to perform curation tasks, you must first be assigned as a curator.
+    </p>
+}
+else
+{
+    if (Model.Tasks.Count == 0)
+    {
+        <p>No curation tasks are required for this file.</p>
+    }
+    else
+    {
+
+        <table class="table">
+            <tr>
+                <th>Status</th>
+                <th>Task</th>
+                <th>Completed</th>
+            </tr>
+
+            @foreach (var task in Model.Tasks)
+            {
+                <tr>
+                    <td>
+                        @if (task.IsComplete)
+                        {
+                            <span class="glyphicon glyphicon-check"></span>
+                        }
+                        else
+                        {
+                            <span class="glyphicon glyphicon-unchecked"></span>
+                        }
+                    </td>
+                    <td>
+                        @if (task.IsComplete || !Model.IsUserCurator)
+                        {
+                            @task.TaskType
+                        }
+                        else
+                        {
+                            @Html.ActionLink(task.TaskType, "Details", task.Controller, new { id = Model.Id }, null)
+                        }
+                    </td>
+                    <td>
+                        @if (task.IsComplete)
+                        {
+                            using (Html.BeginForm("Details", task.Controller, new { id = Model.File.Id }, FormMethod.Post))
+                            {
+                                <span>
+                                    @task.CuratorName on @task.CompletedDate
+
+                                    <input type="submit" class="btn btn-sm btn-default" name="result" value="Undo" />
+                                </span>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+
+        </table>
+
+    }
+}

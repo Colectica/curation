@@ -1,0 +1,31 @@
+﻿@model Colectica.Curation.Models.ScriptedTaskModel
+
+@{
+    string escapedJson = Model.VariablesJson.Replace("'", "\\'");
+}
+
+
+    @Scripts.Render("~/bundles/knockout")
+    <script src="/Scripts/knockout.mapping-latest.js"></script>
+    <script src="/Scripts/knockout.x-editable.min.js"></script>
+
+    <script src="/Areas/Ddi/js/VariableEditor.js"></script>
+
+
+    <script src="/Scripts/bootstrap3-editable/js/bootstrap-editable.js"></script>
+    <script src="/Scripts/moment.min.js"></script>
+    <script src="/Scripts/select2/select2.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $.fn.editable.defaults.mode = 'inline';
+            $.fn.editable.defaults.url = "/Variables/Update"
+            $.fn.editable.defaults.inputclass = "editable-input-wide";
+        });
+    </script>
+
+    <script>
+        var vm = new VariableEditorViewModel("@Model.File.Id", true, '@Html.Raw(escapedJson)');
+            ko.applyBindings(vm);
+    </script>
+

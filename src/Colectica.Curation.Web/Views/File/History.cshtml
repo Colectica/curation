@@ -1,0 +1,16 @@
+﻿@model Colectica.Curation.Web.Models.ManagedFileHistoryModel
+
+@{
+    ViewBag.Title = Model.File.Name;
+}
+
+@section breadcrumb
+{
+    <a href="@Url.Action("Files", "CatalogRecord", new { id = Model.File.CatalogRecord.Id })">&laquo; @Model.File.CatalogRecord.Title</a>
+}
+
+@Html.Partial("_FileNavigation", Model)
+
+<h2>File History</h2>
+
+@Html.Partial("_History", Model.Events)

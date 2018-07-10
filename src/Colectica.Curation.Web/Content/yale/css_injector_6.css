@@ -1,0 +1,67 @@
+.region-content {
+max-width: inherit;
+}
+
+#views-exposed-form-data-panel-pane-1 {
+background-color: #eee;
+padding: .8em 1em;
+}
+
+#views-exposed-form-projects-panel-pane-1{
+background-color: #eee;
+padding:10px;
+}
+
+#views-exposed-form-publications-panel-pane-1{
+background-color: #eee;
+padding:10px;
+}
+
+.views-exposed-form .views-exposed-widget {
+width: 25%;
+background-color: #eee;
+padding: .8em 1em;
+}
+
+.form-item .description {
+    display: none;
+}
+
+#edit-field-data-subject-tid {
+     max-width: 100%; 
+}
+#edit-pi {
+     max-width: 100%; 
+}
+
+#edit-field-data-location-tid {
+     max-width: 100%; 
+}
+#edit-pubname { 
+     max-width: 100%; 
+}
+#edit-keywords {
+     max-width: 100%; 
+}
+#edit-policy-area { 
+     max-width: 100%; 
+}
+#edit-research-design{ 
+     max-width: 100%; 
+}
+
+#block-views-exp-publications-page-1 {
+margin-bottom: 2em;
+}
+
+.views-exposed-form .views-exposed-widget .form-submit {
+    color: #fff;
+    background-color: #336699;
+    margin-top: 1.6em;
+}
+
+ul.quicktabs-tabs li.active a {
+    background-image: linear-gradient(#eee, #eee);
+    background-size: 100% auto;
+    color: #336699;
+}

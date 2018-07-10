@@ -1,0 +1,68 @@
+﻿@model Colectica.Curation.Addins.Editors.StudyUnitCatalogRecordModel
+
+@using Colectica.Curation.Common.Utility
+
+@{
+    ViewBag.Title = Model.CatalogRecord.Title;
+}
+
+
+@Html.Partial("_CatalogRecordNavigation", Model.CatalogRecord)
+
+
+<h2>Quality</h2>
+
+@if (Model.IsLocked)
+{
+    @Html.Partial("_CatalogRecordLocked", Model.OperationStatus)
+}
+
+
+<form class="form-horizontal" role="form">
+
+    <dl class="dl-horizontal">
+
+        <!-- Quality review type -->
+        <dt>
+            <span class="" style="display: block; padding-top: 5px;">Quality Review Type</span>
+        </dt>
+        <dd>
+            <span class="editable-field" id="QualityReviewType" data-type="select" data-pk="1"
+               data-source="[{ value: 1, text: 'Full' }, { value: 2, text: 'Partial' }, { value: 3, text: 'None' }]"
+               data-prepend="Not selected" data-title="Quality Review Type">@Model.QualityReviewType</span>
+        </dd>
+
+        <!-- Quality review date -->
+        <dt>
+            <span class="" style="display: block; padding-top: 5px;">Quality Review Date</span>
+        </dt>
+        <dd>
+            <span class="editable-field" id="QualityReviewDate" data-type="combodate" data-pk="1" data-title="Quality Review Date">@Model.QualityReviewDate</span>
+        </dd>
+
+        <!-- Quality reviewer name -->
+        <dt>
+            <span class="" style="display: block; padding-top: 5px;">Quality Reviewer Name</span>
+        </dt>
+        <dd>
+            <span class="editable-field" id="QualityReviewerName" data-type="text" data-pk="1" data-title="Quality Reviewer Name">@Model.QualityReviewerName</span>
+        </dd>
+
+        <!-- Quality review description -->
+        <dt>
+            <span class="" style="display: block; padding-top: 5px;">Quality Review Description</span>
+        </dt>
+        <dd>
+            <span class="editable-field" id="QualityReviewDescription" data-type="textarea" data-pk="1" data-title="Quality Review Description">@Model.QualityReviewDescription</span>
+        </dd>
+
+    </dl>
+</form>
+
+
+
+
+@section scripts
+{
+    @Html.Partial("~/Areas/Ddi/Views/Shared/_EditorScripts.cshtml")
+}

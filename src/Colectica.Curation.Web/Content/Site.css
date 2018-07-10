@@ -1,0 +1,291 @@
+﻿
+.field-validation-error, #errorMessage {
+    color: #b94a48;
+}
+
+.page > h1
+{
+    font-size: 24px;
+    margin: 0;
+
+}
+
+/* User Badge */
+
+#user-badge {
+    margin-top: 6px;
+}
+
+    #user-badge .headshot {
+        font-size: 24px;
+    }
+
+    #user-badge button {
+        border: none;
+        border-radius: 0;
+        border-left: 6px solid #333;
+    }
+
+.user-name {
+    margin-left: 5px;
+}
+
+
+/* Forms */
+
+.input-large {
+    min-width: 150px;
+}
+
+.dl-horizontal dt {
+    width: 200px;
+}
+
+.dl-horizontal dd {
+    margin-left: 215px;
+}
+
+.editableform .editable-input-wide {
+    width: 600px;
+}
+
+.editable {
+    cursor: pointer;
+    color: #2a6496;
+    text-decoration: none;
+}
+
+.editable:hover {
+    color: #DD1144;
+}
+
+.editable-disabled {
+    color: #777;
+    text-decoration: none;
+    cursor: default;
+}
+.editable-disabled:hover {
+    color: #777;
+}
+
+
+/* Variables editor */
+
+.variableEditor dt {
+    width: 130px;
+}
+
+.variableEditor dd {
+    margin-left: 145px;
+}
+
+
+.variableEditorWrapper {
+    /* height: calc(100% - 200px); */
+    height: 500px;
+    width: 100%;
+    position: absolute;
+    top: 50px;
+    left: 0px;
+}
+
+.missingLabelsVariableEditorWrapper {
+    height: 400px;
+}
+
+.variableListWrapper {
+    height: 100%;
+    padding: 0px 0 0px 0;
+    overflow: auto;
+}
+
+.variableContentWrapper {
+    height: 100%;
+    padding-left: 20px;
+    overflow: auto;
+}
+
+.variable-progress {
+    padding-left: 20px;
+}
+
+
+
+.history-event {
+    border-top-style: solid;
+    border-top-color: #f1f1f1;
+    border-top-width: 1px;
+}
+
+.history-event-body {
+    padding-left: 45px;
+    padding-top: 12px;
+    margin-bottom: 12px;
+}
+
+.history-event-icon {
+    position: absolute;
+    left: 12px;
+    font-size: 24px;
+}
+
+.history-event-summary {
+}
+
+.history-event-whowhen {
+    color: #bbb;
+}
+
+.history-event-summary h4 {
+    margin-top: 3px;
+}
+
+
+
+
+.user-list-container {
+    background: #f1f1f1;
+    margin-right: 12px;
+    margin-top: 12px;
+    border-radius: 4px;
+}
+
+.user-list {
+    padding-left: 0;
+    padding-bottom: 50px;
+}
+
+.user-list-item {
+    background: white;
+    margin-bottom: 10px;
+    padding: 6px;
+    border-radius: 4px;
+    cursor: move;
+    border-bottom: 1px solid #ccc;
+    z-index: 10;
+    width: 150px;
+}
+
+.tilt {
+    transform: rotate(3deg);
+    -moz-transform: rotate(3deg);
+    -webkit-transform: rotate(3deg);
+}
+
+
+.info-tip {
+    border-bottom: dotted 1px gray;
+}
+
+div.tooltip-inner {
+    max-width: 350px;
+}
+
+.form-horizontal .editable {
+    display: inline;
+}
+
+.form-readonly-control {
+    display: block;
+    width: 100%;
+    min-height: 34px;
+    padding: 6px 0px;
+    font-size: 14px;
+    line-height: 1.428571429;
+    color: #555;
+    vertical-align: middle;
+    background-color: #fff;
+}
+
+
+.bottom-drawer {
+    /*    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: 210px;
+*/
+    background-color: lightgray;
+}
+
+    .bottom-drawer .tab-pane {
+        padding: 20px;
+        overflow-y: scroll;
+        height: 200px;
+    }
+
+
+
+
+
+
+/* Dashboard */
+
+.widget .widget-icon {
+    background: #30426a;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    text-align: center;
+    vertical-align: middle;
+    margin-right: 15px;
+}
+
+.green {
+    background: #23ae89 !important;
+}
+
+.red {
+    background: #ae2323 !important;
+}
+
+.orange {
+    background: #d3a938 !important;
+}
+
+.blue {
+    background: #2361ae !important;
+}
+
+.widget .widget-content .title {
+    font-size: 28px;
+    display: block;
+}
+
+.widget .widget-content .widget-icon {
+    line-height: 66px;
+    color: #fff;
+    font-size: 30px;
+}
+
+.no-report-content {
+    padding: 20px;
+}
+
+.user-badge-email {
+    font-size: 8px;
+}
+
+.comment-file, .comment-variable {
+    font-size: 80%;
+    color: #777;
+}
+
+.note-breadcrumb {
+    padding: 0;
+    margin-bottom: 3px;
+    list-style: outside none none;
+    background-color: inherit;
+    border-radius: inherit;
+}
+
+input[type=checkbox].agreement-checkbox {
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(2); /* IE */
+  -moz-transform: scale(2); /* FF */
+  -webkit-transform: scale(2); /* Safari and Chrome */
+  -o-transform: scale(2); /* Opera */
+  padding: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+}

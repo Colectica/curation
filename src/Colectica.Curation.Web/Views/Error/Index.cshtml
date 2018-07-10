@@ -1,0 +1,42 @@
+﻿@model Colectica.Curation.Web.Models.ErrorModel
+
+@{
+    if (!Request.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+    }
+}
+
+<h1>@Model.HttpStatusCode</h1>
+
+<div>
+    It looks like something went wrong...
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Model.Message))
+{
+    <p>@Model.Message</p>
+}
+else
+{
+<div id="errorMessage">
+    @{
+        string message = null;
+        switch (Model.HttpStatusCode)
+        {
+            case 404:
+                message = "The requested content was not found";
+                break;
+            case 403:
+                message = string.Concat("Forbidden<br /> ", Model.Exception.Message);
+                break;
+            default:
+                message = string.Concat("The following server error was encountered:<br /> ", Model.Exception.Message);
+                break;
+        }
+    }
+
+    @Html.Raw(message)
+</div>
+
+}

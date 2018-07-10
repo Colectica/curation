@@ -1,0 +1,232 @@
+﻿@model Colectica.Curation.Web.Models.CatalogRecordIndexModel
+
+@{
+    Layout = "/Views/Shared/_PublicLayout.cshtml";
+    ViewBag.Title = "Index";
+    string yaleRoot = "http://isps.yale.edu";
+}
+
+<div id="breadcrumb" class="grid-12"><h2 class="element-invisible">You are here</h2><div class="breadcrumb"><a href="@yaleRoot/">Home</a><span class="tic"> > </span><a href="@yaleRoot/research">Research</a><span class="tic"> > </span>Data</div><div class="moved-sidenav" data-set="append-sidenav"></div></div>
+<div class="grid-12 region region-content" id="region-content">
+    <div class="region-inner region-content-inner">
+        <a id="main-content"></a>
+        <h1 class="title" id="page-title">
+            Data
+        </h1>
+        <section class="block block-block block-7 block-block-7 odd" id="block-block-7">
+            <div class="block-inner clearfix">
+                <h2 class="block-title">About Our Data</h2>
+
+                <div class="content clearfix">
+                    <p>Welcome to the <a href="http://isps.yale.edu/research/data/about">ISPS Data Archive</a>!</p>
+                    <p>The majority of digital content in the ISPS Data Archive currently consists of social science research data from experiments, program files with the code for analyzing these data, requisite documentation to use and understand the data, and associated files. Access to the ISPS Data Archive is provided at no cost and is granted for scholarship and research purposes only.</p>
+                    <p>When possible, Data is linked to <a href="http://isps.yale.edu/research/projects">Projects </a>and <a href="http://isps.yale.edu/research/publications">Publications</a>, via the <a href="http://isps.yale.edu/research">ISPS KnowledgeBase</a>.</p>
+                    <p>More about the <a href="http://isps.yale.edu/research/data/about">ISPS Data Archive</a>.</p>
+                </div>
+            </div>
+        </section>
+        <section class="block block-block block-24 block-block-24 even" id="block-block-24">
+            <div class="block-inner clearfix">
+                <h2 class="block-title">ISPS Data Archive: Terms of Use</h2>
+
+                <div class="content clearfix">
+                    <p>By using, contributing, and/or downloading files associated with scholarly studies available on the ISPS Data Archive, you agree to these terms and conditions.</p>
+                    <p>Please read the ISPS Data Archive <a href="http://isps.yale.edu/research/data/terms-of-use">Terms of Use.</a></p>
+                </div>
+            </div>
+        </section>
+        <div class="block block-views block--exp-data-page-1 block-views-exp-data-page-1 odd block-without-title" id="block-views-exp-data-page-1">
+            <div class="block-inner clearfix">
+
+                <div class="content clearfix">
+                    @using (Html.BeginForm("Index","Public"))
+                    {
+                        <div>
+                            <div class="views-exposed-form">
+                                <div class="views-exposed-widgets clearfix">
+                                    <div id="edit-pi-wrapper" class="views-exposed-widget views-widget-filter-field_data_pi_target_id">
+                                        <label for="edit-pi">
+                                            Author
+                                        </label>
+                                        <div class="views-widget">
+                                            <div class="form-item form-type-select form-item-pi">
+                                                @Html.DropDownListFor(x => Model.pi, Model.pi_option, "- All -", new {@id="edit-pi" , @class="form-select" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="edit-field-data-subject-tid-wrapper" class="views-exposed-widget views-widget-filter-field_data_subject_tid">
+                                        <label for="edit-field-data-subject-tid">
+                                            Discipline
+                                        </label>
+                                        <div class="views-widget">
+                                            <div class="form-item form-type-select form-item-field-data-subject-tid">
+                                                <select id="edit-field-data-subject-tid" name="field_data_subject_tid" class="form-select">
+                                                    <option value="All" selected="selected">- Any -</option>
+                                                    <option value="American Studies">American Studies</option>
+                                                    <option value="Bioethics">Bioethics</option>
+                                                    <option value="Economics">Economics</option>
+                                                    <option value="History">History</option>
+                                                    <option value="Interdisciplinary">Interdisciplinary</option>
+                                                    <option value="Law">Law</option>
+                                                    <option value="Management">Management</option>
+                                                    <option value="Medicine">Medicine</option>
+                                                    <option value="Political Science">Political Science</option>
+                                                    <option value="Psychology">Psychology</option>
+                                                    <option value="Public Health">Public Health</option>
+                                                    <option value="Sociology">Sociology</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="edit-keywords-wrapper" class="views-exposed-widget views-widget-filter-field_data_keywords_tid">
+                                        <label for="edit-keywords">
+                                            Keywords
+                                        </label>
+                                        <div class="views-widget">
+                                            <div class="form-item form-type-select form-item-keywords">
+                                                @Html.DropDownListFor(x => Model.keywords, Model.keywords_option, "- All -", new {@id="edit-keywords", @class="form-select" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="edit-policy-area-wrapper" class="views-exposed-widget views-widget-filter-field_data_policy_area_tid">
+                                        <label for="edit-policy-area">
+                                            Area of Study
+                                        </label>
+                                        <div class="views-widget">
+                                            <div class="form-item form-type-select form-item-policy-area">
+                                                <select id="edit-policy-area" name="policy_area" class="form-select">
+                                                    <option value="All" selected="selected">- Any -</option>
+                                                    <option value="Civil Society & the State">Civil Society &amp; the State</option>
+                                                    <option value="Criminal Justice">Criminal Justice</option>
+                                                    <option value="Education">Education</option>
+                                                    <option value="Energy & Environment">Energy &amp; Environment</option>
+                                                    <option value="Federal Budget">Federal Budget</option>
+                                                    <option value="Federal Government">Federal Government</option>
+                                                    <option value="Food & Agriculture">Food &amp; Agriculture</option>
+                                                    <option value="Governance & Democratic Process">Governance &amp; Democratic Process</option>
+                                                    <option value="Health">Health</option>
+                                                    <option value="Immigration">Immigration</option>
+                                                    <option value="International Affairs">International Affairs</option>
+                                                    <option value="Labor & Work">Labor &amp; Work</option>
+                                                    <option value="Macroeconomic Policy & Economic Growth">Macroeconomic Policy &amp; Economic Growth</option>
+                                                    <option value="Methodology">Methodology</option>
+                                                    <option value="Microeconomics">Microeconomics</option>
+                                                    <option value="National Security & Defense">National Security &amp; Defense</option>
+                                                    <option value="Political Behavior">Political Behavior</option>
+                                                    <option value="Poverty & Inequality">Poverty &amp; Inequality</option>
+                                                    <option value="Race, Ethnicity & Gender">Race, Ethnicity &amp; Gender</option>
+                                                    <option value="Regulation">Regulation</option>
+                                                    <option value="Retirement Security & Aging">Retirement Security &amp; Aging</option>
+                                                    <option value="Science & Technology">Science &amp; Technology</option>
+                                                    <option value="State & Local">State &amp; Local</option>
+                                                    <option value="Taxation">Taxation</option>
+                                                    <option value="Urban & Housing Policy">Urban &amp; Housing Policy</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="edit-field-data-location-tid-wrapper" class="views-exposed-widget views-widget-filter-field_data_location_tid">
+                                        <label for="edit-field-data-location-tid">
+                                            Location
+                                        </label>
+                                        <div class="views-widget">
+                                            <div class="form-item form-type-select form-item-field-data-location-tid">
+                                                @Html.DropDownListFor(x => Model.field_data_location_tid, Model.field_data_location_option, "- All -", new { @id="edit-field-data-location-tid", @class="form-select"})
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="edit-archived-wrapper" class="views-exposed-widget views-widget-filter-field_data_archive_date_value">
+                                        <label for="edit-archived">
+                                            Year
+                                        </label>
+                                        <div class="views-widget">
+                                            <div id="edit-field-data-archive-date-value-value-wrapper">
+                                                <div id="edit-field-data-archive-date-value-value-inside-wrapper">
+                                                    <div class="container-inline-date">
+                                                        <div class="form-item form-type-date-select form-item-archived-value">
+                                                            <div id="edit-archived-value" class="date-padding clearfix">
+                                                                <div class="form-item form-type-select form-item-archived-value-year">
+                                                                    <label class="element-invisible" for="edit-archived-value-year">Year </label>
+                                                                    <div class="date-year">
+                                                                        @Html.DropDownListFor(x => Model.archived_value_year, Model.archived_value_year_option, "- All -", new { @id="edit-archived-value-year", @class="date-year form-select" })
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="edit-research-design-wrapper" class="views-exposed-widget views-widget-filter-field_data_research_design_tid">
+                                        <label for="edit-research-design">
+                                            Research design
+                                        </label>
+                                        <div class="views-widget">
+                                            <div class="form-item form-type-select form-item-research-design">
+                                                @Html.DropDownListFor(x => Model.research_design, Model.research_design_option, "- All -", new {@id="edit-research-design", @class="form-select" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="views-exposed-widget views-submit-button">
+                                        <input type="submit" id="edit-submit-data" name="" value="Search" class="form-submit" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="block block-system block-main block-system-main even block-without-title" id="block-system-main">
+            <div class="block-inner clearfix">
+
+                <div class="content clearfix">
+                    <div class="view view-data view-id-data view-display-id-page_1 view-dom-id-eebef21afdac2634f1db776fdc301a5d">
+
+
+
+                        <div class="view-content">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">
+                                            <a href="/research/data?pi=All&amp;field_data_subject_tid=All&amp;keywords=All&amp;policy-area=All&amp;field_data_location_tid=All&amp;archived%5Bvalue%5D&amp;research-design=All&amp;order=title&amp;sort=asc" title="sort by Title" class="active">Title</a>
+                                        </th>
+                                        <th class="views-field views-field-field-data-authors" scope="col">
+                                            <a href="/research/data?pi=All&amp;field_data_subject_tid=All&amp;keywords=All&amp;policy-area=All&amp;field_data_location_tid=All&amp;archived%5Bvalue%5D&amp;research-design=All&amp;order=field_data_authors&amp;sort=asc" title="sort by Author(s)" class="active">Author(s)</a>
+                                        </th>
+                                        <th scope="col">
+                                            <a href="/research/data?pi=All&amp;field_data_subject_tid=All&amp;keywords=All&amp;policy-area=All&amp;field_data_location_tid=All&amp;archived%5Bvalue%5D&amp;research-design=All&amp;order=field_data_archive_date&amp;sort=asc" title="sort by Year archived" class="active">Year archived<img typeof="foaf:Image" src="http://isps.yale.edu/misc/arrow-asc.png" width="13" height="13" alt="sort ascending" title="sort ascending" /></a>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var record in Model.records)
+                                    {
+                                        <tr class="odd views-row-first">
+                                            <td>
+                                                <a href="/research/data/@record.Number?.ToLower()">@record.Title</a>
+                                            </td>
+                                            <td class="views-field views-field-field-data-authors">
+                                                <p>@record.AuthorsText</p>
+                                            </td>
+                                            <td>
+                                                @if (record.ArchiveDate != null && record.ArchiveDate.HasValue)
+                                                {
+                                                    <span class="date-display-single" property="dc:date" datatype="xsd:dateTime" content="2016-02-29T00:00:00-05:00">@record.ArchiveDate?.Value.Year</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,115 @@
+.logo-img {
+float:left;
+padding-right: 20px;
+}
+.breadcrumb {
+//visibility: hidden;
+margin-bottom: 0em;
+}
+/** Mobile menu bug **/
+@media screen and (max-width:979px){
+#superfish-1{
+flex-flow:row wrap;
+}
+#superfish-1 li{
+width:100%;
+}}
+
+/*people styles */
+.view-team-directory img {
+float:left; 
+padding: 0px 10px 15px;
+}
+.views-field-field-team-member-photo{
+float:left; 
+padding: 20px 20px 20px 0px;
+}
+.field-name-field-team-member-creds {
+font-style: italic;
+}
+.view-team-directory h2 {
+font-family: serif;
+font-size: 1em;
+}
+.field-name-field-team-member-photo {
+float:left;
+padding: 0px 20px 0px 0px;
+}
+
+/*.site-name {
+float:right;
+}
+.site-name-slogan {
+float:right;
+}
+*/
+
+h1.site-name, h2.site-name {
+   margin-bottom: 0.1em;
+    margin-top: 0.5em;
+}
+h6.site-slogan {
+font-size: 1em;
+font-family: "OpenSansRegular",Arial,Helvetica,sans-serif;
+text-transform: uppercase;
+color: #608ab7;
+weight: 400;
+padding-bottom: .08em;
+}
+
+.page-research-publications #page-title, .page-research-data #page-title, .page-research-projects #page-title  {
+color: #000000 !important;
+font-weight: normal;
+}
+
+.field-name-field-data-related-publications, .field-name-field-data-related-projects {
+background-color: #accfe7;
+padding-left: 30px;
+}
+
+.field-name-field-data-related-publications a, .field-name-field-data-related-projects a {
+color: #4d81b4;
+font-weight: bold;
+}
+
+//#isps-logo {		
+//background-size: 157px 108px;		
+//width: 157px;		
+//height: 108px;		
+//}		
+a.read-more {		
+    font-family: "TheSans-Caps";		
+    font-weight: 400;		
+    font-size: 0.944em;		
+    text-transform: lowercase;		
+    letter-spacing: 0.03em;		
+    color: #222222;		
+    padding: 10px 24px;		
+    border: 1px solid #7d7d7d;		
+    text-decoration: none;		
+}		
+a.read-more:hover {		
+    color: #fff;		
+    background-color: #286dc0;		
+    border-color: transparent;		
+    text-decoration: none;		
+}		
+.field-name-field-event-image .floatright img {		
+max-width: 100%;		
+}		
+.label-inline {		
+display: inline;		
+}
+
+.copyright i {
+display:none;
+}
+
+/* Remove underline on read more button for areas-of-study page */
+.view-display-id-page p.no-underline a {
+    text-decoration: none;
+}
+
+.view-display-id-page p a {
+    text-decoration: none;
+}

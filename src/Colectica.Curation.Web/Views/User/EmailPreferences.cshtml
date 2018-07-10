@@ -1,0 +1,78 @@
+﻿@model Colectica.Curation.Web.Models.UserEmailPreferencesModel
+
+@{
+    ViewBag.Title = "Email Preferences";
+}
+
+@section breadcrumb
+{
+    <a href="/User/">&laquo; Users</a>
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+
+
+        <p>Choose which types of email notifications you will receive.</p>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NotifyOnCatalogRecordCreated, "Record Created", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.NotifyOnCatalogRecordCreated)
+                    @Html.ValidationMessageFor(model => model.NotifyOnCatalogRecordCreated, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NotifyOnCatalogRecordSubmittedForCuration, "Record Submitted for Curation", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.NotifyOnCatalogRecordSubmittedForCuration)
+                    @Html.ValidationMessageFor(model => model.NotifyOnCatalogRecordSubmittedForCuration, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NotifyOnAssignedToCatalogRecord, "Assigned to Record", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.NotifyOnAssignedToCatalogRecord)
+                    @Html.ValidationMessageFor(model => model.NotifyOnAssignedToCatalogRecord, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NotifyOnCatalogRecordPublishRequested, "Record Publication Requested", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.NotifyOnCatalogRecordPublishRequested)
+                    @Html.ValidationMessageFor(model => model.NotifyOnCatalogRecordPublishRequested, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NotifyOnCatalogRecordPublishedOrRejected, "Record Accepted or Rejected", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.NotifyOnCatalogRecordPublishedOrRejected)
+                    @Html.ValidationMessageFor(model => model.NotifyOnCatalogRecordPublishedOrRejected, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+
+    </div>
+}

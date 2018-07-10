@@ -1,0 +1,20 @@
+/* Styles for Site Backup */
+
+ul.ui-autocomplete {
+  width: 350px !important;
+  padding: 0;
+  border-bottom: none;
+}
+.ui-autocomplete li.ui-menu-item {
+  list-style-type: none;
+  border-bottom: 1px solid #ccc;
+}
+.ui-autocomplete li.ui-menu-item a {
+  display: block;
+  padding: 3px 0 3px 5px;
+  text-decoration: none;
+}
+.ui-autocomplete li.ui-menu-item a:hover {
+  background-color: #E0E0D8;
+  margin: 0;
+}

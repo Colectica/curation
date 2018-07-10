@@ -1,0 +1,159 @@
+﻿@model Colectica.Curation.Web.Models.SystemStatusModel
+
+<h2>Core Components</h2>
+<table class="table table-condensed">
+    <tr>
+        <th>Component</th>
+        <th>Status</th>
+        <th>Details</th>
+    </tr>
+    @foreach (var component in Model.Components)
+    {
+        <tr>
+            <td>@component.Name</td>
+
+            <td>
+                @if (component.IsWorking)
+                {
+                    <span class="label label-success">Working</span>
+                }
+                else
+                {
+                    <span class="label label-danger">Not working</span>
+                }
+            </td>
+            <td>
+                @component.Message
+            </td>
+        </tr>
+    }
+</table>
+
+<h2>Addins: Actions</h2>
+<table class="table table-condensed">
+    <tr>
+        <th>Addin</th>
+        <th>Status</th>
+        <th>Type</th>
+    </tr>
+
+    @foreach (var addin in Model.CreateCatalogRecordActions)
+    {
+        <tr>
+            <td>@addin.Name</td>
+            <td><span class="label label-success">Working</span></td>
+            <td>Create Catalog Record Action</td>
+        </tr>
+    }
+
+    @foreach (var addin in Model.SubmitForCurationActions)
+    {
+        <tr>
+            <td>@addin.Name</td>
+            <td><span class="label label-success">Working</span></td>
+            <td>Submit for Curation Action</td>
+        </tr>
+    }
+
+    @foreach (var addin in Model.FileActions)
+    {
+        <tr>
+            <td>@addin.Name</td>
+            <td><span class="label label-success">Working</span></td>
+            <td>File Action</td>
+        </tr>
+    }
+
+    @foreach (var addin in Model.ApplyMetadataUpdatesActions)
+    {
+        <tr>
+            <td>@addin.Name</td>
+            <td><span class="label label-success">Working</span></td>
+            <td>Apply Metadata Updates Action</td>
+        </tr>
+    }
+
+    @foreach (var addin in Model.CreatePreservationFormatsActions)
+    {
+        <tr>
+            <td>@addin.Name</td>
+            <td><span class="label label-success">Working</span></td>
+            <td>Create Preservation Formats Action</td>
+        </tr>
+    }
+
+    @foreach (var addin in Model.CreatePersistentIdentifiersActions)
+    {
+        <tr>
+            <td>@addin.Name</td>
+            <td><span class="label label-success">Working</span></td>
+            <td>Create Persistent Identifiers Action</td>
+        </tr>
+    }
+
+    @foreach (var addin in Model.FinalizeMetadataActions)
+    {
+        <tr>
+            <td>@addin.Name</td>
+            <td><span class="label label-success">Working</span></td>
+            <td>Finalize Metadata Action</td>
+        </tr>
+    }
+
+    @foreach (var addin in Model.PublishActions)
+    {
+        <tr>
+            <td>@addin.Name</td>
+            <td><span class="label label-success">Working</span></td>
+            <td>Publish Action</td>
+        </tr>
+    }
+
+
+</table>
+
+<h2>Addins: Curation Tasks</h2>
+<table class="table table-condensed">
+    <tr>
+        <th>Addin</th>
+        <th>Status</th>
+        <th>Type</th>
+    </tr>
+
+    @foreach (var addin in Model.TaskAddins)
+    {
+        <tr>
+            <td>@addin.Name</td>
+            <td><span class="label label-success">Working</span></td>
+            <td>Task</td>
+        </tr>
+    }
+</table>
+
+
+<h2>Addins: Editors</h2>
+<table class="table table-condensed">
+    <tr>
+        <th>Addin</th>
+        <th>Status</th>
+        <th>Type</th>
+    </tr>
+
+    @foreach (var addin in Model.CatalogRecordEditors)
+    {
+        <tr>
+            <td>@addin.Name</td>
+            <td><span class="label label-success">Working</span></td>
+            <td>Catalog Record Editor</td>
+        </tr>
+    }
+
+    @foreach (var addin in Model.ManagedFileEditors)
+    {
+        <tr>
+            <td>@addin.Name</td>
+            <td><span class="label label-success">Working</span></td>
+            <td>File Editor</td>
+        </tr>
+    }
+</table>

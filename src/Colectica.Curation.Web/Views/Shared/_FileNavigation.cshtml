@@ -1,0 +1,87 @@
+﻿@model Colectica.Curation.Common.ViewModels.IFileModel
+
+@{
+    var addinEditors = Colectica.Curation.Operations.MefConfig.AddinManager.AllFileEditors
+        .OrderBy(x => x.Weight);
+
+    string generalClass = string.Empty;
+    string reviewClass = string.Empty;
+    string notesClass = string.Empty;
+    
+    if (Request.Path.Contains("/General/"))
+    {
+        generalClass = "active";
+    }
+
+    
+    if (Request.Path.Contains("/Notes/"))
+    {
+        notesClass = "active";
+    }
+    
+    if (Request.Path.Contains("/Status"))
+    {
+        reviewClass = "active";
+    }
+
+    int taskCount = 0;
+    using (var db = Colectica.Curation.Data.ApplicationDbContext.Create())
+    {
+        taskCount = db.TaskStatuses.Where(x => x.File.Id == Model.File.Id).Count();
+    }
+}
+
+<ul class="nav nav-pills nav-wizard">
+    <li class="@generalClass">
+        @Html.ActionLink("General", "General", "File", new { id = Model.File.Id }, null)
+        <div class="nav-arrow"></div>
+    </li>
+
+    @foreach (var editor in addinEditors)
+    {
+        if (!editor.IsValidForFile(Model.File))
+        {
+            continue;
+        }
+
+        string url = editor.Url + Model.File.Id;
+        string activeClass = Request.Path.Contains(editor.Url) ? "active" : string.Empty;
+
+        <li class="@activeClass">
+            <div class="nav-wedge"></div>
+            <a class="" href="@url">@editor.Name</a>
+            <div class="nav-arrow"></div>
+        </li>
+    }
+
+    <li class="@notesClass">
+        <div class="nav-wedge"></div>
+        <a href="/File/Editor/Notes/@Model.File.Id">Notes</a>
+        <div class="nav-arrow"></div>
+    </li>
+
+    <li class="@reviewClass">
+        <div class="nav-wedge"></div>
+        <a href="/File/Status/@Model.File.Id">Review <span class="badge">@taskCount</span></a>
+    </li>
+
+    <li>
+        <div class="dropdown">
+            <button class="dropdown-toggle btn" data-toggle="dropdown" style="margin-top: 3px;">
+                <span class="glyphicon glyphicon-cog"></span> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                @if (Model.IsUserCurator || Model.IsUserApprover)
+                {
+                    <li>
+                        @Html.ActionLink("History", "History", "File", new { id = Model.File.Id }, null)
+                    </li>
+                }
+                <li>
+                    @Html.ActionLink("Revisions", "Revisions", "File", new { id = Model.File.Id }, null)
+                </li>
+            </ul>
+        </div>
+    </li>
+
+</ul>

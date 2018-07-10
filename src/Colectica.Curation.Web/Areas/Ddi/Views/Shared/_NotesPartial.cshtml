@@ -1,0 +1,50 @@
+﻿@model Colectica.Curation.Models.NotesModel
+
+<h2>Notes</h2>
+
+@if (Model.Comments.Count == 0)
+{
+    <p>Nobody has commented on this item yet.</p>
+}
+
+@foreach (var comment in Model.Comments)
+{
+    <div>
+        <blockquote>
+            <ol class="breadcrumb note-breadcrumb">
+                @if (comment.File != null)
+                {
+                    <li><span class="comment-file">@Html.ActionLink(comment.File.Name, "General", "File", new { id = comment.File.Id }, null)</span></li>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(comment.VariableName))
+                {
+                    <li><span class="comment-variable">@Html.ActionLink(comment.VariableName, "Editor", "Variables", new { id = comment.File.Id }, null)</span></li>
+                }
+            </ol>
+
+            <p>@comment.Text</p>
+            <small>
+                @comment.UserName - @comment.Timestamp.ToShortDateString()
+            </small>
+        </blockquote>
+
+        <hr />
+    </div>
+}
+
+
+<div id="progress" class="progress progress-striped active hidden">
+    <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+    </div>
+</div>
+
+<form role="form">
+    <div class="form-group">
+        <textarea class="form-control" id="text" name="text" data-bind="value: newNoteText"></textarea>
+    </div>
+
+    <button class="btn btn-lg btn-primary" id="new-note" data-bind="click: newNote">Add Comment</button>
+
+</form>
+

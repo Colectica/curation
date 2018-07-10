@@ -1,0 +1,318 @@
+﻿<!DOCTYPE html>
+
+@{ 
+    string yaleRoot = "http://isps.yale.edu";
+}
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--
+
+    GGGGGGGGGGGG      GGGGGGGGGGG               fGGGGGG
+      ;GGGGG.             GGGi                     GGGG
+        CGGGG:           GGG                       GGGG
+         lGGGGt         GGL                        GGGG
+          .GGGGC       GG:                         GGGG
+            GGGGG    .GG.        ;CGGGGGGL         GGGG          .LGGGGGGGL
+             GGGGG  iGG        GGG:   ,GGGG        GGGG        tGGf     ;GGGC
+              LGGGGfGG        GGGG     CGGG;       GGGG       GGGL       GGGGt
+               lGGGGL                  CGGG;       GGGG      CGGGCCCCCCCCCCCCC
+                GGGG                   GGGG,       GGGG      GGGG
+                GGGG             tCGG; CGGG,       GGGG      GGGG
+                GGGG          GGGG     CGGG.       GGGG      GGGGL
+                GGGG         GGGGC     CGGG.       GGGG      :GGGGC          :
+               ,GGGGG.       GGGGG:  .LGGGGG,.tG   GGGG        GGGGGGt,..,fGC
+          ,GGGGGGGGGGGGGGf    iGGGGGG   CGGGGC  GGGGGGGGGG       LGGGGGGGC
+
+    -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=10, minimum-scale=1, user-scalable=yes" />
+    <meta name="Generator" content="Drupal 7 (http://drupal.org)" />
+    <link rel="shortcut icon" href="~/Content/yale/isps-logo_2.png" type="image/png" />
+    <title>
+        Data
+        | Institution for Social and Policy Studies
+    </title>
+    <!--[if IEMobile]><meta http-equiv="cleartype" content="on" /><![endif]-->
+
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64" href="~/Content/yale/favicon.ico" type="image/vnd.microsoft.icon">
+    <link rel="icon" sizes="228x228" href="~/Content/yale/touch-icon-228.png">
+    <link rel="apple-touch-icon-precomposed" sizes="228x228" href="~/Content/yaletouch-icon-228.png">
+    <link href="~/Content/yale/system.base.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/yale/system.menus.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/yale/system.messages.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/yale/system.theme.css" rel="stylesheet" type="text/css" />
+
+    <link href="~/Content/yale/jquery.ui.core.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/yale/jquery.ui.theme.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/yale/jquery.ui.menu.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/yale/jquery.ui.autocomplete.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="~/Content/yale/ais.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/calendar_multiday.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/calendar_tooltips.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/comment.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/date.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/datepicker.1.7.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/field.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/mollom.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/node.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/search.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/site_backup.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/user.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/extlink.css?oubnb0" " rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/views.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/ckeditor.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+
+    <link href="~/Content/yale/colorbox_style.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/ctools.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/jquery.jscrollpane.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/ldap_servers.admin.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/panels.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/typogrify.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/custom_search.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/node_embed.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/isps.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/isps_in_the_news.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/font-awesome.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/superfish.css?oubnb0" rel="stylesheet" type="text/css" media="all" />
+
+    <link href="~/Content/yale/formalize.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="~/Content/yale/globalnew.css" rel="stylesheet" type="text/css" media="all" />
+
+    <link type="text/css" rel="stylesheet" href="~/Content/yale/css_injector_1.css?oubnb0" media="all" />
+    <link type="text/css" rel="stylesheet" href="~/Content/yale/css_injector_6.css?oubnb0" media="all" />
+
+    <!--[if (lt IE 9)&(!IEMobile)]>
+    <link type="text/css" rel="stylesheet" href="~/Content/yale/yalenew-default-wide-12.css?oubnb0" media="all" />
+    <![endif]-->
+    <!--[if gte IE 9]><!-->
+    <link type="text/css" rel="stylesheet" href="~/Content/yale/yalenew-default-fluid-12.css?oubnb0" media="all" />
+    <!--<![endif]-->
+    <!--[if gte IE 9]><!-->
+    <link type="text/css" rel="stylesheet" href="~/Content/yale/yalenew-default-narrow-12.css?oubnb0" media="all" />
+    <!--<![endif]-->
+    <!--[if gte IE 9]><!-->
+    <link type="text/css" rel="stylesheet" href="~/Content/yale/yalenew-default-wide-12.css?oubnb0" media="all" />
+    <!--<![endif]-->
+    <script type="text/javascript" src="~/Content/yale/respond.min.js?oubnb0"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript">
+<!--//--><![CDATA[//><!--
+window.jQuery || document.write("<script src='~/Content/yale/jquery.min.js'>\x3C/script>")
+//--><!]]>
+    </script>
+    <script type="text/javascript" src="~/Content/yale/jquery.once.js?v=1.2"></script>
+    <script type="text/javascript" src="~/Content/yale/drupal.js?oubnb0"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+<!--//--><![CDATA[//><!--
+window.jQuery.ui || document.write("<script src='~/Content/yale/jquery-ui.min.js'>\x3C/script>")
+//--><!]]>
+    </script>
+    <script type="text/javascript" src="~/Content/yale/jquery.bt.min.js?v=0.9.5-rc1"></script>
+    <script type="text/javascript" src="~/Content/yale/beautytips.min.js?v=7.x-2.x"></script>
+    <script type="text/javascript" src="~/Content/yale/excanvas.compiled.js?v=r3"></script>
+    <script type="text/javascript">
+<!--//--><![CDATA[//><!--
+Drupal.settings.ais = [{"name":"threshold-480","size":480},{"name":"threshold-768","size":768},{"name":"threshold-992","size":992},{"name":"threshold-1382","size":1382}];
+Drupal.settings.ais_method = "both-max";
+//--><!]]>
+    </script>
+    <script type="text/javascript" src="~/Content/yale/extlink.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/ais.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/jquery.colorbox-min.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/colorbox.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/colorbox_style.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/colorbox_load.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/colorbox_inline.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/jquery.jscrollpane.min.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/jquery.mousewheel.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/script.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/custom_search.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/googleanalytics.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/isps_common.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/jquery.hoverIntent.minified.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/sftouchscreen.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/superfish.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/superfish-drupal.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/jquery.formalize.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/omega-mediaqueries.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/modernizr.min.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/jquery.fitted.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/fastclick.min.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/appendAround.min.js?oubnb0"></script>
+    <script type="text/javascript" src="~/Content/yale/scripts.js?oubnb0"></script>
+    <script type="text/javascript">
+<!--//--><![CDATA[//><!--
+jQuery.extend(Drupal.settings, {"basePath":"\/","pathPrefix":"","ajaxPageState":{"theme":"yalenew_wide","theme_token":"73-KAgwN7AkfkP5AouNV3M84vgNskpVRT30ntgGFi_g","js":{"sites\/all\/themes\/yalenew_base\/js\/jcaption.min.js":1,"sites\/all\/libraries\/respondjs\/respond.min.js":1,"\/\/ajax.googleapis.com\/ajax\/libs\/jquery\/1.8.3\/jquery.min.js":1,"0":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"\/\/ajax.googleapis.com\/ajax\/libs\/jqueryui\/1.10.2\/jquery-ui.min.js":1,"1":1,"sites\/all\/modules\/contrib\/beautytips\/js\/jquery.bt.min.js":1,"sites\/all\/modules\/contrib\/beautytips\/js\/beautytips.min.js":1,"sites\/all\/modules\/contrib\/beautytips\/other_libs\/excanvas_r3\/excanvas.compiled.js":1,"2":1,"sites\/all\/modules\/contrib\/extlink\/extlink.js":1,"ais\/assets\/js\/ais.js":1,"sites\/all\/libraries\/colorbox\/jquery.colorbox-min.js":1,"sites\/all\/modules\/contrib\/colorbox\/js\/colorbox.js":1,"sites\/all\/modules\/contrib\/colorbox\/styles\/default\/colorbox_style.js":1,"sites\/all\/modules\/contrib\/colorbox\/js\/colorbox_load.js":1,"sites\/all\/modules\/contrib\/colorbox\/js\/colorbox_inline.js":1,"sites\/all\/modules\/contrib\/jscrollpane\/js\/jquery.jscrollpane.min.js":1,"sites\/all\/modules\/contrib\/jscrollpane\/js\/jquery.mousewheel.js":1,"sites\/all\/modules\/contrib\/jscrollpane\/js\/script.js":1,"sites\/all\/modules\/contrib\/custom_search\/js\/custom_search.js":1,"sites\/all\/modules\/contrib\/google_analytics\/googleanalytics.js":1,"3":1,"sites\/all\/modules\/features\/isps\/isps_common\/js\/isps_common.js":1,"sites\/all\/modules\/contrib\/beautytips\/other_libs\/jquery.hoverIntent.minified.js":1,"sites\/all\/libraries\/superfish\/jquery.hoverIntent.minified.js":1,"sites\/all\/libraries\/superfish\/sftouchscreen.js":1,"sites\/all\/libraries\/superfish\/superfish.js":1,"sites\/all\/modules\/contrib\/superfish\/superfish.js":1,"sites\/all\/themes\/omega\/omega\/js\/jquery.formalize.js":1,"sites\/all\/themes\/omega\/omega\/js\/omega-mediaqueries.js":1,"sites\/all\/themes\/yalenew_base\/js\/modernizr.min.js":1,"sites\/all\/themes\/yalenew_base\/js\/jquery.fitted.js":1,"sites\/all\/themes\/yalenew_base\/js\/fastclick.min.js":1,"sites\/all\/themes\/yalenew_base\/js\/appendAround.min.js":1,"sites\/all\/themes\/yalenew_base\/js\/scripts.js":1},"css":{"modules\/system\/system.base.css":1,"modules\/system\/system.menus.css":1,"modules\/system\/system.messages.css":1,"modules\/system\/system.theme.css":1,"misc\/ui\/jquery.ui.core.css":1,"misc\/ui\/jquery.ui.theme.css":1,"misc\/ui\/jquery.ui.menu.css":1,"misc\/ui\/jquery.ui.autocomplete.css":1,"sites\/all\/modules\/contrib\/ais\/assets\/css\/ais.css":1,"sites\/all\/modules\/contrib\/calendar\/css\/calendar_multiday.css":1,"sites\/all\/modules\/contrib\/calendar_tooltips\/calendar_tooltips.css":1,"modules\/comment\/comment.css":1,"sites\/all\/modules\/contrib\/date\/date_api\/date.css":1,"sites\/all\/modules\/contrib\/date\/date_popup\/themes\/datepicker.1.7.css":1,"modules\/field\/theme\/field.css":1,"sites\/all\/modules\/contrib\/mollom\/mollom.css":1,"modules\/node\/node.css":1,"modules\/search\/search.css":1,"sites\/all\/modules\/custom\/site_backup\/site_backup.css":1,"modules\/user\/user.css":1,"sites\/all\/modules\/contrib\/extlink\/extlink.css":1,"sites\/all\/modules\/contrib\/views\/css\/views.css":1,"sites\/all\/modules\/contrib\/ckeditor\/css\/ckeditor.css":1,"sites\/all\/modules\/contrib\/colorbox\/styles\/default\/colorbox_style.css":1,"sites\/all\/modules\/contrib\/ctools\/css\/ctools.css":1,"sites\/all\/modules\/contrib\/jscrollpane\/css\/jquery.jscrollpane.css":1,"sites\/all\/modules\/contrib\/ldap\/ldap_servers\/ldap_servers.admin.css":1,"sites\/all\/modules\/contrib\/panels\/css\/panels.css":1,"sites\/all\/modules\/contrib\/typogrify\/typogrify.css":1,"sites\/all\/modules\/contrib\/custom_search\/custom_search.css":1,"sites\/all\/modules\/features\/isps\/isps_common\/stylesheets\/research.css":1,"sites\/all\/modules\/contrib\/node_embed\/plugins\/node_embed\/node_embed.css":1,"sites\/all\/modules\/features\/isps\/isps_common\/stylesheets\/common.css":1,"sites\/all\/modules\/features\/isps\/isps_common\/stylesheets\/isps.css":1,"sites\/all\/modules\/features\/isps\/isps_in_the_news\/css\/isps_in_the_news.css":1,"sites\/all\/libraries\/fontawesome\/css\/font-awesome.css":1,"sites\/all\/libraries\/superfish\/css\/superfish.css":1,"sites\/all\/themes\/omega\/omega\/css\/formalize.css":1,"sites\/all\/themes\/yalenew_base\/css\/globalnew.css":1,"public:\/\/css_injector\/css_injector_1.css":1,"public:\/\/css_injector\/css_injector_6.css":1,"ie::wide::sites\/all\/themes\/yalenew_base\/css\/grid\/yalenew_default\/wide\/yalenew-default-wide-12.css":1,"sites\/all\/themes\/yalenew_base\/css\/grid\/yalenew_default\/fluid\/yalenew-default-fluid-12.css":1,"sites\/all\/themes\/yalenew_base\/css\/grid\/yalenew_default\/narrow\/yalenew-default-narrow-12.css":1,"sites\/all\/themes\/yalenew_base\/css\/grid\/yalenew_default\/wide\/yalenew-default-wide-12.css":1}},"colorbox":{"opacity":"0.85","current":"{current} of {total}","previous":"\u00ab Prev","next":"Next \u00bb","close":"Close","maxWidth":"98%","maxHeight":"98%","fixed":true,"mobiledetect":true,"mobiledevicewidth":"480px","colorbox_original_image":null},"jScrollPane":{"class":".scroll-pane"},"custom_search":{"form_target":"_self","solr":0},"urlIsAjaxTrusted":{"\/research\/data":true},"extlink":{"extTarget":"_blank","extClass":0,"extLabel":"(link is external)","extImgClass":0,"extSubdomains":0,"extExclude":"","extInclude":"","extCssExclude":"","extCssExplicit":"","extAlert":0,"extAlertText":"This link will take you to an external web site. We are not responsible for their content.","mailtoClass":0,"mailtoLabel":"(link sends e-mail)"},"googleanalytics":{"trackOutbound":1,"trackMailto":1,"trackDownload":1,"trackDownloadExtensions":"7z|aac|arc|arj|asf|asx|avi|bin|csv|doc(x|m)?|dot(x|m)?|exe|flv|gif|gz|gzip|hqx|jar|jpe?g|js|mp(2|3|4|e?g)|mov(ie)?|msi|msp|pdf|phps|png|ppt(x|m)?|pot(x|m)?|pps(x|m)?|ppam|sld(x|m)?|thmx|qtm?|ra(m|r)?|sea|sit|tar|tgz|torrent|txt|wav|wma|wmv|wpd|xls(x|m|b)?|xlt(x|m)|xlam|xml|z|zip","trackColorbox":1,"trackDomainMode":"1","trackCrossDomains":["isps.research\u200b.yale.edu","isps.yale.edu"]},"beautytipStyles":{"default":{"fill":"#F7F7F7","padding":8,"strokeStyle":"#B7B7B7","cornerRadius":0,"cssStyles":{"fontFamily":"\u0026quot;lucida grande\u0026quot;,tahoma,verdana,arial,sans-serif","fontSize":"11px"}},"plain":[],"netflix":{"positions":["right","left"],"fill":"#FFF","padding":5,"shadow":true,"shadowBlur":12,"strokeStyle":"#B9090B","spikeLength":50,"spikeGirth":60,"cornerRadius":10,"centerPointY":0.1,"overlap":-8,"cssStyles":{"fontSize":"12px","fontFamily":"arial,helvetica,sans-serif"}},"facebook":{"fill":"#F7F7F7","padding":8,"strokeStyle":"#B7B7B7","cornerRadius":0,"cssStyles":{"fontFamily":"\u0022lucida grande\u0022,tahoma,verdana,arial,sans-serif","fontSize":"11px"}},"transparent":{"fill":"rgba(0, 0, 0, .8)","padding":20,"strokeStyle":"#CC0","strokeWidth":3,"spikeLength":40,"spikeGirth":40,"cornerRadius":40,"cssStyles":{"color":"#FFF","fontWeight":"bold"}},"big-green":{"fill":"#00FF4E","padding":20,"strokeWidth":0,"spikeLength":40,"spikeGirth":40,"cornerRadius":15,"cssStyles":{"fontFamily":"\u0022lucida grande\u0022,tahoma,verdana,arial,sans-serif","fontSize":"14px"}},"google-maps":{"positions":["top","bottom"],"fill":"#FFF","padding":15,"strokeStyle":"#ABABAB","strokeWidth":1,"spikeLength":65,"spikeGirth":40,"cornerRadius":25,"centerPointX":0.9,"cssStyles":[]},"hulu":{"fill":"#F4F4F4","strokeStyle":"#666666","spikeLength":20,"spikeGirth":10,"width":350,"overlap":0,"centerPointY":1,"cornerRadius":0,"cssStyles":{"fontFamily":"\u0022Lucida Grande\u0022,Helvetica,Arial,Verdana,sans-serif","fontSize":"12px","padding":"10px 14px"},"shadow":true,"shadowColor":"rgba(0,0,0,.5)","shadowBlur":8,"shadowOffsetX":4,"shadowOffsetY":4}},"beautytips":{"calendar-tooltips":{"cssSelect":".calendar-calendar .mini-day-on a, .calendar-calendar .day a, .calendar-calendar .mini-day-on span, .calendar-calendar .day span","contentSelector":"$(this).next().html()","hoverIntentOpts":{"timeout":"3000","interval":0},"style":"default","list":["contentSelector","hoverIntentOpts"]}},"superfish":{"1":{"id":"1","sf":{"animation":{"opacity":"show","height":"show"},"speed":"fast","autoArrows":false,"dropShadows":false},"plugins":{"touchscreen":{"behaviour":"0","mode":"useragent_predefined"}}}},"omega":{"layouts":{"primary":"wide","order":["fluid","narrow","wide"],"queries":{"fluid":"all and (max-width: 739px)","narrow":"all and (min-width: 740px) and (max-width: 1024px)","wide":"all and (min-width: 1025px)"}}}});
+//--><!]]>
+    </script>
+</head>
+<body class="html not-front not-logged-in no-sidebars page-node page-node- page-node-22096 node-type-data yalenew-wide context-research nav-blue-dk block-carbon nav-serif block-font-serif block-outline">
+    <div id="skip-link">
+        <a href="#main-content" class="element-invisible element-focusable">Skip to main content</a>
+    </div>
+    <div class="region region-page-top" id="region-page-top">
+        <div class="region-inner region-page-top-inner">
+        </div>
+    </div>
+
+
+    <div class="page clearfix" id="page">
+        <header id="section-header" class="section section-header">
+            <div id="zone-topper-wrapper" class="zone-wrapper zone-topper-wrapper clearfix">
+                <div id="zone-topper" class="zone zone-topper clearfix container-12">
+
+                    <aside class="grid-3 region region-topper-first" id="region-topper-first">
+                        <div class="region-inner region-topper-first-inner">
+                            <div class="topper-logo">
+                                <a href="http://www.yale.edu/" class="y-icons y-yale y-univ"><span class="element-invisible">Yale University</span></a>
+                                <a href="#" role="link" id="nav-toggle" class="nav-ready"><span class="element-invisible">Navigation</span></a>
+                            </div>
+                        </div>
+                    </aside>
+                    <div class="grid-9 region region-topper-second" id="region-topper-second">
+                        <div class="region-inner region-topper-second-inner">
+                            <div class="block block-search block-form block-search-form odd block-without-title" id="block-search-form">
+                                <div class="block-inner clearfix">
+
+                                    <div class="content clearfix">
+                                        <form class="search-form" role="search" action="/research/data/d134" method="post" id="search-block-form" accept-charset="UTF-8">
+                                            <div>
+                                                <div class="container-inline">
+                                                    <h2 class="element-invisible">Search form</h2>
+                                                    <div class="form-item form-type-textfield form-item-search-block-form">
+                                                        <label for="edit-search-block-form--2"><i class="fa fa-search"></i> </label>
+                                                        <input title="Enter the terms you wish to search for." class="custom-search-box form-text" placeholder="Search this site" type="text" id="edit-search-block-form--2" name="search_block_form" value="" size="15" maxlength="128" />
+                                                    </div>
+                                                    <div class="form-actions form-wrapper" id="edit-actions"><input style="display:none;" type="submit" id="edit-submit" name="op" value="" class="form-submit" /></div><input type="hidden" name="form_build_id" value="form-RfRIUV3kPUVqwDaRFl4KWK2fKarouDmHY-ndTdmXx5M" />
+                                                    <input type="hidden" name="form_id" value="search_block_form" />
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="block block-menu block-menu-banner-menu block-menu-menu-banner-menu even block-without-title" id="block-menu-menu-banner-menu">
+                                <div class="block-inner clearfix">
+
+                                    <div class="content clearfix">
+                                        <ul class="menu">
+                                            <li class="first leaf menu-calendar"><a href="http://calendar.yale.edu/cal/opa" title=""><span>Calendar</span></a></li>
+                                            <li class="last leaf menu-yale-directories"><a href="http://www.yale.edu/directories" title=""><span>Yale Directories</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><div id="zone-branding-wrapper" class="zone-wrapper zone-branding-wrapper clearfix">
+                <div id="zone-branding" class="zone zone-branding clearfix container-12">
+                    <div class="grid-12 region region-branding" id="region-branding">
+                        <div class="region-inner region-branding-inner">
+                            <div class="branding-data clearfix">
+                                <div class="logo-img">
+                                    <a href="@yaleRoot/"
+                                       title="Institution for Social and Policy Studies"><span id="isps-logo"></span></a>
+                                </div>
+                                <div id="title-slogan-area">
+                                    <h2 class="site-name">
+                                        <a href="@yaleRoot/" title="Home">Institution for Social and Policy Studies</a>
+                                    </h2>
+                                    <h6 class="site-slogan">
+                                        Advancing Research  •  Shaping Policy  •  Developing Leaders
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section id="section-content" class="section section-content">
+            <div id="section-content-inner">
+                <div id="zone-menu-wrapper" class="zone-wrapper zone-menu-wrapper clearfix yale-wide-menu">
+                    <div id="zone-menu" class="zone zone-menu clearfix container-12">
+                        <div class="grid-12 region region-menu" id="region-menu">
+                            <div class="region-inner region-menu-inner">
+                                <div class="block block-superfish block-1 block-superfish-1 odd block-without-title" id="block-superfish-1">
+                                    <div class="block-inner clearfix">
+
+                                        <div class="content clearfix">
+                                            <ul id="superfish-1" class="menu sf-menu sf-main-menu sf-horizontal sf-style-none sf-total-items-6 sf-parent-items-6 sf-single-items-0"><li id="menu-3226-1" class="active-trail first odd sf-item-1 sf-depth-1 sf-total-children-5 sf-parent-children-2 sf-single-children-3 menuparent"><a href="@yaleRoot/research" class="sf-depth-1 menuparent">Research</a><ul><li id="menu-3228-1" class="active-trail first odd sf-item-1 sf-depth-2 sf-no-children"><a href="/research/data" class="active sf-depth-2">Data</a></li><li id="menu-3229-1" class="middle even sf-item-2 sf-depth-2 sf-no-children"><a href="@yaleRoot/research/projects" class="sf-depth-2">Projects</a></li><li id="menu-3227-1" class="middle odd sf-item-3 sf-depth-2 sf-no-children"><a href="@yaleRoot/research/publications" class="sf-depth-2">Publications</a></li><li id="menu-964-1" class="middle even sf-item-4 sf-depth-2 sf-total-children-3 sf-parent-children-0 sf-single-children-3 menuparent"><a href="@yaleRoot/field-experiments-initiative" class="sf-depth-2 menuparent">Field Experiments Initiative</a><ul><li id="menu-967-1" class="first odd sf-item-1 sf-depth-3 sf-no-children"><a href="@yaleRoot/content/isps-grant-application" class="sf-depth-3">ISPS Grant Application</a></li><li id="menu-966-1" class="middle even sf-item-2 sf-depth-3 sf-no-children"><a href="@yaleRoot/node/16698" class="sf-depth-3">Lessons from GOTV experiments</a></li><li id="menu-965-1" class="last odd sf-item-3 sf-depth-3 sf-no-children"><a href="@yaleRoot/node/16697" class="sf-depth-3">Why randomize?</a></li></ul></li><li id="menu-757-1" class="last odd sf-item-5 sf-depth-2"><a href="@yaleRoot/research/areas-of-study" class="sf-depth-2">Areas of Study</a></li></ul></li><li id="menu-638-1" class="middle even sf-item-2 sf-depth-1 sf-total-children-3 sf-parent-children-0 sf-single-children-3 menuparent"><a href="@yaleRoot/events" class="sf-depth-1 menuparent">Events</a><ul><li id="menu-1935-1" class="first odd sf-item-1 sf-depth-2 sf-no-children"><a href="http://calendar.yale.edu/cal/isps" class="sf-depth-2">Calendar</a></li><li id="menu-3779-1" class="middle even sf-item-2 sf-depth-2 sf-no-children"><a href="@yaleRoot/isps-supported-seminars" class="sf-depth-2">ISPS Supported Seminars</a></li><li id="menu-3897-1" class="last odd sf-item-3 sf-depth-2 sf-no-children"><a href="@yaleRoot/past-conferences" class="sf-depth-2">Past Conferences</a></li></ul></li><li id="menu-3033-1" class="middle odd sf-item-3 sf-depth-1 sf-total-children-4 sf-parent-children-0 sf-single-children-4 menuparent"><a href="@yaleRoot/news/latest" class="sf-depth-1 menuparent">News</a><ul><li id="menu-1045-1" class="first odd sf-item-1 sf-depth-2 sf-no-children"><a href="@yaleRoot/news/all" class="sf-depth-2">Latest News</a></li><li id="menu-850-1" class="middle even sf-item-2 sf-depth-2 sf-no-children"><a href="@yaleRoot/news/blog" class="sf-depth-2">Lux et Data: ISPS Blog</a></li><li id="menu-1232-1" class="middle odd sf-item-3 sf-depth-2 sf-no-children"><a href="@yaleRoot/newsletter-archive" class="sf-depth-2">Newsletter Archive</a></li><li id="menu-3030-1" class="last even sf-item-4 sf-depth-2 sf-no-children"><a href="@yaleRoot/isps-media" class="sf-depth-2">ISPS Media</a></li></ul></li><li id="menu-3217-1" class="middle even sf-item-4 sf-depth-1 sf-total-children-10 sf-parent-children-0 sf-single-children-10 menuparent"><a href="@yaleRoot/node/21878" class="sf-depth-1 menuparent">Team</a><ul><li id="menu-838-1" class="first odd sf-item-1 sf-depth-2 sf-no-children"><a href="@yaleRoot/team/jacob-s-hacker" class="sf-depth-2">Director</a></li><li id="menu-4146-1" class="middle even sf-item-2 sf-depth-2 sf-no-children"><a href="@yaleRoot/team/directory" class="sf-depth-2">Team Directory</a></li><li id="menu-3218-1" class="middle odd sf-item-3 sf-depth-2 sf-no-children"><a href="@yaleRoot/team/directory/resident-faculty-fellow" class="sf-depth-2">Resident Faculty Fellow</a></li><li id="menu-3220-1" class="middle even sf-item-4 sf-depth-2 sf-no-children"><a href="@yaleRoot/team/directory/faculty-fellow" class="sf-depth-2">Faculty Fellow</a></li><li id="menu-3221-1" class="middle odd sf-item-5 sf-depth-2 sf-no-children"><a href="@yaleRoot/team/directory/resident-postdoctoral-fellow" class="sf-depth-2">Resident Postdoctoral Fellow</a></li><li id="menu-3219-1" class="middle even sf-item-6 sf-depth-2 sf-no-children"><a href="@yaleRoot/team/directory/graduate-policy-fellow" class="sf-depth-2">Graduate Policy Fellow</a></li><li id="menu-3222-1" class="middle odd sf-item-7 sf-depth-2 sf-no-children"><a href="@yaleRoot/team/directory/undergraduate-directors-fellow" class="sf-depth-2">Undergraduate Director&#039;s Fellow</a></li><li id="menu-3223-1" class="middle even sf-item-8 sf-depth-2 sf-no-children"><a href="@yaleRoot/team/directory/graduate-student" class="sf-depth-2">Graduate Student</a></li><li id="menu-3224-1" class="middle odd sf-item-9 sf-depth-2 sf-no-children"><a href="@yaleRoot/team/directory/affiliated-fellow" class="sf-depth-2">Affiliated Fellow</a></li><li id="menu-3225-1" class="last even sf-item-10 sf-depth-2 sf-no-children"><a href="@yaleRoot/team/directory/staff" class="sf-depth-2">Staff</a></li></ul></li><li id="menu-3031-1" class="middle odd sf-item-5 sf-depth-1 sf-total-children-4 sf-parent-children-0 sf-single-children-4 menuparent"><a href="@yaleRoot/about-isps" class="sf-depth-1 menuparent">About</a><ul><li id="menu-1007-1" class="first odd sf-item-1 sf-depth-2 sf-no-children"><a href="@yaleRoot/contact" class="sf-depth-2">Contact Us</a></li><li id="menu-1009-1" class="middle even sf-item-2 sf-depth-2 sf-no-children"><a href="@yaleRoot/about/directions" class="sf-depth-2">Directions</a></li><li id="menu-1011-1" class="middle odd sf-item-3 sf-depth-2 sf-no-children"><a href="@yaleRoot/form/room-reservation" class="sf-depth-2">Room Reservations</a></li><li id="menu-1241-1" class="last even sf-item-4 sf-depth-2 sf-no-children"><a href="@yaleRoot/form/get-updates-about-isps" class="sf-depth-2">Newsletter Sign-up</a></li></ul></li><li id="menu-525-1" class="last even sf-item-6 sf-depth-1 sf-total-children-7 sf-parent-children-0 sf-single-children-7 menuparent"><a href="@yaleRoot/programs" class="sf-depth-1 menuparent">Programs</a><ul><li id="menu-3778-1" class="first odd sf-item-1 sf-depth-2 sf-no-children"><a href="@yaleRoot/programs/policy-lab" class="sf-depth-2">Policy Lab</a></li><li id="menu-2068-1" class="middle even sf-item-2 sf-depth-2 sf-no-children"><a href="@yaleRoot/programs/center-for-the-study-of-inequality" class="sf-depth-2">I-CSI</a></li><li id="menu-1137-1" class="middle odd sf-item-3 sf-depth-2 sf-no-children"><a href="@yaleRoot/programs/center-for-the-study-of-american-politics" class="sf-depth-2">CSAP</a></li><li id="menu-1410-1" class="middle even sf-item-4 sf-depth-2 sf-no-children"><a href="@yaleRoot/programs/isps-health-at-yale" class="sf-depth-2">ISPS Health at Yale</a></li><li id="menu-1140-1" class="middle odd sf-item-5 sf-depth-2 sf-no-children"><a href="@yaleRoot/programs/program-on-ethics-politics-economics" class="sf-depth-2">EP&amp;E</a></li><li id="menu-1141-1" class="middle even sf-item-6 sf-depth-2 sf-no-children"><a href="@yaleRoot/programs/yale-interdisciplinary-center-for-bioethics" class="sf-depth-2">Yale Bioethics</a></li><li id="menu-1474-1" class="last odd sf-item-7 sf-depth-2 sf-no-children"><a href="@yaleRoot/programs/isps-fellowships" class="sf-depth-2">ISPS Fellowships</a></li></ul></li></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="zone-content-wrapper" class="zone-wrapper zone-content-wrapper clearfix">
+                    <div id="zone-content" class="zone zone-content clearfix container-12">
+
+                        @RenderBody()
+
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer id="section-footer" class="section section-footer">
+            <div id="zone-footer-wrapper" class="zone-wrapper zone-footer-wrapper clearfix">
+                <div id="zone-footer" class="zone zone-footer clearfix container-12">
+                    <aside class="grid-2 region region-footer-first" id="region-footer-first">
+                        <div class="region-inner region-footer-first-inner">
+                            <div class="footer-logo"><a href="http://www.yale.edu" class="y-icons y-yale y-mark"><span class="element-invisible">Yale</span></a></div>
+                        </div>
+                    </aside><aside class="grid-6 region region-footer-second" id="region-footer-second">
+                        <div class="region-inner region-footer-second-inner">
+                            <p class="copyright">
+                                Copyright &copy; 2017 Yale University &middot; All rights reserved &middot;
+                                <a title="Yale Privacy policy" href="http://www.yale.edu/privacy-policy">Privacy policy</a>
+                                <a href="https://twitter.com/ISPSYale" target="_blank"><i class="fa fa-twitter"></i></a>
+                            </p>
+                            <div class="block block-footer-message block-footer-message-footer-message odd block-without-title" id="block-footer-message-footer-message">
+                                <div class="block-inner clearfix">
+
+                                    <div class="content clearfix">
+                                        <p class="rtecenter">
+                                            Institution for Social and Policy Studies<br />
+                                            77 Prospect Street, New Haven, CT 06520<br /><a href="mailto:isps@yale.edu?subject=Inquiry%20for%20ISPS"><a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#105;&#115;&#112;&#115;&#64;&#121;&#97;&#108;&#101;&#46;&#101;&#100;&#117;">&#105;&#115;&#112;&#115;&#64;&#121;&#97;&#108;&#101;&#46;&#101;&#100;&#117;</a></a> | <a href="http://isps.yale.edu/about/directions">Directions</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </aside><div class="grid-4 region region-footer-third" id="region-footer-third">
+                        <div class="region-inner region-footer-third-inner">
+                            <div class="block block-menu sharing block-menu-social-buttons block-menu-menu-social-buttons odd block-without-title" id="block-menu-menu-social-buttons">
+                                <div class="block-inner clearfix">
+
+                                    <div class="content clearfix">
+                                        <ul class="menu">
+                                            <li class="first leaf menu-twitter"><a href="https://twitter.com/ISPSYale" class="fa fa-twitter"><span>Twitter</span></a></li>
+                                            <li class="last leaf menu-newsletter-archive"><a href="@yaleRoot/newsletter-archive" class="fa fa-newspaper-o"><span>Newsletter Archive</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div class="region region-page-bottom" id="region-page-bottom">
+        <div class="region-inner region-page-bottom-inner">
+        </div>
+    </div>
+
+</body>
+</html>

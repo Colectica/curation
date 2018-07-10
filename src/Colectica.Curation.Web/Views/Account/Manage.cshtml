@@ -1,0 +1,35 @@
+﻿@using Colectica.Curation.Web.Models;
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "Manage Account";
+}
+
+<p class="text-success">@ViewBag.StatusMessage</p>
+
+@if (ViewBag.HasLocalPassword)
+{
+    @Html.Partial("_ChangePasswordPartial")
+}
+else
+{
+    @Html.Partial("_SetPasswordPartial")
+}
+
+@*<section id="externalLogins">
+    @Html.Action("RemoveAccountList")
+    @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { Action = "LinkLogin", ReturnUrl = ViewBag.ReturnUrl })
+</section>*@
+
+<div class="clearfix"></div>
+<h2>Log Off</h2>
+@using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+{
+    @Html.AntiForgeryToken()
+    <input type="submit" class="btn btn-primary" value="Log Off" />
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

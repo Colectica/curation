@@ -1,0 +1,29 @@
+﻿
+@if (!Model.IsLocked &&
+    Model.IsUserCurator)
+{
+
+    <script src="/Scripts/bootstrap3-editable/js/bootstrap-editable.js"></script>
+    <script src="/Scripts/moment.min.js"></script>
+    <script src="/Scripts/select2/select2.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $.fn.editable.defaults.mode = 'inline';
+            $('.editable-field').editable({
+                url: '/CatalogRecord/General/@Model.CatalogRecord.Id',
+                inputclass: 'editable-input-wide'
+            });
+        });
+
+        $('.select-field').editable({
+            mode: 'inline',
+            inputclass: 'input-large',
+            select2: {
+                tags: [],
+                tokenSeparators: [",", " "],
+                inputclass: 'editable-input-wide'
+            }
+        });
+    </script>
+}

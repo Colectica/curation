@@ -1,0 +1,322 @@
+﻿@model Colectica.Curation.Common.ViewModels.CatalogRecordGeneralViewModel
+
+@using Colectica.Curation.Web.Resources
+
+@{
+    string url = "";
+
+    string postAction = "Create";
+
+    if (!Model.IsCatalogRecordCreated)
+    {
+        postAction = "Create";
+        ViewBag.Title = "Create New Catalog Record";
+    }
+    else
+    {
+        postAction = "General";
+        ViewBag.Title = Model.CatalogRecord.Title;
+    }
+
+    string hasAgreement = string.IsNullOrWhiteSpace(Model.DepositAgreement) ? "false" : "true";
+}
+
+@section breadcrumb {
+
+    @FormHelpers.CatalogRecordStatusLabel(Model.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+    @if (Model.IsUserApprover)
+    {
+        <span class="label label-info">Approver</span>
+    }
+}
+
+@helper RequiredForCuration()
+{
+    if (Model.CatalogRecord.Status == Colectica.Curation.Data.CatalogRecordStatus.New)
+    {
+        <text>*</text>
+    }
+}
+
+@helper RequiredForPublication()
+{
+    if (Model.CatalogRecord.Status == Colectica.Curation.Data.CatalogRecordStatus.Processing)
+    {
+        <text>*</text>
+    }
+}
+
+@section styles {
+    <link href="/Content/typeahead-bootstrap.css" rel="stylesheet" media="screen">
+}
+
+
+
+@Html.Partial("_CatalogRecordNavigation", Model)
+
+@if (Model.IsLocked)
+{
+    @Html.Partial("_CatalogRecordLocked", Model.OperationStatus)
+}
+
+@using (Html.BeginForm(postAction, "CatalogRecord"))
+{
+    @Html.HiddenFor(m => m.CatalogRecordId)
+
+    <div class="form-horizontal" role="form">
+
+        @if (Model.CatalogRecord.Status == Colectica.Curation.Data.CatalogRecordStatus.New)
+        {
+            <p>Fields marked with * are required before submitting a catalog record for curation.</p>
+        }
+        else if (Model.CatalogRecord.Status == Colectica.Curation.Data.CatalogRecordStatus.Processing)
+        {
+            <p>Fields marked with * are required before submitting a catalog record for publication.</p>
+        }
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+
+        @if (Model.CuratorCount == 0 && 
+            Model.IsCatalogRecordCreated && 
+            Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New)
+        {
+            if (Model.IsUserApprover)
+            {
+                <p class="alert alert-dismissable alert-info">
+                    This catalog record does not have any curators assigned.
+                    @Html.ActionLink("Assign one now.", "Permissions", new { id = Model.CatalogRecordId })
+                </p>
+            }
+            else
+            {
+                <p class="alert alert-dismissable alert-info">This catalog record does not have any curators assigned.</p>
+            }
+        }
+
+        <h3>General</h3>
+
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "Title", "text", "Title", Model.Title, FieldDefinitions.Title, isRequired: true, isReadOnly: Model.IsReadOnly)
+
+        @if (Model.IsCatalogRecordCreated)
+        {
+            @FormHelpers.ReadOnlyField("Study Unique ID", Model.CatalogRecord.Id.ToString(), FieldDefinitions.UniqueID)
+        }
+
+        <div class="form-group">
+            @FormHelpers.ControlLabel("Authors", FieldDefinitions.Authors, isRequired: true)
+
+            <div class="col-md-10">
+                <div data-bind="foreach: peopleInput().people" style="padding-top: 6px;">
+                    <div data-bind="visible: fullName() !== ''">
+                        <p>
+                            <strong><span data-bind="text: fullName"></span></strong>
+
+                            <span data-bind="visible: contactInformation() !== null && contactInformation() !== ''">
+                                <br />
+                                <span data-bind="text: contactInformation"></span>
+                            </span>
+
+                            <span data-bind="visible: orcid() !== null">
+                                <br />
+                                ORCID: <span data-bind="text: orcid"></span>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                @if (!Model.IsReadOnly)
+                {
+                    <div>
+                        <h6>Add or remove authors</h6>
+                        <div data-bind="with: peopleInput" style="margin-top: 5px;">
+                            @Html.Partial("_PersonInput")
+                        </div>
+                    </div>
+                }
+
+                <div>
+                    <p>@Model.CatalogRecord.AuthorsText</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Description -->
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "Description", "textarea", "Description", Model.Description, FieldDefinitions.Description, isRequired: true, isReadOnly: Model.IsReadOnly)
+
+        <!-- Number -->
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "Number", "text", "Number", Model.Number, FieldDefinitions.Number, isRequired: false, isReadOnly: Model.IsReadOnly)
+
+        <!-- Keywords -->
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "Keywords", "text", "Keywords", Model.Keywords, FieldDefinitions.Keywords,
+            isRequired: true,
+            isReadOnly: Model.IsReadOnly,
+            messageBelowControl: "Separate multiple outcome measures with a comma.")
+
+        @if (Model.IsCatalogRecordCreated)
+        {
+            <div class="form-group">
+                @FormHelpers.ControlLabel("Creator", FieldDefinitions.CatalogRecordCreator)
+                <div class="col-md-10">
+                    <span class="form-readonly-control">
+                        @if (Model.CatalogRecord.CreatedBy != null)
+                        {
+                            @Html.ActionLink(Model.CatalogRecord.CreatedBy.FullName, "History", "User", new { id = Model.CatalogRecord.CreatedBy.UserName }, null)
+                            <span class="label label-default">Auto</span>
+                        }
+                    </span>
+                </div>
+            </div>
+
+
+            @FormHelpers.ReadOnlyField("Created Date", Model.CatalogRecord.CreatedDate, FieldDefinitions.CreatedDate)
+
+            @FormHelpers.ReadOnlyField("Version", Model.CatalogRecord.Version.ToString(), FieldDefinitions.Version)
+
+            @FormHelpers.ReadOnlyField("Last Updated", Model.CatalogRecord.LastUpdatedDate, FieldDefinitions.LastUpdatedDate)
+
+            @*@FormHelpers.ReadOnlyField("Archive Date", Model.CatalogRecord.ArchiveDate, FieldDefinitions.ArchiveDate)*@
+            @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "ArchiveDate", "date", "Archive Date", Model.ArchiveDate, FieldDefinitions.ArchiveDate, isRequired: false, isReadOnly: Model.IsReadOnly)
+
+            @FormHelpers.SelectField(url, Model.CatalogRecord.Id, "ReviewType", "Review Type", Model.ReviewType, FieldDefinitions.ReviewType,
+                Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+                Model.IsReadOnly,
+                "Full", "Partial", "None")
+        }
+
+        <h3>Citation</h3>
+
+        @if (Model.IsCatalogRecordCreated)
+        {
+            @FormHelpers.ReadOnlyField("Organization", Model.Organization, FieldDefinitions.Organization)
+
+            @FormHelpers.ReadOnlyField("Owner Contact", Model.OwnerContact, FieldDefinitions.OwnerContact)
+
+            @FormHelpers.ReadOnlyField("Suggested Citation", Model.TermsOfUse, FieldDefinitions.TermsOfUse)
+
+            <div class="form-group">
+                @FormHelpers.ControlLabel("Persistent ID", FieldDefinitions.PersistentID)
+                <div class="col-md-10">
+                    @if (string.IsNullOrWhiteSpace(Model.PersistentId))
+                    {
+                        <text>Not yet assigned</text>
+                    }
+                    else
+                    {
+                        @Model.PersistentId
+                    }
+                </div>
+            </div>
+        }
+
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "Funding", "textarea", "Funding", Model.Funding, FieldDefinitions.FundingInformation, isRequired: true, isReadOnly: Model.IsReadOnly)
+
+        <h3>Access</h3>
+
+        @FormHelpers.SelectField(url, Model.CatalogRecord.Id, "AccessStatement", "Access Statement",
+            Model.AccessStatement, FieldDefinitions.AccessStatement, true, Model.IsReadOnly,
+            "Public", "Restricted")
+
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "IsRestrictedConfidential", "checkbox", "Confidential", 
+            Model.CatalogRecord.IsRestrictedConfidential ? "true" : "false", FieldDefinitions.IsRestrictedConfidential)
+
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "IsRestrictedEmbargo", "checkbox", "Embargoed", 
+            Model.CatalogRecord.IsRestrictedEmbargo ? "true" : "false", FieldDefinitions.IsRestrictedEmbargo)
+
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "IsRestrictedOther", "checkbox", "Other Restriction", 
+            Model.CatalogRecord.IsRestrictedOther ? "true" : "false", FieldDefinitions.IsRestrictedOther)
+
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "ConfidentialityStatement", "textarea", "Confidentiality Statement", Model.ConfidentialityStatement, FieldDefinitions.ConfidentialityStatement, isRequired: true, isReadOnly: Model.IsReadOnly)
+
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "EmbargoStatement", "textarea", "Embargo Statement", Model.EmbargoStatement, FieldDefinitions.EmbargoStatement, isRequired: true, isReadOnly: Model.IsReadOnly)
+
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "OtherRestrictionStatement", "textarea", "Other Restriction", Model.OtherRestrictionStatement, isReadOnly: Model.IsReadOnly)
+
+        <h3>Other</h3>
+
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "RelatedDatabase", "textarea", "Related Databases", Model.RelatedDatabase, FieldDefinitions.RelatedDatabase,
+            isRequired: true, isReadOnly: Model.IsReadOnly)
+
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "RelatedPublications", "textarea", "Related Publications", Model.RelatedPublications, FieldDefinitions.RelatedPublications,
+            isRequired: true, isReadOnly: Model.IsReadOnly)
+
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "RelatedProjects", "textarea", "Related Projects", Model.RelatedProjects, FieldDefinitions.RelatedProjects,
+            isRequired: true, isReadOnly: Model.IsReadOnly)
+
+        @if (!Model.IsReadOnly)
+        {
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-lg btn-primary">
+                    Save
+                </button>
+            </div>
+        }
+
+    </div>
+}
+
+
+@section scripts
+{
+    <script src="~/Scripts/underscore-min.js"></script>
+
+    @Scripts.Render("~/bundles/knockout")
+    <script src="/Scripts/typeahead.bundle.js"></script>
+    <script src="/Scripts/typeahead.jquery.js"></script>
+
+    <script src="~/js/CatalogRecordEditorViewModel.js"></script>
+    <script src="~/js/PersonInput.js"></script>
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+    <script src="/Scripts/bootstrap3-editable/js/bootstrap-editable.js"></script>
+    <script src="/Scripts/moment.min.js"></script>
+    <script src="/Scripts/select2/select2.js"></script>
+
+    <script>
+        @if (!Model.IsLocked &&
+            Model.IsUserCurator)
+        {
+            <text>
+        $(document).ready(function () {
+            $.fn.editable.defaults.mode = 'inline';
+            $('.editable-field').editable({
+                inputclass: 'editable-input-wide'
+            });
+        });
+
+        $('.select-field').editable({
+            mode: 'inline',
+            inputclass: 'input-large editable-input-wide',
+            select2: {
+                tags: [],
+                tokenSeparators: [",", " "]
+            }
+        });
+        </text>
+        }
+
+        ko.applyBindings(new CatalogRecordEditorViewModel("@Model.CatalogRecord.Id", "@Model.Organization", '@Html.Raw(Model.Authors)', '', @hasAgreement));
+
+        $(".info-tip").tooltip({
+            'placement': 'top',
+            'container': 'body'
+        });
+
+        $("#Keywords").select2({
+            tags: [ @foreach (string x in Model.AvailableKeywords) { <text>"@x",</text> } ],
+            tokenSeparators: [","]
+        });
+    </script>
+}
+
+@section bottom {
+
+    @Html.Partial("_CreateUserModal")
+}

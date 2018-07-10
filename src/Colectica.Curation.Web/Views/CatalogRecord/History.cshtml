@@ -1,0 +1,27 @@
+﻿@model Colectica.Curation.Web.Models.CatalogRecordHistoryModel
+
+@{
+    ViewBag.Title = Model.CatalogRecord.Title;
+}
+
+@section breadcrumb {
+    @FormHelpers.CatalogRecordStatusLabel(Model.CatalogRecord)
+    @if (Model.IsUserCurator)
+    {
+        <span class="label label-info">Curator</span>
+    }
+    @if (Model.IsUserApprover)
+    {
+        <span class="label label-info">Approver</span>
+    }
+}
+
+
+@Html.Partial("_CatalogRecordNavigation", Model)
+
+<h2>History</h2>
+
+<a class="btn btn-primary" href="@Url.Action("ChangeLogPdf", "CatalogRecord", new { id = Model.CatalogRecord.Id })" title="Download Change Log"
+   style="margin-bottom: 10px;"><span class="glyphicon glyphicon-download"></span> Download Change Log</a>
+
+@Html.Partial("_History", Model.Events)

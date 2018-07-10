@@ -1,0 +1,37 @@
+﻿@model Colectica.Curation.Models.ScriptedTaskModel
+
+<li class="sidebar-title">@Model.CatalogRecordTitle</li>
+
+<li class="sidebar-list">
+    <a href="@Url.Action("DownloadArchive", "File", new { catalogRecordId = Model.File.CatalogRecord.Id })">
+        Download all files
+        <span class="menu-icon glyphicon glyphicon-download-alt"></span>
+    </a>
+</li>
+
+
+<li class="sidebar-title">@Model.File.Name</li>
+
+<li class="sidebar-list">
+    <a href="@Url.Action("Download", "File", new { id = @Model.File.Id })">
+        Download
+        <span class="menu-icon glyphicon glyphicon-download"></span>
+    </a>
+</li>
+
+<li class="sidebar-list">
+    <a href="@Url.Action("Deposit", "CatalogRecord", new { id = Model.CatalogRecordId })">
+        Upload New Version
+        <span class="menu-icon glyphicon glyphicon-upload"></span>
+    </a>
+</li>
+
+<li class="sidebar-title">Review</li>
+
+<li class="sidebar-list">
+    <a href="#" data-toggle="modal" data-target="#approve-modal">
+        Approve or Reject
+        <span class="menu-icon glyphicon glyphicon-ok"></span>
+    </a>
+</li>
+
