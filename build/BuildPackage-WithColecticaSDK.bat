@@ -1,14 +1,23 @@
 set zip="c:\Program Files\7-Zip\7z.exe"
 set msbuild="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe"
 
-set WORKSPACE="c:\svn"
+set WORKSPACE=c:\svn\curation
+IF "%computername%"=="MARGOT" (
+  set WORKSPACE=c:\jenkins\workspace\curation
+)
+
+REM Set the build number in the application.
+IF "%computername%"=="MARGOT" (
+  powershell -Command "(gc %WORKSPACE%\src\Colectica.Curation.Data\RevisionInfo.cs) -replace 'LOCAL_BUILD', $Env:BUILD_NUMBER | Out-File %WORKSPACE%\src\Colectica.Curation.Data\RevisionInfo.cs"
+)
+
 
 REM Clear any existing output.
 rmdir /Q /S ..\dist
 mkdir ..\dist
 
 REM Build the WebDeploy packages.
-%msbuild% ..\src\Colectica.Curation.Web\Colectica.Curation.Web.WithDdi.csproj  /P:Configuration=Release /P:Platform=AnyCPU /P:DeployOnBuild=true /p:VisualStudioVersion=12.0 /P:PublishProfile=FileBundle /P:SolutionDir=%WORKSPACE%\curation\src\
+%msbuild% ..\src\Colectica.Curation.Web\Colectica.Curation.Web.WithDdi.csproj  /P:Configuration=Release /P:Platform=AnyCPU /P:DeployOnBuild=true /p:VisualStudioVersion=12.0 /P:PublishProfile=FileBundle /P:SolutionDir=%WORKSPACE%\src\
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 REM Include the version number in the file names.
