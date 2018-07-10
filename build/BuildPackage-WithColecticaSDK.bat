@@ -23,7 +23,8 @@ REM Build the WebDeploy packages.
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 REM Include the version number in the file names.
-set /p revisionNumber= <"..\src\Colectica.Curation.Data\RevisionNumber.txt"
+REM set /p revisionNumber= <"..\src\Colectica.Curation.Data\RevisionNumber.txt"
+set revisionNumber="1.0.0.%BUILD_NUMBER%"
 echo Revision number is %revisionNumber%
 
 mkdir ..\dist\ColecticaCurationPackage-%revisionNumber%
