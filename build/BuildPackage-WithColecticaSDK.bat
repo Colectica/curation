@@ -9,6 +9,7 @@ IF "%computername%"=="MARGOT" (
 REM Set the build number in the application.
 IF "%computername%"=="MARGOT" (
   powershell -Command "(gc %WORKSPACE%\src\Colectica.Curation.Data\RevisionInfo.cs) -replace 'LOCAL_BUILD', $Env:BUILD_NUMBER | Out-File %WORKSPACE%\src\Colectica.Curation.Data\RevisionInfo.cs"
+  powershell -Command "(gc %WORKSPACE%\src\Colectica.Curation.Data\RevisionNumber.txt) -replace 'LOCAL_BUILD', $Env:BUILD_NUMBER | Out-File %WORKSPACE%\src\Colectica.Curation.Data\RevisionNumber.txt"
 )
 
 PUSHD build
