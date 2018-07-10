@@ -1,0 +1,19 @@
+node {
+
+    stage('Preparation') {
+        echo("Downloading latest code")
+        git url: 'https://github.com/Colectica/curation.git'
+    }
+
+    stage('Build') {
+        echo("Building")
+        bat "${WORKSPACE}/curation/build/BuildCuration-WithColecticaSDK.bat"
+    }
+
+    stage('Results') {
+        echo("Archiving artifacts")
+        archiveArtifacts artifacts: "curation/dist/artifacts/*"
+    }
+
+}
+
