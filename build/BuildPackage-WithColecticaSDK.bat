@@ -24,7 +24,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 
 REM Include the version number in the file names.
 REM set /p revisionNumber= <"..\src\Colectica.Curation.Data\RevisionNumber.txt"
-set revisionNumber="1.0.0.%BUILD_NUMBER%"
+set revisionNumber=1.0.0.%BUILD_NUMBER%
 echo Revision number is %revisionNumber%
 
 mkdir ..\dist\ColecticaCurationPackage-%revisionNumber%
