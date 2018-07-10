@@ -3,7 +3,6 @@ dist/
 **/obj/
 docs/_build
 src/.vs
-src/.nuget
 src/packages
 src/Colectica.Curation.Web/CurationAddins
 *.user
