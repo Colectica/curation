@@ -933,7 +933,7 @@ xcopy /s /y /d "$(SolutionDir)packages\LibGit2Sharp.NativeBinaries.1.0.185\runti
 
 
 
-if not exist "$(TargetDir)spss-redist\" xcopy /e /y "$(SolutionDir)..\..\algenta\Spss.Data\spss-redist" "$(TargetDir)spss-redist\"
+if not exist "$(TargetDir)spss-redist\" xcopy /e /y "c:\svn\algenta\Spss.Data\spss-redist" "$(TargetDir)spss-redist\"
 </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
