@@ -257,28 +257,26 @@ namespace Colectica.Curation.Common.ViewModels
         public DateModel StudyTimePeriod { get; set; }
 
         public string Location { get; set; }
-        public string LocationDetails { get; set; }
+        [AllowHtml] public string LocationDetails { get; set; }
         public string UnitOfObservation { get; set; }
         public string SampleSize { get; set; }
-        public string InclusionExclusionCriteria { get; set; }
-        public string RandomizationProcedure { get; set; }
+        [AllowHtml] public string InclusionExclusionCriteria { get; set; }
+        [AllowHtml] public string RandomizationProcedure { get; set; }
         public string UnitOfRandomization { get; set; }
-        public string Treatment { get; set; }
+
+        [AllowHtml] public string Treatment { get; set; }
         public string TreatmentAdministration { get; set; }
         public string OutcomeMeasures { get; set; }
 
-        [AllowHtml]
-        public string DataType { get; set; }
+        [AllowHtml] public string DataType { get; set; }
 
-        [AllowHtml]
-        public string DataSource { get; set; }
+        [AllowHtml] public string DataSource { get; set; }
 
-        [AllowHtml]
-        public string DataSourceInformation { get; set; }
+        [AllowHtml] public string DataSourceInformation { get; set; }
 
         public string CatalogRecordDataType { get; set; }
-        public string CatalogRecordDataSource { get; set; }
-        public string CatalogRecordDataSourceInformation { get; set; }
+        [AllowHtml] public string CatalogRecordDataSource { get; set; }
+        [AllowHtml] public string CatalogRecordDataSourceInformation { get; set; }
 
 
         public string ResearchDesignOtherSpecify { get; set; }
