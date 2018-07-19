@@ -7,7 +7,7 @@ enable a seamless framework for collecting, processing, archiving, and
 publishing data. The platform enables open access to data resources that have
 been fully reviewed and enhanced for long term usability and analysis.
 
-Development has been supported by the Yale Institute for Social and Policy
+Development has been supported by the Yale Institution for Social and Policy
 Studies and Innovations for Poverty Action.
 
 For further details, see the documentation at https://docs.colectica.com/curation/.
