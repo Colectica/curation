@@ -316,7 +316,7 @@ namespace Colectica.Curation.Addins.Editors.Controllers
                     // Save the new version of the variable.
                     VersionUpdater.UpdateVersionsAndSave(variable, physicalInstance, dataRelationship, variableStatistic);
 
-                    var file = db.Files.Where(x => x.Id == physicalInstance.Identifier)
+                    var file = db.Files.Where(x => x != null && physicalInstance != null && x.Id == physicalInstance.Identifier)
                         .FirstOrDefault();
                     if (file != null &&
                         file.IsStataDataFile())
