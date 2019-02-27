@@ -11,3 +11,8 @@ Development has been supported by the Yale Institution for Social and Policy
 Studies and Innovations for Poverty Action.
 
 For further details, see the documentation at https://docs.colectica.com/curation/.
+
+# License
+Colectica curation is licensed under the GNU Affero General Public License v3.0
+
+https://opensource.org/licenses/AGPL-3.0
