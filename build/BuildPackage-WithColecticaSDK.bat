@@ -18,6 +18,11 @@ REM Clear any existing output.
 rmdir /Q /S ..\dist
 mkdir ..\dist
 
+REM Restore nuget packages
+PUSHD ..\src
+.nuget\nuget.exe restore ColecticaCurationTools-WithColecticaSDK.sln
+POPD
+
 REM Build the WebDeploy packages.
 %msbuild% ..\src\Colectica.Curation.Web\Colectica.Curation.Web.WithDdi.csproj  /P:Configuration=Release /P:Platform=AnyCPU /P:DeployOnBuild=true /p:VisualStudioVersion=12.0 /P:PublishProfile=FileBundle /P:SolutionDir=%WORKSPACE%\src\
 if %errorlevel% neq 0 exit /b %errorlevel%
