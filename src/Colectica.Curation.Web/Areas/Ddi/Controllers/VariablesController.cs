@@ -331,7 +331,7 @@ namespace Colectica.Curation.Addins.Editors.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw new HttpException(500, ex.Message);
+                    throw new HttpException(500, ex.Message, ex);
                 }
             }
         }
