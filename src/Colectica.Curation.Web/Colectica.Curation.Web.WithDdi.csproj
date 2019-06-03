@@ -41,6 +41,7 @@
     <DefineConstants>TRACE;ISPRO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <MSBuildExtensionsPath>c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\</MSBuildExtensionsPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Algenta.Colectica.Commands, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
