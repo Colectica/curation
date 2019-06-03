@@ -47,7 +47,6 @@ namespace Colectica.Curation.Web.Areas.Ddi.Utility
             itemsToRegister.Add(variable);
             itemsToRegister.Add(physicalInstance);
             itemsToRegister.Add(dataRelationship);
-            itemsToRegister.Add(variableStatistic);
 
             // Increase version of the variable.
             variable.Version++;
@@ -72,9 +71,13 @@ namespace Colectica.Curation.Web.Areas.Ddi.Utility
             variableInDataRelationship.VersionDate = now;
 
             // Increase the version and reference of hte VariableStatistic that references the Variable.
-            variableStatistic.Version++;
-            variableStatistic.VersionDate = now;
-            variableStatistic.VariableReference.Version = variable.Version;
+            if (variableStatistic != null)
+            {
+                variableStatistic.Version++;
+                variableStatistic.VersionDate = now;
+                variableStatistic.VariableReference.Version = variable.Version;
+                itemsToRegister.Add(variableStatistic);
+            }
 
             // Register all the changes.
             var options = new CommitOptions();
