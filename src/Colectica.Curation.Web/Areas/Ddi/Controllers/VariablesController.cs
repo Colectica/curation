@@ -316,18 +316,22 @@ namespace Colectica.Curation.Addins.Editors.Controllers
                     // Save the new version of the variable.
                     VersionUpdater.UpdateVersionsAndSave(variable, physicalInstance, dataRelationship, variableStatistic);
 
-                    var file = db.Files.Where(x => x != null && physicalInstance != null && x.Id == physicalInstance.Identifier)
-                        .FirstOrDefault();
-                    if (file != null &&
-                        file.IsStataDataFile())
+                    Guid? piID = physicalInstance?.Identifier;
+                    if (piID.HasValue)
                     {
-                        file.HasPendingMetadataUpdates = true;
-                        db.SaveChanges();
+                        var file = db.Files.Where(x => x != null && x.Id == piID)
+                            .FirstOrDefault();
+                        if (file != null &&
+                            file.IsStataDataFile())
+                        {
+                            file.HasPendingMetadataUpdates = true;
+                            db.SaveChanges();
+                        }
                     }
 
 
                     // For x-editable, just a simple 200 return is sufficient if things went well.
-                    return Content(string.Empty);
+                    return Content(value);
                 }
                 catch (Exception ex)
                 {
