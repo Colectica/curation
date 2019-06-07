@@ -578,9 +578,55 @@ namespace Colectica.Curation.Web.Controllers
             }
         }
 
+        public ActionResult RemovePersistentId(FileViewModel model)
+        {
+            using (var db = ApplicationDbContext.Create())
+            {
+                var user = db.Users
+                    .Where(x => x.UserName == User.Identity.Name)
+                    .FirstOrDefault();
+                if (user == null)
+                {
+                    return RedirectToAction("Index");
+                }
+
+                // Fetch the appropriate ManagedFile by ID.
+                Guid id = model.Id;
+                var file = GetFile(id, db);
+
+                EnsureUserIsAllowed(file.CatalogRecord, db);
+                EnsureUserCanEdit(file.CatalogRecord, db);
+
+                // Clear the persistent ID.
+                file.PersistentLink = null;
+                file.PersistentLinkDate = null;
+
+                // Log the editing of the file.
+                var log = new Event()
+                {
+                    EventType = EventTypes.EditManagedFile,
+                    Timestamp = DateTime.UtcNow,
+                    User = user,
+                    RelatedCatalogRecord = file.CatalogRecord,
+                    Title = "Edit a File",
+                    Details = "Remove persistent link"
+                };
+                db.Events.Add(log);
+
+                db.SaveChanges();
+
+                return RedirectToAction("General", new { id = file.Id });
+            }
+        }
+
         [HttpPost]
         public ActionResult General(FileViewModel model)
         {
+            if (Request.Form.AllKeys.Contains("RemovePersistentId"))
+            {
+                return RemovePersistentId(model);
+            }
+
             using (var db = ApplicationDbContext.Create())
             {
                 var user = db.Users
