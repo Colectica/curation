@@ -56,6 +56,15 @@
 
     }
 
+    @if ((Model.IsUserCurator || Model.IsUserApprover) && !string.IsNullOrWhiteSpace(Model.File.PersistentLink))
+    {
+        using (Html.BeginForm())
+        {
+            <button type="submit" name="RemovePersistentId" value="RemovePersistentId" class="btn btn-primary" style="margin: 12px 0 0 0;">
+                Remove Persistent Link
+            </button>
+        }
+    }
 
 </div>
 
@@ -82,7 +91,7 @@
         @FormHelpers.SelectField(url, Model.File.Id, "Type", "File Type", Model.File.Type,
             FieldDefinitions.FileType, false,
             Model.IsReadOnly || Model.IsFileTypeAutoDetected,
-            "Data", "Program", "Output", "Codebook", "Treatment Materials", "Supplementary Materials")
+            "Data", "Program", "Output", "Codebook", "Treatment Materials", "Supplementary Materials", "README", "Metadata", "Workspace")
 
         <!-- Number -->
         @FormHelpers.EditableField(url, Model.File.Id, "Number", "text", "Number", Model.File.Number, FieldDefinitions.Number, isRequired: false, isReadOnly: Model.IsReadOnly)
@@ -92,7 +101,6 @@
 
         <!-- Date Persistent Link Issued -->
         @FormHelpers.ReadOnlyField("Date of Persistent Link", Model.File.PersistentLinkDate.ToString(), FieldDefinitions.PersistentLinkDate)
-
 
         <!-- Version -->
         @FormHelpers.ReadOnlyField("Version", Model.File.Version, FieldDefinitions.FileVersion)

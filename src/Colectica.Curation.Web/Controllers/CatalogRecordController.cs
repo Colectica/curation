@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Affero General Public License along
 // with Colectica Curation Tools. If not, see <https://www.gnu.org/licenses/>.
 
-﻿using AutoMapper;
+using AutoMapper;
 using Colectica.Curation.Common.Utility;
 using Colectica.Curation.Common.ViewModels;
 using Colectica.Curation.Data;
@@ -1046,9 +1046,54 @@ namespace Colectica.Curation.Web.Controllers
             }
         }
 
+        public ActionResult RemovePersistentId(CatalogRecordGeneralViewModel model)
+        {
+            using (var db = ApplicationDbContext.Create())
+            {
+                var user = db.Users
+                    .Where(x => x.UserName == User.Identity.Name)
+                    .FirstOrDefault();
+                if (user == null)
+                {
+                    return RedirectToAction("Index");
+                }
+
+                // Fetch the appropriate catalog record by ID.
+                Guid id = model.CatalogRecordId;
+
+                var record = GetRecord(id, db);
+
+                EnsureUserIsAllowed(record, db);
+                EnsureUserCanEdit(record, db, user);
+
+                // Clear the persistent ID.
+                record.PersistentId = null;
+
+                // Log the editing of the catalog record.
+                var log = new Event()
+                {
+                    EventType = EventTypes.EditCatalogRecord,
+                    Timestamp = DateTime.UtcNow,
+                    User = user,
+                    RelatedCatalogRecord = record,
+                    Title = "Edit a Catalog Record",
+                    Details = "Remove persistent link"
+                };
+                db.Events.Add(log);
+                db.SaveChanges();
+
+                return RedirectToAction("General", new { id = id });
+            }
+        }
+
         [HttpPost]
         public ActionResult General(CatalogRecordGeneralViewModel model)
         {
+            if (Request.Form.AllKeys.Contains("RemovePersistentId"))
+            {
+                return RemovePersistentId(model);
+            }
+
             using (var db = ApplicationDbContext.Create())
             {
                 var user = db.Users
@@ -1862,7 +1907,7 @@ namespace Colectica.Curation.Web.Controllers
 
                 // If the user is the depositor, only show notes made by the depositor.
                 if (record.CreatedBy.UserName == User.Identity.Name &&
-                    !model.IsUserCurator && 
+                    !model.IsUserCurator &&
                     !model.IsUserApprover)
                 {
                     notes = notes.Where(x => x.User.UserName == User.Identity.Name);
