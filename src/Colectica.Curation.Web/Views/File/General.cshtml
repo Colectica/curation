@@ -106,7 +106,7 @@
         @FormHelpers.ReadOnlyField("Version", Model.File.Version, FieldDefinitions.FileVersion)
 
         <!-- File Format Name -->
-        @FormHelpers.ReadOnlyField("Format Name", Model.File.FormatName, FieldDefinitions.FormatName)
+        @FormHelpers.EditableField(url, Model.File.Id, "FormatName", "text", "Format Name", Model.File.FormatName, FieldDefinitions.FormatName, isRequired: false, isReadOnly: Model.IsReadOnly)
 
         <!-- Format ID -->
         @FormHelpers.ReadOnlyField("Format ID", Model.File.FormatId, FieldDefinitions.FormatID)
