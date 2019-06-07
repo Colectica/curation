@@ -90,7 +90,7 @@
         <!-- File Type -->
         @FormHelpers.SelectField(url, Model.File.Id, "Type", "File Type", Model.File.Type,
             FieldDefinitions.FileType, false,
-            Model.IsReadOnly || Model.IsFileTypeAutoDetected,
+            Model.IsReadOnly,
             "Data", "Program", "Output", "Codebook", "Treatment Materials", "Supplementary Materials", "README", "Metadata", "Workspace")
 
         <!-- Number -->
