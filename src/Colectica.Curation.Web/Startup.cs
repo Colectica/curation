@@ -70,7 +70,6 @@ namespace Colectica.Curation.Web
                 .ForMember(x => x.PersistentLink, opt => opt.Ignore())
                 .ForMember(x => x.PersistentLinkDate, opt => opt.Ignore())
                 .ForMember(x => x.Version, opt => opt.Ignore())
-                .ForMember(x => x.FormatName, opt => opt.Ignore())
                 .ForMember(x => x.FormatId, opt => opt.Ignore())
                 .ForMember(x => x.Size, opt => opt.Ignore())
                 .ForMember(x => x.Checksum, opt => opt.Ignore())
