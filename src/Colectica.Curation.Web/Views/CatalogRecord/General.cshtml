@@ -208,7 +208,17 @@
                     }
                     else
                     {
+                        <input type="hidden" name="PersistentId" value="@Model.PersistentId" />
                         @Model.PersistentId
+
+                        if (Model.IsUserCurator || Model.IsUserApprover)
+                        {
+                            <button type="submit" name="RemovePersistentLink" value="RemovePersistentLink" class="btn btn-sm btn-primary">
+                                Remove
+                            </button>
+
+                        }
+
                     }
                 </div>
             </div>
