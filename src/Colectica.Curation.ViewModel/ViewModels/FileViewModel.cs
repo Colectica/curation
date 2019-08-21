@@ -103,8 +103,13 @@ namespace Colectica.Curation.Web.Models
                     return false;
                 }
 
-                if (!IsUserCurator &&
-                    this.File.CatalogRecord.Status != CatalogRecordStatus.New)
+                if (!IsUserCurator)
+                {
+                    return true;
+                }
+
+                if (this.File.CatalogRecord.Status == CatalogRecordStatus.New ||
+                    this.File.CatalogRecord.Status == CatalogRecordStatus.Processing)
                 {
                     return true;
                 }
