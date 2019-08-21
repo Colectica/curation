@@ -16,6 +16,7 @@
 // with Colectica Curation Tools. If not, see <https://www.gnu.org/licenses/>.
 
 ﻿using Colectica.Curation.Web.Models;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,11 @@ namespace Colectica.Curation.Web.Controllers
     {
         public ActionResult Index(int statusCode, Exception exception, bool isAjaxRequest)
         {
+            var logger = LogManager.GetLogger("ErrorController");
+            logger.Debug("Entering ErrorController.Index()");
+
             Response.StatusCode = statusCode;
+            logger.Debug("Finished setting status code");
 
             // If it's not an AJAX request that triggered this action then just retun the view
             if (!isAjaxRequest)

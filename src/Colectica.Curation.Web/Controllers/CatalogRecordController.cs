@@ -24,6 +24,7 @@ using Colectica.Curation.Operations;
 using Colectica.Curation.Web.Areas.Ddi.Utility;
 using Colectica.Curation.Web.Models;
 using Colectica.Curation.Web.Utility;
+using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -207,6 +208,8 @@ namespace Colectica.Curation.Web.Controllers
 
         public ActionResult General(Guid id)
         {
+            var logger = LogManager.GetLogger("CatalogRecordController");
+
             using (var db = ApplicationDbContext.Create())
             {
                 var record = GetRecord(id, db);
@@ -260,6 +263,9 @@ namespace Colectica.Curation.Web.Controllers
                 model.IsUserApprover = record.Approvers.Any(x => x.UserName == User.Identity.Name) ||
                     OrganizationHelper.DoesUserHaveRight(db, User, record.Organization.Id, Right.CanApprove);
                 model.CuratorCount = record.Curators.Count;
+
+                logger.Debug($"IsCurator: {model.IsUserCurator}");
+                logger.Debug($"IsApprover: {model.IsUserApprover}");
 
                 return View(model);
             }
@@ -1089,13 +1095,19 @@ namespace Colectica.Curation.Web.Controllers
         [HttpPost]
         public ActionResult General(CatalogRecordGeneralViewModel model)
         {
+            var logger = LogManager.GetLogger("CatalogRecordController");
+            logger.Debug("Entering CatalogRecordController.General() POST handler");
+
             if (Request.Form.AllKeys.Contains("RemovePersistentId"))
             {
+                logger.Debug("Removing persistent ID");
                 return RemovePersistentId(model);
             }
 
             using (var db = ApplicationDbContext.Create())
             {
+                logger.Debug("Created database object");
+
                 var user = db.Users
                     .Where(x => x.UserName == User.Identity.Name)
                     .FirstOrDefault();
@@ -1104,6 +1116,7 @@ namespace Colectica.Curation.Web.Controllers
                     return RedirectToAction("Index");
                 }
 
+                logger.Debug("Got user object");
 
                 // Fetch the appropriate catalog record by ID.
                 Guid id = model.CatalogRecordId;
@@ -1113,13 +1126,17 @@ namespace Colectica.Curation.Web.Controllers
                 EnsureUserIsAllowed(record, db);
                 EnsureUserCanEdit(record, db, user);
 
+                logger.Debug("User is allowed");
+
                 if (record.IsLocked)
                 {
+                    logger.Debug("Record is locked. Throwing.");
                     throw new HttpException(400, "This operation cannot be performed while the record is locked");
                 }
 
                 // Copy information from the POST to the CatalogRecord.
                 Mapper.Map(model, record);
+                logger.Debug("Mapped");
 
                 // Manually map authors based on the AuthorIDs property
                 record.Authors.Clear();
@@ -1129,6 +1146,8 @@ namespace Colectica.Curation.Web.Controllers
                     record.Authors.Add(author);
                 }
                 record.AuthorsText = string.Join(", ", record.Authors.Select(x => x.FullName));
+
+                logger.Debug("Authors retrieved");
 
                 // Up the version.
                 record.Version++;
@@ -1146,8 +1165,12 @@ namespace Colectica.Curation.Web.Controllers
                 };
                 db.Events.Add(log);
 
+                logger.Debug("Logged");
+
                 // Save the updated record.
                 db.SaveChanges();
+
+                logger.Debug("Saved to database");
 
                 return RedirectToAction("Methods", new { id = id });
             }
@@ -1158,11 +1181,15 @@ namespace Colectica.Curation.Web.Controllers
         {
             using (var db = ApplicationDbContext.Create())
             {
+                var logger = LogManager.GetLogger("CatalogRecordController");
+                logger.Debug("Entering CatalogRecord.Methods() POST handler");
+
                 var user = db.Users
                     .Where(x => x.UserName == User.Identity.Name)
                     .FirstOrDefault();
                 if (user == null)
                 {
+                    logger.Debug("Could not get user. Returning");
                     return RedirectToAction("Index");
                 }
 
@@ -1172,16 +1199,23 @@ namespace Colectica.Curation.Web.Controllers
 
                 var record = GetRecord(id, db);
 
+                logger.Debug("Got record");
+
                 EnsureUserIsAllowed(record, db);
                 EnsureUserCanEdit(record, db, user);
 
+                logger.Debug("User is allowed");
+
                 if (record.IsLocked)
                 {
+                    logger.Debug("Record is locked. Throwing.");
                     throw new HttpException(400, "This operation cannot be performed while the record is locked");
                 }
 
                 // Copy information from the POST to the CatalogRecord.
                 Mapper.Map(model, record);
+
+                logger.Debug("Mapped");
 
                 if (Request.Form["FieldDates.isRange"] != null)
                 {
@@ -1220,6 +1254,7 @@ namespace Colectica.Curation.Web.Controllers
                     record.UnitOfObservation = model.UnitOfObservationOtherSpecify;
                 }
 
+                logger.Debug("Done manually mapping");
 
                 // Log the editing of the catalog record.
                 var log = new Event()
@@ -1233,8 +1268,12 @@ namespace Colectica.Curation.Web.Controllers
                 };
                 db.Events.Add(log);
 
+                logger.Debug("Logged");
+
                 // Save the updated record.
                 db.SaveChanges();
+
+                logger.Debug("Saved to database");
 
                 return RedirectToAction("Files", new { id = id });
             }

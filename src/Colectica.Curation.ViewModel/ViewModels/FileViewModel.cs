@@ -105,13 +105,11 @@ namespace Colectica.Curation.Web.Models
 
                 if (!IsUserCurator)
                 {
-                    return true;
-                }
-
-                if (this.File.CatalogRecord.Status == CatalogRecordStatus.New ||
-                    this.File.CatalogRecord.Status == CatalogRecordStatus.Processing)
-                {
-                    return true;
+                    // If it is new, the depositor can still edit it.
+                    if (this.File.CatalogRecord.Status != CatalogRecordStatus.New)
+                    {
+                        return true;
+                    }
                 }
 
                 return false;
