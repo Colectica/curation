@@ -25,6 +25,7 @@ POPD
 
 REM Build the WebDeploy packages.
 %msbuild% ..\src\Colectica.Curation.Web\Colectica.Curation.Web.WithDdi.csproj  /P:Configuration=Release /P:Platform=AnyCPU /P:DeployOnBuild=true /p:VisualStudioVersion=12.0 /P:PublishProfile=FileBundle /P:SolutionDir=%WORKSPACE%\src\
+%msbuild% ..\src\Colectica.Curation.Service\Colectica.Curation.Service.WithDdi.csproj  /P:Configuration=Release /P:Platform=AnyCPU /p:VisualStudioVersion=12.0 /P:SolutionDir=%WORKSPACE%\src\
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 REM Include the version number in the file names.
