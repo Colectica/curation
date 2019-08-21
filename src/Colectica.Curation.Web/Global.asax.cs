@@ -19,6 +19,7 @@
 using Colectica.Curation.Operations;
 using Colectica.Curation.Web.Controllers;
 using Colectica.Curation.Web.Utility;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,10 @@ namespace Colectica.Curation.Web
     {
         protected void Application_Start()
         {
+            var logger = LogManager.GetLogger("MvcApplication");
+            logger.Info("Entering Application_Start()");
+            logger.Info("Version: " + RevisionInfo.FullVersionString);
+
             string addinsPath = System.IO.Path.Combine(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath, 
                 "CurationAddins");
 
@@ -56,7 +61,12 @@ namespace Colectica.Curation.Web
 
         protected void Application_Error(object sender, EventArgs e)
         {
+            var logger = LogManager.GetLogger("Application_Error");
+            logger.Debug("Entering Application_Error()");
+
             Exception lastError = Server.GetLastError();
+            logger.Error("Unhandled error", lastError);
+
             Server.ClearError();
 
             int statusCode = 0;
@@ -87,6 +97,8 @@ namespace Colectica.Curation.Web
 
             controller.Execute(requestContext);
             Response.End();
+
+            logger.Debug("Leaving Application_Error()");
         }
     }
 }
