@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/140463778.svg)](https://zenodo.org/badge/latestdoi/140463778)
+
 # Colectica Curation Tools
 
 The Colectica Curation Tools allow data archives to structure the curation workflow. 
