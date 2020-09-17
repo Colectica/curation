@@ -8,3 +8,4 @@ src/Colectica.Curation.Web/CurationAddins
 *.user
 /src/Colectica.Curation.Web/App_Data/isConfigured.txt
 /src/Colectica.Curation.Web/App_Data/Errors
+/.vs
