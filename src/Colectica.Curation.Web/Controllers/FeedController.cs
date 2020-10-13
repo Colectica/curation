@@ -43,9 +43,16 @@ namespace Colectica.Curation.Web.Controllers
             logger.Debug("Opening DB context");
             using (var db = ApplicationDbContext.Create())
             {
+                var org = OrganizationHelper.GetOrganizationByHost(Request, db);
+                if (org == null)
+                {
+                    return RedirectToAction("Index", "Dashboard");
+                }
+
                 // Get all published records.
                 logger.Debug("Getting published records");
                 var publishedRecords = db.CatalogRecords
+                    .Where(x => x.Organization.Id == org.Id)
                     .Where(x => x.Status == CatalogRecordStatus.Published)
                     .Include(x => x.Authors)
                     .Include(x => x.Files);
