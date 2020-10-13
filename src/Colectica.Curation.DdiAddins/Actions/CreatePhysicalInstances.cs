@@ -37,6 +37,7 @@ using Spss.Data;
 using Colectica.Curation.DdiAddins.Utility;
 using Algenta.Colectica.Model;
 using Algenta.Colectica.Model.Repository;
+using Algenta.Colectica.Commands.SummaryStatistics;
 
 namespace Colectica.Curation.DdiAddins.Actions
 {
@@ -152,8 +153,9 @@ namespace Colectica.Curation.DdiAddins.Actions
             StataImporter importer = new StataImporter();
             try
             {
-                var calculator = new CalculateSummaryStatistics();
-                var stats = calculator.ComputeStatistics(importer, stataFilePath, physicalInstance, null);
+                var calculator = new PhysicalInstanceSummaryStatisticComputer();
+                var stats = calculator.ComputeStatistics(importer, stataFilePath, physicalInstance, 
+                    physicalInstance.FileStructure.CaseQuantity, null);
                 if (stats != null)
                 {
                     physicalInstance.Statistics.Clear();
@@ -212,8 +214,9 @@ namespace Colectica.Curation.DdiAddins.Actions
             try
             {
                 logger.Debug("Calculating summary statistics");
-                var calculator = new CalculateSummaryStatistics();
-                var stats = calculator.ComputeStatistics(importer, spssFilePath, physicalInstance, null);
+                var calculator = new PhysicalInstanceSummaryStatisticComputer();
+                var stats = calculator.ComputeStatistics(importer, spssFilePath, physicalInstance,
+                    physicalInstance.FileStructure.CaseQuantity, null);
                 logger.Debug("Done calculating summary statistics");
 
                 if (stats != null)
@@ -276,8 +279,9 @@ namespace Colectica.Curation.DdiAddins.Actions
 
             try
             {
-                var calculator = new CalculateSummaryStatistics();
-                var stats = calculator.ComputeStatistics(importer, filePath, physicalInstance, null);
+                var calculator = new PhysicalInstanceSummaryStatisticComputer();
+                var stats = calculator.ComputeStatistics(importer, filePath, physicalInstance,
+                    physicalInstance.FileStructure.CaseQuantity, null);
                 if (stats != null)
                 {
                     physicalInstance.Statistics.Clear();
@@ -330,8 +334,9 @@ namespace Colectica.Curation.DdiAddins.Actions
 
             try
             {
-                var calculator = new CalculateSummaryStatistics();
-                var stats = calculator.ComputeStatistics(importer, filePath, physicalInstance, null);
+                var calculator = new PhysicalInstanceSummaryStatisticComputer();
+                var stats = calculator.ComputeStatistics(importer, filePath, physicalInstance,
+                    physicalInstance.FileStructure.CaseQuantity, null);
                 if (stats != null)
                 {
                     physicalInstance.Statistics.Clear();
