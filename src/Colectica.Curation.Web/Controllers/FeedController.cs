@@ -17,6 +17,7 @@
 
 ﻿using Colectica.Curation.Common.ViewModels;
 using Colectica.Curation.Data;
+using Colectica.Curation.Web.Utility;
 using log4net;
 using Newtonsoft.Json;
 using System;
