@@ -137,6 +137,7 @@ namespace Colectica.Curation.Web.Models
             Name = file.Name;
             Type = file.Type;
             Status = file.Status;
+            Number = file.Number;
 
             IsPublicAccess = file.IsPublicAccess ? "Yes" : "No";
 
