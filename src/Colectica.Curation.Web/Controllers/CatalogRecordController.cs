@@ -1134,6 +1134,19 @@ namespace Colectica.Curation.Web.Controllers
                     throw new HttpException(400, "This operation cannot be performed while the record is locked");
                 }
 
+                // Create a change summary.
+                List<string> authorNames = new List<string>();
+                foreach (string authorId in model.AuthorIds)
+                {
+                    string name = db.Users.FirstOrDefault(x => x.Id == authorId)?.FullName;
+                    if (!string.IsNullOrWhiteSpace(name))
+                    {
+                        authorNames.Add(name);
+                    }
+                }
+                model.Authors = string.Join(", ", authorNames);
+                string changeSummary = CatalogRecordChangeDetector.GetChangeSummary(record, model);
+
                 // Copy information from the POST to the CatalogRecord.
                 Mapper.Map(model, record);
                 logger.Debug("Mapped");
@@ -1161,7 +1174,7 @@ namespace Colectica.Curation.Web.Controllers
                     User = user,
                     RelatedCatalogRecord = record,
                     Title = "Edit a Catalog Record",
-                    Details = string.Empty
+                    Details = changeSummary
                 };
                 db.Events.Add(log);
 
@@ -1211,6 +1224,9 @@ namespace Colectica.Curation.Web.Controllers
                     logger.Debug("Record is locked. Throwing.");
                     throw new HttpException(400, "This operation cannot be performed while the record is locked");
                 }
+
+                // Create a change summary.
+                string changeSummary = CatalogRecordChangeDetector.GetChangeSummary(record, model);
 
                 // Copy information from the POST to the CatalogRecord.
                 Mapper.Map(model, record);
@@ -1264,7 +1280,7 @@ namespace Colectica.Curation.Web.Controllers
                     User = user,
                     RelatedCatalogRecord = record,
                     Title = "Edit a Catalog Record",
-                    Details = string.Empty
+                    Details = changeSummary
                 };
                 db.Events.Add(log);
 
@@ -1966,7 +1982,29 @@ namespace Colectica.Curation.Web.Controllers
                     });
                 }
 
-                // Get all notes from variables in this catalog record.
+                // Get all notes from files in this catalog record.
+                foreach (var file in record.Files)
+                {
+                    var fileNotes = db.Notes.Where(x => x.File.Id == id).Include(x => x.User);
+                    // If the user is the depositor, only show notes made by the depositor.
+                    if (file.CatalogRecord.CreatedBy.UserName == User.Identity.Name &&
+                        !model.IsUserCurator && 
+                        !model.IsUserApprover)
+                    {
+                        fileNotes = notes.Where(x => x.User.UserName == User.Identity.Name);
+                    }
+
+                    foreach (var note in fileNotes)
+                    {
+                        model.Comments.Add(new UserCommentModel
+                        {
+                            Text = note.Text,
+                            UserName = note.User.UserName,
+                            Timestamp = note.Timestamp,
+                        });
+                    }
+
+                }
 
                 return View("Notes", model);
             }

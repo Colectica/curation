@@ -76,7 +76,8 @@
                 @if (!string.IsNullOrWhiteSpace(log.CatalogRecordTitle))
                 {
                     <div>
-                        @Html.ActionLink(log.CatalogRecordTitle, "General", "CatalogRecord", new { id = log.CatalogRecordId }, null)
+                        @Html.ActionLink(log.CatalogRecordTitle + " (" + log.CatalogRecordNumber + ")",
+                           "General", "CatalogRecord", new { id = log.CatalogRecordId }, null)
                     </div>
                 }
 
@@ -88,7 +89,7 @@
                             @foreach (var file in log.RelatedFiles)
                             {
                                 <li>
-                                    @Html.ActionLink(file.FileName, "General", "File", new { id = file.FileId }, null)
+                                    @Html.ActionLink(file.FileName + " (" + file.FileNumber + ")", "General", "File", new { id = file.FileId }, null)
                                 </li>
                             }
                         </ul>

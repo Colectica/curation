@@ -372,6 +372,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FieldDefinitions.resx</DependentUpon>
     </Compile>
+    <Compile Include="Utility\CatalogRecordChangeDetector.cs" />
     <Compile Include="Utility\ChangeLogBuilder.cs" />
     <Compile Include="Utility\DdiIngester.cs" />
     <Compile Include="Utility\Extensions.cs" />
