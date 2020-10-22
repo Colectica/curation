@@ -81,6 +81,20 @@ namespace Colectica.Curation.Web.Areas.Ddi.Utility
             string result = form["result"];
             string notes = form["notes"];
 
+            // Add a note.
+            if (!string.IsNullOrWhiteSpace(notes))
+            {
+                var note = new Note()
+                {
+                    CatalogRecord = file.CatalogRecord,
+                    File = file,
+                    Timestamp = DateTime.UtcNow,
+                    User = user,
+                    Text = notes
+                };
+                db.Notes.Add(note);
+            }
+
             if (result == "Accept" ||
                 result == "Not Applicable")
             {
