@@ -34,16 +34,18 @@ namespace Colectica.Curation.Test
         public void RequestHandleTest()
         {
             var binding = CreateBasicHttpBinding();
-            var address = new EndpointAddress("http://linktest.odai.yale.edu/ypls-ws/PersistentLinking");
+            var address = new EndpointAddress("https://linktest.its.yale.edu/ypls-ws/PersistentLinking");
             var client = new PersistentLinkingClient(binding, address);
+            var client2 = new YaleIsps.HandleService.YalePersistentLinkingService2.PersistentLinkingClient(binding, address);
 
             string[] ids = new string[]
             {
                 "http://example.org/test1", "test2", "asdf asdf", "test2", "cb340d03-67a3-47c1-bec5-f25df1d6cd87"
             };
 
-            var result = client.createBatch(ids, "10079.1/ISPS", "10079.1/ISPS", "isps");
-
+            string username = Environment.GetEnvironmentVariable("Handle_Username");
+            string password = Environment.GetEnvironmentVariable("Handle_Password");
+            var result = client.createBatch(ids, username, username, password);
 
             Console.WriteLine("test");
         }
@@ -72,6 +74,11 @@ namespace Colectica.Curation.Test
             binding.ReceiveTimeout = new TimeSpan(0, 10, 0);
             binding.OpenTimeout = new TimeSpan(0, 1, 0);
             binding.SendTimeout = new TimeSpan(0, 1, 0);
+            binding.Security.Mode = BasicHttpSecurityMode.Transport;
+            binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
+            binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
+            binding.Security.Transport.Realm = "";
+            binding.Security.Message.ClientCredentialType = BasicHttpMessageCredentialType.Certificate;
 
             //buffer size
             binding.MaxBufferSize = 65536;
