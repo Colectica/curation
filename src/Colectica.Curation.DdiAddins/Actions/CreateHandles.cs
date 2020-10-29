@@ -186,6 +186,11 @@ namespace Colectica.Curation.DdiAddins.Actions
             binding.ReceiveTimeout = new TimeSpan(0, 10, 0);
             binding.OpenTimeout = new TimeSpan(0, 1, 0);
             binding.SendTimeout = new TimeSpan(0, 1, 0);
+            binding.Security.Mode = BasicHttpSecurityMode.Transport;
+            binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
+            binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
+            binding.Security.Transport.Realm = "";
+            binding.Security.Message.ClientCredentialType = BasicHttpMessageCredentialType.Certificate;
 
             //buffer size
             binding.MaxBufferSize = 65536;
