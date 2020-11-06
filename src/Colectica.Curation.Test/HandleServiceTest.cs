@@ -35,6 +35,7 @@ namespace Colectica.Curation.Test
         {
             var binding = CreateBasicHttpBinding();
             var address = new EndpointAddress("https://linktest.its.yale.edu/ypls-ws/PersistentLinking");
+            //var address = new EndpointAddress("http://link.its.yale.edu/ypls-ws/PersistentLinking");
             var client = new PersistentLinkingClient(binding, address);
             var client2 = new YaleIsps.HandleService.YalePersistentLinkingService2.PersistentLinkingClient(binding, address);
 

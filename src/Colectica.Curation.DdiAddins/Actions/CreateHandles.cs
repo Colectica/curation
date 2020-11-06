@@ -136,6 +136,8 @@ namespace Colectica.Curation.DdiAddins.Actions
                     string handle = "http://hdl.handle.net/" + item.key;
                     string url = item.value;
 
+                    logger.Debug("Assigning Handle for " + handle + ", " + url);
+
                     Guid idForHandle = handleRequests
                         .Where(x => x.Url == url)
                         .Select(x => x.Id)
@@ -145,11 +147,13 @@ namespace Colectica.Curation.DdiAddins.Actions
                     if (record.Id == idForHandle)
                     {
                         record.PersistentId = handle;
+                        logger.Debug("Assigning handle to record");
                     }
                     else if (result.DdiFileId == idForHandle)
                     {
                         // How about for the DDI file?
                         result.DdiFileHandle = handle;
+                        logger.Debug("Assigning handle to DDI file");
                     }
                     else
                     {
@@ -159,6 +163,7 @@ namespace Colectica.Curation.DdiAddins.Actions
                         {
                             file.PersistentLink = handle;
                             file.PersistentLinkDate = DateTime.UtcNow;
+                            logger.Debug("Assigning handle to file: " + file.Name);
                         }
                         else
                         {
