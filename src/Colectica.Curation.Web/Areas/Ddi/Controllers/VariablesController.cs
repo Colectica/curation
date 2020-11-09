@@ -36,6 +36,7 @@ using Colectica.Curation.Web.Controllers;
 using Colectica.Curation.Web.Areas.Ddi.Utility;
 using Algenta.Colectica.Model.Utility;
 using Colectica.Curation.Common.Utility;
+using log4net;
 
 namespace Colectica.Curation.Addins.Editors.Controllers
 {
@@ -45,13 +46,20 @@ namespace Colectica.Curation.Addins.Editors.Controllers
         [Route("Variables/Editor/{id}")]
         public ActionResult Editor(Guid id)
         {
+            var logger = LogManager.GetLogger("VariableController");
+            logger.Debug("Entering Variable.Editor()");
+
             using (var db = ApplicationDbContext.Create())
             {
+                logger.Debug("Getting file information");
                 var file = GetFile(id, db);
+                logger.Debug("Got file information");
 
                 try
                 {
+                    logger.Debug("Creating model");
                     var model = FileToVariableEditorMapper.GetModelFromFile(file);
+                    logger.Debug("Created model");
 
                     var user = db.Users
                         .Where(x => x.UserName == User.Identity.Name)
@@ -71,13 +79,17 @@ namespace Colectica.Curation.Addins.Editors.Controllers
                         !isApprover &&
                         !userCanViewAll)
                     {
+                        logger.Warn("No permissions to show variable information");
                         throw new HttpException(403, "You must be a curator or an administrator to perform this action.");
                     }
 
+                    logger.Debug("Leaving Variable.Editor()");
                     return View("~/Areas/Ddi/Views/Variables/Editor.cshtml", model);
                 }
-                catch (InvalidOperationException ex)
+                catch (Exception ex)
                 {
+                    logger.Error("Unhandled exception", ex);
+
                     var model = new MissingPhysicalInstanceModel()
                     {
                         File = file,
@@ -87,7 +99,6 @@ namespace Colectica.Curation.Addins.Editors.Controllers
                             OrganizationHelper.DoesUserHaveRight(db, User, file.CatalogRecord.Organization.Id, Right.CanApprove),
                         OperationStatus = file.CatalogRecord.OperationStatus
                     };
-
                     return View("~/Areas/Ddi/Views/Variables/MissingPhysicalInstance.cshtml", model);
                 }
             }
