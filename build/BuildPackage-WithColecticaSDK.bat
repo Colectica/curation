@@ -41,6 +41,7 @@ ren ..\dist\ColecticaCurationWeb ColecticaCurationWeb-%revisionNumber%
 
 REM Copy service binaries to the dist/ folder.
 xcopy ..\src\Colectica.Curation.Service\bin\Release %serviceDir% /i /s /y
+copy ..\src\lib\CsvHelper.dll %serviceDir%
 
 REM TODO Rename config files to end in .dist
 del %serviceDir%\Colectica.Curation.Service.vhost.exe.config
