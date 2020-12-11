@@ -10,11 +10,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Colectica.Curation.DdiAddins</RootNamespace>
     <AssemblyName>Colectica.Curation.DdiAddins</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,31 +36,34 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Algenta.Colectica.Commands, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ColecticaRepositoryLibrary.5.4.6759\lib\net40\Algenta.Colectica.Commands.dll</HintPath>
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Algenta.Colectica.Commands.dll</HintPath>
     </Reference>
     <Reference Include="Algenta.Colectica.Commands.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ColecticaRepositoryLibrary.5.4.6759\lib\net40\Algenta.Colectica.Commands.Data.dll</HintPath>
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Algenta.Colectica.Commands.Data.dll</HintPath>
     </Reference>
     <Reference Include="Algenta.Colectica.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ColecticaRepositoryLibrary.5.4.6759\lib\net40\Algenta.Colectica.Core.dll</HintPath>
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Algenta.Colectica.Core.dll</HintPath>
     </Reference>
     <Reference Include="Algenta.Colectica.Data.Stata, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ColecticaRepositoryLibrary.5.4.6759\lib\net40\Algenta.Colectica.Data.Stata.dll</HintPath>
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Algenta.Colectica.Data.Stata.dll</HintPath>
     </Reference>
     <Reference Include="Algenta.Colectica.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ColecticaRepositoryLibrary.5.4.6759\lib\net40\Algenta.Colectica.Model.dll</HintPath>
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Algenta.Colectica.Model.dll</HintPath>
     </Reference>
     <Reference Include="Algenta.Colectica.Model.Ddi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ColecticaRepositoryLibrary.5.4.6759\lib\net40\Algenta.Colectica.Model.Ddi.dll</HintPath>
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Algenta.Colectica.Model.Ddi.dll</HintPath>
     </Reference>
     <Reference Include="Algenta.Colectica.Repository, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ColecticaRepositoryLibrary.5.4.6759\lib\net40\Algenta.Colectica.Repository.dll</HintPath>
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Algenta.Colectica.Repository.dll</HintPath>
     </Reference>
     <Reference Include="Algenta.Colectica.Repository.Client, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ColecticaRepositoryLibrary.5.4.6759\lib\net40\Algenta.Colectica.Repository.Client.dll</HintPath>
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Algenta.Colectica.Repository.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Algenta.Colectica.Repository.Sync, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Algenta.Colectica.Repository.Sync.dll</HintPath>
     </Reference>
     <Reference Include="Algenta.Colectica.ViewModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ColecticaRepositoryLibrary.5.4.6759\lib\net40\Algenta.Colectica.ViewModel.dll</HintPath>
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Algenta.Colectica.ViewModel.dll</HintPath>
     </Reference>
     <Reference Include="antlr.runtime">
       <HintPath>..\..\..\thirdparty\antlr-2.7.7\lib\antlr.runtime.dll</HintPath>
@@ -71,13 +75,16 @@
       <HintPath>..\packages\AutoMapper.3.2.1\lib\net40\AutoMapper.Net4.dll</HintPath>
     </Reference>
     <Reference Include="Colectica, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ColecticaRepositoryLibrary.5.4.6759\lib\net40\Colectica.dll</HintPath>
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Colectica.dll</HintPath>
+    </Reference>
+    <Reference Include="Colectica.Data.Excel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Colectica.Data.Excel.dll</HintPath>
     </Reference>
     <Reference Include="Colectica.Reporting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ColecticaRepositoryLibrary.5.4.6759\lib\net40\Colectica.Reporting.dll</HintPath>
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Colectica.Reporting.dll</HintPath>
     </Reference>
     <Reference Include="Data.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ColecticaRepositoryLibrary.5.4.6759\lib\net40\Data.Common.dll</HintPath>
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Data.Common.dll</HintPath>
     </Reference>
     <Reference Include="DynamicInterop">
       <HintPath>..\packages\DynamicInterop.0.7.2.0\lib\net40\DynamicInterop.dll</HintPath>
@@ -98,13 +105,8 @@
       <HintPath>..\packages\LumenWorks.Framework.IO.3.8.0\lib\net20\LumenWorks.Framework.IO.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MathNet.Numerics, Version=2.6.1.30, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\algenta\Algenta.Colectica.Designer\packages\MathNet.Numerics.Signed.2.6.1\lib\net40\MathNet.Numerics.dll</HintPath>
-    </Reference>
-    <Reference Include="MathNet.Numerics.IO, Version=2.6.1.30, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\algenta\Algenta.Colectica.Designer\packages\MathNet.Numerics.Signed.2.6.1\lib\net40\MathNet.Numerics.IO.dll</HintPath>
+    <Reference Include="MathNet.Numerics, Version=3.11.1.0, Culture=neutral, PublicKeyToken=cd8b63ad3d691a37, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.Signed.3.11.1\lib\net40\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
@@ -116,8 +118,8 @@
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="QuickGraph">
       <HintPath>..\..\..\thirdparty\graphsharp\bin\QuickGraph.dll</HintPath>
@@ -131,8 +133,14 @@
     <Reference Include="RDotNet.NativeLibrary">
       <HintPath>..\packages\R.NET.Community.1.5.20\lib\net40\RDotNet.NativeLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="Sasr.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Sasr.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.2.9.0\lib\net46\Serilog.dll</HintPath>
+    </Reference>
     <Reference Include="Spss.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
-      <HintPath>..\packages\ColecticaRepositoryLibrary.5.4.6759\lib\net40\Spss.Data.dll</HintPath>
+      <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7769\lib\net472\Spss.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />

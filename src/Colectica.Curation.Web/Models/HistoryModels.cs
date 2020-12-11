@@ -86,7 +86,7 @@ namespace Colectica.Curation.Web.Models
 
         public Guid CatalogRecordId { get; set; }
         public string CatalogRecordTitle { get; set; }
-
+        public string CatalogRecordNumber { get; set; }
         public List<RelatedFileModel> RelatedFiles { get; protected set; }
 
         public HistoryEventModel()
@@ -113,6 +113,7 @@ namespace Colectica.Curation.Web.Models
             {
                 model.CatalogRecordId = log.RelatedCatalogRecord.Id;
                 model.CatalogRecordTitle = log.RelatedCatalogRecord.Title;
+                model.CatalogRecordNumber = log.RelatedCatalogRecord.Number;
             }
 
             foreach (var managedFile in log.RelatedManagedFiles)
@@ -120,6 +121,7 @@ namespace Colectica.Curation.Web.Models
                 var fileModel = new RelatedFileModel();
                 fileModel.FileId = managedFile.Id;
                 fileModel.FileName = managedFile.Name;
+                fileModel.FileNumber = managedFile.Number;
                 model.RelatedFiles.Add(fileModel);
             }
 
@@ -164,5 +166,6 @@ namespace Colectica.Curation.Web.Models
         public long FileSize { get; set; }
         public string Commit { get; set; }
         public string Sha { get; set; }
+        public string FileNumber { get; set; }
     }
 }

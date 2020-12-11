@@ -45,7 +45,7 @@ namespace Colectica.Curation.Web.Utility
             return builder.ToString();
         }
 
-        static void CheckProperty(string propertyName, string oldValue, string newValue, StringBuilder builder)
+        internal static void CheckProperty(string propertyName, string oldValue, string newValue, StringBuilder builder)
         {
             if (string.IsNullOrWhiteSpace(oldValue) &&
                 string.IsNullOrWhiteSpace(newValue))

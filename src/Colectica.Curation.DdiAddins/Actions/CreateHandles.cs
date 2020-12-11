@@ -136,6 +136,8 @@ namespace Colectica.Curation.DdiAddins.Actions
                     string handle = "http://hdl.handle.net/" + item.key;
                     string url = item.value;
 
+                    logger.Debug("Assigning Handle for " + handle + ", " + url);
+
                     Guid idForHandle = handleRequests
                         .Where(x => x.Url == url)
                         .Select(x => x.Id)
@@ -145,11 +147,13 @@ namespace Colectica.Curation.DdiAddins.Actions
                     if (record.Id == idForHandle)
                     {
                         record.PersistentId = handle;
+                        logger.Debug("Assigning handle to record");
                     }
                     else if (result.DdiFileId == idForHandle)
                     {
                         // How about for the DDI file?
                         result.DdiFileHandle = handle;
+                        logger.Debug("Assigning handle to DDI file");
                     }
                     else
                     {
@@ -159,6 +163,7 @@ namespace Colectica.Curation.DdiAddins.Actions
                         {
                             file.PersistentLink = handle;
                             file.PersistentLinkDate = DateTime.UtcNow;
+                            logger.Debug("Assigning handle to file: " + file.Name);
                         }
                         else
                         {
@@ -186,6 +191,11 @@ namespace Colectica.Curation.DdiAddins.Actions
             binding.ReceiveTimeout = new TimeSpan(0, 10, 0);
             binding.OpenTimeout = new TimeSpan(0, 1, 0);
             binding.SendTimeout = new TimeSpan(0, 1, 0);
+            binding.Security.Mode = BasicHttpSecurityMode.Transport;
+            binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
+            binding.Security.Transport.ProxyCredentialType = HttpProxyCredentialType.None;
+            binding.Security.Transport.Realm = "";
+            binding.Security.Message.ClientCredentialType = BasicHttpMessageCredentialType.Certificate;
 
             //buffer size
             binding.MaxBufferSize = 65536;

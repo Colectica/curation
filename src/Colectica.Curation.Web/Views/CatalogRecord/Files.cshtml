@@ -50,9 +50,11 @@ else
         <thead>
             <tr>
                 <th width="60" data-defaultsort="disabled"></th>
+                <th>Number</th>
                 <th>File</th>
                 <th>Version</th>
                 <th>Type</th>
+                <th>Public</th>
                 <th>Status</th>
                 <th width="60" data-defaultsort="disabled"></th>
             </tr>
@@ -71,6 +73,9 @@ else
                         <a class="btn btn-default" href="@Url.Action("Download","File",new { id = file.Id })" title="Download"><span class="glyphicon glyphicon-download"></span></a>
                     </td>
                     <td>
+                        @file.Number
+                    </td>
+                    <td>
                         @if (!string.IsNullOrWhiteSpace(file.Name))
                         {
                             @Html.ActionLink(file.Name, "General", "File", new { id = file.Id }, null)
@@ -78,6 +83,9 @@ else
                     </td>
                     <td>@file.Version</td>
                     <td>@file.Type</td>
+                    <td>
+                        @file.IsPublicAccess
+                    </td>
                     <td>
                         @if (file.Status == Colectica.Curation.Data.FileStatus.Accepted)
                         {

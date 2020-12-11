@@ -1,5 +1,5 @@
 set zip="c:\Program Files\7-Zip\7z.exe"
-set msbuild="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe"
+set msbuild="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
 
 set WORKSPACE=c:\svn\curation
 IF "%computername%"=="MARGOT" (
@@ -25,6 +25,7 @@ POPD
 
 REM Build the WebDeploy packages.
 %msbuild% ..\src\Colectica.Curation.Web\Colectica.Curation.Web.WithDdi.csproj  /P:Configuration=Release /P:Platform=AnyCPU /P:DeployOnBuild=true /p:VisualStudioVersion=12.0 /P:PublishProfile=FileBundle /P:SolutionDir=%WORKSPACE%\src\
+%msbuild% ..\src\Colectica.Curation.Service\Colectica.Curation.Service.WithDdi.csproj  /P:Configuration=Release /P:Platform=AnyCPU /p:VisualStudioVersion=12.0 /P:SolutionDir=%WORKSPACE%\src\
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 REM Include the version number in the file names.
@@ -40,6 +41,7 @@ ren ..\dist\ColecticaCurationWeb ColecticaCurationWeb-%revisionNumber%
 
 REM Copy service binaries to the dist/ folder.
 xcopy ..\src\Colectica.Curation.Service\bin\Release %serviceDir% /i /s /y
+copy ..\src\lib\CsvHelper.dll %serviceDir%
 
 REM TODO Rename config files to end in .dist
 del %serviceDir%\Colectica.Curation.Service.vhost.exe.config

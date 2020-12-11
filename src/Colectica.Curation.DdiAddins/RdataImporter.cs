@@ -382,5 +382,7 @@ namespace Colectica.Curation.Operations
         {
             get { return false; }
         }
+
+        public bool SupportsColumnDataTypes => false;
     }
 }

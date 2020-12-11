@@ -112,6 +112,7 @@ function VariableEditorViewModel(fileId, hasBottomDrawer, variablesJson) {
     self.onUpdateLabelSuccess = function (response, newValue) {
         self.selectedListItem.Label(newValue);
         self.selectedListItem.IsLabelOk('true');
+        self.selectNode(self.selectedListItem);
     };
 
     self.onUpdateRepresentationTypeSuccess = function(response, newValue) {
