@@ -103,10 +103,13 @@ namespace Colectica.Curation.Web.Models
                     return false;
                 }
 
-                if (!IsUserCurator &&
-                    this.File.CatalogRecord.Status != CatalogRecordStatus.New)
+                if (!IsUserCurator)
                 {
-                    return true;
+                    // If it is new, the depositor can still edit it.
+                    if (this.File.CatalogRecord.Status != CatalogRecordStatus.New)
+                    {
+                        return true;
+                    }
                 }
 
                 return false;
@@ -134,6 +137,7 @@ namespace Colectica.Curation.Web.Models
             Name = file.Name;
             Type = file.Type;
             Status = file.Status;
+            Number = file.Number;
 
             IsPublicAccess = file.IsPublicAccess ? "Yes" : "No";
 

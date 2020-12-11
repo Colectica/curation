@@ -56,6 +56,15 @@
 
     }
 
+    @if ((Model.IsUserCurator || Model.IsUserApprover) && !string.IsNullOrWhiteSpace(Model.File.PersistentLink))
+    {
+        using (Html.BeginForm())
+        {
+            <button type="submit" name="RemovePersistentId" value="RemovePersistentId" class="btn btn-primary" style="margin: 12px 0 0 0;">
+                Remove Persistent Link
+            </button>
+        }
+    }
 
 </div>
 
@@ -81,8 +90,8 @@
         <!-- File Type -->
         @FormHelpers.SelectField(url, Model.File.Id, "Type", "File Type", Model.File.Type,
             FieldDefinitions.FileType, false,
-            Model.IsReadOnly || Model.IsFileTypeAutoDetected,
-            "Data", "Program", "Output", "Codebook", "Treatment Materials", "Supplementary Materials")
+            Model.IsReadOnly,
+            "Data", "Program", "Output", "Codebook", "Treatment Materials", "Supplementary Materials", "README", "Metadata", "Workspace")
 
         <!-- Number -->
         @FormHelpers.EditableField(url, Model.File.Id, "Number", "text", "Number", Model.File.Number, FieldDefinitions.Number, isRequired: false, isReadOnly: Model.IsReadOnly)
@@ -93,12 +102,11 @@
         <!-- Date Persistent Link Issued -->
         @FormHelpers.ReadOnlyField("Date of Persistent Link", Model.File.PersistentLinkDate.ToString(), FieldDefinitions.PersistentLinkDate)
 
-
         <!-- Version -->
         @FormHelpers.ReadOnlyField("Version", Model.File.Version, FieldDefinitions.FileVersion)
 
         <!-- File Format Name -->
-        @FormHelpers.ReadOnlyField("Format Name", Model.File.FormatName, FieldDefinitions.FormatName)
+        @FormHelpers.EditableField(url, Model.File.Id, "FormatName", "text", "Format Name", Model.File.FormatName, FieldDefinitions.FormatName, isRequired: false, isReadOnly: Model.IsReadOnly)
 
         <!-- Format ID -->
         @FormHelpers.ReadOnlyField("Format ID", Model.File.FormatId, FieldDefinitions.FormatID)
@@ -118,12 +126,9 @@
         @FormHelpers.EditableField(url, Model.File.Id, "Hardware", "textarea", "Hardware", Model.File.Hardware, FieldDefinitions.Hardware, isReadOnly: Model.IsReadOnly)
 
         <!-- Data Type / Kind of Data -->
-        @if (Model.File.Type == "Data")
-        {
-            @FormHelpers.SelectField(url, Model.File.Id, "KindOfData", "Data Type", Model.File.KindOfData, FieldDefinitions.KindOfData, true,
-                Model.IsReadOnly,
-                "Administrative (e.g., voting records)", "Survey/interview (e.g., ANES)", "Web (e.g,. page views, game)", "Social media (e.g., Twitter)", "Observed behavior", "Other")
-        }
+        @FormHelpers.SelectField(url, Model.File.Id, "KindOfData", "Data Type", Model.File.KindOfData, FieldDefinitions.KindOfData, true,
+            Model.IsReadOnly,
+            "Administrative (e.g., voting records)", "Survey/interview (e.g., ANES)", "Web (e.g,. page views, game)", "Social media (e.g., Twitter)", "Observed behavior", "Other")
 
         <!-- Checksum value -->
         @FormHelpers.ReadOnlyField("Checksum", Model.File.Checksum, FieldDefinitions.Checksum)

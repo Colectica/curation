@@ -32,23 +32,31 @@ namespace Colectica.Curation.Addins.Editors.Mappers
     {
         public static VariableEditorViewModel GetModelFromFile(ManagedFile file)
         {
+            var logger = LogManager.GetLogger("FileToVariableEditorMapper");
+            logger.Debug("Entering GetModelFromFile()");
+
             var model = new VariableEditorViewModel(file);
 
             // Get the DDI PhysicalInstance that corresponds to this ManagedFile.
+            logger.Debug("Getting PhysicalInstance");
             var physicalInstance = GetPhysicalInstance(file, file.CatalogRecord.Organization.AgencyID);
+            logger.Debug("Got PhysicalInstance");
 
             // Make the list of variables.
             if (physicalInstance == null)
             {
+                logger.Debug("Got null PhysicalInstance");
                 return model;
             }
 
             // Populate what is needed to get the list of variables.
+            logger.Debug("Populating PhysicalInstance");
             var client = RepositoryHelper.GetClient();
             foreach (var dr in physicalInstance.DataRelationships)
             {
                 client.PopulateItem(dr, false, Algenta.Colectica.Model.Repository.ChildReferenceProcessing.PopulateLatest);
             }
+            logger.Debug("Populated PhysicalInstance");
 
             var allVariables = physicalInstance.DataRelationships
                 .SelectMany(x => x.LogicalRecords)
@@ -73,6 +81,7 @@ namespace Colectica.Curation.Addins.Editors.Mappers
             model.IsUserCurator = false;
             model.IsUserApprover = false;
 
+            logger.Debug("Leaving GetModelFromFile()");
             return model;
         }
 

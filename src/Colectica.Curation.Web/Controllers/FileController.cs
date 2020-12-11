@@ -35,6 +35,7 @@ using LibGit2Sharp;
 using Colectica.Curation.Common.Utility;
 using System.Net.Mime;
 using Colectica.Curation.Models;
+using log4net;
 
 namespace Colectica.Curation.Web.Controllers
 {
@@ -200,9 +201,14 @@ namespace Colectica.Curation.Web.Controllers
         {
             using (var db = ApplicationDbContext.Create())
             {
+                var logger = LogManager.GetLogger("FileController");
+
                 var file = GetFile(id, db);
+                logger.Debug("Got file");
 
                 EnsureUserIsAllowed(file.CatalogRecord, db);
+
+                logger.Debug("User is allowed");
 
                 var model = new FileViewModel(file) as FileViewModel;
 
@@ -214,6 +220,14 @@ namespace Colectica.Curation.Web.Controllers
                 string lowerExtension = Path.GetExtension(file.Name).ToLower();
                 string[] autoDetectedFileTypes = { ".dta", ".sav", ".rdata", ".csv", ".do", ".r", ".sps" };
                 model.IsFileTypeAutoDetected = autoDetectedFileTypes.Contains(lowerExtension);
+
+                logger.Debug("Mapped");
+
+                logger.Debug($"Record Status: {model.File.CatalogRecord.Status}");
+                logger.Debug($"IsCurator: {model.IsUserCurator}");
+                logger.Debug($"IsApprover: {model.IsUserApprover}");
+                logger.Debug($"IsReadOnly: {model.IsReadOnly}");
+                logger.Debug($"Persistent link: {model.File.PersistentLink}");
 
                 return View(model);
             }
@@ -578,8 +592,7 @@ namespace Colectica.Curation.Web.Controllers
             }
         }
 
-        [HttpPost]
-        public ActionResult General(FileViewModel model)
+        public ActionResult RemovePersistentId(FileViewModel model)
         {
             using (var db = ApplicationDbContext.Create())
             {
@@ -598,15 +611,74 @@ namespace Colectica.Curation.Web.Controllers
                 EnsureUserIsAllowed(file.CatalogRecord, db);
                 EnsureUserCanEdit(file.CatalogRecord, db);
 
+                // Clear the persistent ID.
+                file.PersistentLink = null;
+                file.PersistentLinkDate = null;
+
+                // Log the editing of the file.
+                var log = new Event()
+                {
+                    EventType = EventTypes.EditManagedFile,
+                    Timestamp = DateTime.UtcNow,
+                    User = user,
+                    RelatedCatalogRecord = file.CatalogRecord,
+                    Title = "Edit a File",
+                    Details = "Remove persistent link"
+                };
+                db.Events.Add(log);
+
+                db.SaveChanges();
+
+                return RedirectToAction("General", new { id = file.Id });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult General(FileViewModel model)
+        {
+            var logger = LogManager.GetLogger("FileController");
+            logger.Debug("Entering FileController.General() POST handler");
+
+            if (Request.Form.AllKeys.Contains("RemovePersistentId"))
+            {
+                logger.Debug("Removing persistent ID");
+                return RemovePersistentId(model);
+            }
+
+            using (var db = ApplicationDbContext.Create())
+            {
+                logger.Debug("Created database object");
+
+                var user = db.Users
+                    .Where(x => x.UserName == User.Identity.Name)
+                    .FirstOrDefault();
+                if (user == null)
+                {
+                    logger.Debug("No user. Returning.");
+                    return RedirectToAction("Index");
+                }
+
+                // Fetch the appropriate ManagedFile by ID.
+                Guid id = model.Id;
+                var file = GetFile(id, db);
+
+                EnsureUserIsAllowed(file.CatalogRecord, db);
+                EnsureUserCanEdit(file.CatalogRecord, db);
+
+                logger.Debug("User is allowed");
+
                 if (file.CatalogRecord.IsLocked)
                 {
+                    logger.Debug("Catalog record is locked. Throwing.");
                     throw new HttpException(400, "This operation cannot be performed while the record is locked");
                 }
 
                 string changeSummary = ManagedFileChangeDetector.GetChangeSummary(file, model);
+                logger.Debug("Got change summary");
 
                 // Copy the information from the POST to the ManagedFile, ignoring read-only properties.                   
                 Mapper.Map(model, file);
+                logger.Debug("Mapped");
 
                 // Log the editing of the file.
                 var log = new Event()
@@ -621,9 +693,13 @@ namespace Colectica.Curation.Web.Controllers
                 log.RelatedManagedFiles.Add(file);
                 db.Events.Add(log);
 
+                logger.Debug("Logged");
+
                 // Save the updated record.
                 db.SaveChanges();
+                logger.Debug("Wrote to database");
 
+                logger.Debug("Returning from FileController.General() POST handler");
                 return RedirectToAction("General", new { id = file.Id });
             }
         }

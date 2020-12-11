@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:ns2="http://schemas.xmlsoap.org/soap/http" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.ypls.odai.yale.edu/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://jaxb.dev.java.net/array" name="PersistentLinkingService" targetNamespace="http://ws.ypls.odai.yale.edu/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema targetNamespace="http://ws.ypls.odai.yale.edu/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="handleMap" type="tns:handleMap" />
+      <xs:element name="resultMap" type="tns:resultMap" />
+      <xs:complexType name="handleMap">
+        <xs:sequence>
+          <xs:element name="map">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="key" type="xs:string" />
+                      <xs:element minOccurs="0" name="value" type="xs:string" />
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="abstractMap" abstract="true">
+        <xs:sequence />
+      </xs:complexType>
+      <xs:complexType name="hashMap">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:abstractMap">
+            <xs:sequence />
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="resultMap">
+        <xs:sequence>
+          <xs:element name="failMap">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="key" type="xs:string" />
+                      <xs:element minOccurs="0" name="value" type="xs:string" />
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="successMap">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="key" type="xs:string" />
+                      <xs:element minOccurs="0" name="value" type="xs:string" />
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+    <xs:schema targetNamespace="http://jaxb.dev.java.net/array" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:complexType name="stringArray" final="#all">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="item" nillable="true" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="deleteBatch">
+    <wsdl:part name="values" type="ns1:stringArray" />
+    <wsdl:part name="user" type="xsd:string" />
+    <wsdl:part name="credential" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="createBatchSemanticResponse">
+    <wsdl:part name="results" type="tns:resultMap" />
+  </wsdl:message>
+  <wsdl:message name="deleteBatchResponse">
+    <wsdl:part name="results" type="tns:resultMap" />
+  </wsdl:message>
+  <wsdl:message name="createBatch">
+    <wsdl:part name="values" type="ns1:stringArray" />
+    <wsdl:part name="group" type="xsd:string" />
+    <wsdl:part name="user" type="xsd:string" />
+    <wsdl:part name="credential" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="resolveBatch">
+    <wsdl:part name="values" type="ns1:stringArray" />
+    <wsdl:part name="user" type="xsd:string" />
+    <wsdl:part name="credential" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="modifyBatch">
+    <wsdl:part name="handlesToValues" type="tns:handleMap" />
+    <wsdl:part name="user" type="xsd:string" />
+    <wsdl:part name="credential" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="modifyBatchResponse">
+    <wsdl:part name="results" type="tns:resultMap" />
+  </wsdl:message>
+  <wsdl:message name="createBatchSemantic">
+    <wsdl:part name="handlesToValues" type="tns:handleMap" />
+    <wsdl:part name="group" type="xsd:string" />
+    <wsdl:part name="user" type="xsd:string" />
+    <wsdl:part name="credential" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:message name="resolveBatchResponse">
+    <wsdl:part name="results" type="tns:resultMap" />
+  </wsdl:message>
+  <wsdl:message name="createBatchResponse">
+    <wsdl:part name="results" type="tns:resultMap" />
+  </wsdl:message>
+  <wsdl:portType name="IPersistentLinking">
+    <wsdl:operation name="createBatchSemantic">
+      <wsdl:input name="createBatchSemantic" message="tns:createBatchSemantic" />
+      <wsdl:output name="createBatchSemanticResponse" message="tns:createBatchSemanticResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="deleteBatch">
+      <wsdl:input name="deleteBatch" message="tns:deleteBatch" />
+      <wsdl:output name="deleteBatchResponse" message="tns:deleteBatchResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="modifyBatch">
+      <wsdl:input name="modifyBatch" message="tns:modifyBatch" />
+      <wsdl:output name="modifyBatchResponse" message="tns:modifyBatchResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="resolveBatch">
+      <wsdl:input name="resolveBatch" message="tns:resolveBatch" />
+      <wsdl:output name="resolveBatchResponse" message="tns:resolveBatchResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="createBatch">
+      <wsdl:input name="createBatch" message="tns:createBatch" />
+      <wsdl:output name="createBatchResponse" message="tns:createBatchResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="PersistentLinkingServiceSoapBinding" type="tns:IPersistentLinking">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    <wsdl:operation name="createBatchSemantic">
+      <soap:operation soapAction="" style="rpc" />
+      <wsdl:input name="createBatchSemantic">
+        <soap:body use="literal" namespace="http://ws.ypls.odai.yale.edu/" />
+      </wsdl:input>
+      <wsdl:output name="createBatchSemanticResponse">
+        <soap:body use="literal" namespace="http://ws.ypls.odai.yale.edu/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="deleteBatch">
+      <soap:operation soapAction="" style="rpc" />
+      <wsdl:input name="deleteBatch">
+        <soap:body use="literal" namespace="http://ws.ypls.odai.yale.edu/" />
+      </wsdl:input>
+      <wsdl:output name="deleteBatchResponse">
+        <soap:body use="literal" namespace="http://ws.ypls.odai.yale.edu/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="modifyBatch">
+      <soap:operation soapAction="" style="rpc" />
+      <wsdl:input name="modifyBatch">
+        <soap:body use="literal" namespace="http://ws.ypls.odai.yale.edu/" />
+      </wsdl:input>
+      <wsdl:output name="modifyBatchResponse">
+        <soap:body use="literal" namespace="http://ws.ypls.odai.yale.edu/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="resolveBatch">
+      <soap:operation soapAction="" style="rpc" />
+      <wsdl:input name="resolveBatch">
+        <soap:body use="literal" namespace="http://ws.ypls.odai.yale.edu/" />
+      </wsdl:input>
+      <wsdl:output name="resolveBatchResponse">
+        <soap:body use="literal" namespace="http://ws.ypls.odai.yale.edu/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createBatch">
+      <soap:operation soapAction="" style="rpc" />
+      <wsdl:input name="createBatch">
+        <soap:body use="literal" namespace="http://ws.ypls.odai.yale.edu/" />
+      </wsdl:input>
+      <wsdl:output name="createBatchResponse">
+        <soap:body use="literal" namespace="http://ws.ypls.odai.yale.edu/" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="PersistentLinkingService">
+    <wsdl:port name="PersistentLinkingPort" binding="tns:PersistentLinkingServiceSoapBinding">
+      <soap:address location="https://linktest.its.yale.edu/ypls-ws/PersistentLinking" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -8,57 +8,57 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace YaleIsps.HandleService.YalePersistentLinkingService {
+namespace YaleIsps.HandleService.YalePersistentLinkingService2 {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(Namespace="http://ws.ypls.odai.yale.edu/", ConfigurationName="YalePersistentLinkingService.IPersistentLinking")]
+    [System.ServiceModel.ServiceContractAttribute(Namespace="http://ws.ypls.odai.yale.edu/", ConfigurationName="YalePersistentLinkingService2.IPersistentLinking")]
     public interface IPersistentLinking {
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc, SupportFaults=true)]
         [return: System.ServiceModel.MessageParameterAttribute(Name="results")]
-        YaleIsps.HandleService.YalePersistentLinkingService.resultMap createBatchSemantic(YaleIsps.HandleService.YalePersistentLinkingService.handleMap handlesToValues, string group, string user, string credential);
+        YaleIsps.HandleService.YalePersistentLinkingService2.resultMap createBatchSemantic(YaleIsps.HandleService.YalePersistentLinkingService2.handleMap handlesToValues, string group, string user, string credential);
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
         [return: System.ServiceModel.MessageParameterAttribute(Name="results")]
-        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService.resultMap> createBatchSemanticAsync(YaleIsps.HandleService.YalePersistentLinkingService.handleMap handlesToValues, string group, string user, string credential);
+        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService2.resultMap> createBatchSemanticAsync(YaleIsps.HandleService.YalePersistentLinkingService2.handleMap handlesToValues, string group, string user, string credential);
         
         // CODEGEN: Parameter 'values' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlArrayAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         [return: System.ServiceModel.MessageParameterAttribute(Name="results")]
-        YaleIsps.HandleService.YalePersistentLinkingService.deleteBatchResponse deleteBatch(YaleIsps.HandleService.YalePersistentLinkingService.deleteBatch request);
+        YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatchResponse deleteBatch(YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatch request);
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService.deleteBatchResponse> deleteBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService.deleteBatch request);
+        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatchResponse> deleteBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatch request);
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(Style=System.ServiceModel.OperationFormatStyle.Rpc, SupportFaults=true)]
         [return: System.ServiceModel.MessageParameterAttribute(Name="results")]
-        YaleIsps.HandleService.YalePersistentLinkingService.resultMap modifyBatch(YaleIsps.HandleService.YalePersistentLinkingService.handleMap handlesToValues, string user, string credential);
+        YaleIsps.HandleService.YalePersistentLinkingService2.resultMap modifyBatch(YaleIsps.HandleService.YalePersistentLinkingService2.handleMap handlesToValues, string user, string credential);
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
         [return: System.ServiceModel.MessageParameterAttribute(Name="results")]
-        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService.resultMap> modifyBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService.handleMap handlesToValues, string user, string credential);
+        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService2.resultMap> modifyBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService2.handleMap handlesToValues, string user, string credential);
         
         // CODEGEN: Parameter 'values' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlArrayAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         [return: System.ServiceModel.MessageParameterAttribute(Name="results")]
-        YaleIsps.HandleService.YalePersistentLinkingService.resolveBatchResponse resolveBatch(YaleIsps.HandleService.YalePersistentLinkingService.resolveBatch request);
+        YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatchResponse resolveBatch(YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatch request);
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService.resolveBatchResponse> resolveBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService.resolveBatch request);
+        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatchResponse> resolveBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatch request);
         
         // CODEGEN: Parameter 'values' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlArrayAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
         [return: System.ServiceModel.MessageParameterAttribute(Name="results")]
-        YaleIsps.HandleService.YalePersistentLinkingService.createBatchResponse createBatch(YaleIsps.HandleService.YalePersistentLinkingService.createBatch request);
+        YaleIsps.HandleService.YalePersistentLinkingService2.createBatchResponse createBatch(YaleIsps.HandleService.YalePersistentLinkingService2.createBatch request);
         
         [System.ServiceModel.OperationContractAttribute(Action="", ReplyAction="*")]
-        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService.createBatchResponse> createBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService.createBatch request);
+        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService2.createBatchResponse> createBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService2.createBatch request);
     }
     
     /// <remarks/>
@@ -314,12 +314,12 @@ namespace YaleIsps.HandleService.YalePersistentLinkingService {
     public partial class deleteBatchResponse {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="", Order=0)]
-        public YaleIsps.HandleService.YalePersistentLinkingService.resultMap results;
+        public YaleIsps.HandleService.YalePersistentLinkingService2.resultMap results;
         
         public deleteBatchResponse() {
         }
         
-        public deleteBatchResponse(YaleIsps.HandleService.YalePersistentLinkingService.resultMap results) {
+        public deleteBatchResponse(YaleIsps.HandleService.YalePersistentLinkingService2.resultMap results) {
             this.results = results;
         }
     }
@@ -358,12 +358,12 @@ namespace YaleIsps.HandleService.YalePersistentLinkingService {
     public partial class resolveBatchResponse {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="", Order=0)]
-        public YaleIsps.HandleService.YalePersistentLinkingService.resultMap results;
+        public YaleIsps.HandleService.YalePersistentLinkingService2.resultMap results;
         
         public resolveBatchResponse() {
         }
         
-        public resolveBatchResponse(YaleIsps.HandleService.YalePersistentLinkingService.resultMap results) {
+        public resolveBatchResponse(YaleIsps.HandleService.YalePersistentLinkingService2.resultMap results) {
             this.results = results;
         }
     }
@@ -406,23 +406,23 @@ namespace YaleIsps.HandleService.YalePersistentLinkingService {
     public partial class createBatchResponse {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="", Order=0)]
-        public YaleIsps.HandleService.YalePersistentLinkingService.resultMap results;
+        public YaleIsps.HandleService.YalePersistentLinkingService2.resultMap results;
         
         public createBatchResponse() {
         }
         
-        public createBatchResponse(YaleIsps.HandleService.YalePersistentLinkingService.resultMap results) {
+        public createBatchResponse(YaleIsps.HandleService.YalePersistentLinkingService2.resultMap results) {
             this.results = results;
         }
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IPersistentLinkingChannel : YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking, System.ServiceModel.IClientChannel {
+    public interface IPersistentLinkingChannel : YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class PersistentLinkingClient : System.ServiceModel.ClientBase<YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking>, YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking {
+    public partial class PersistentLinkingClient : System.ServiceModel.ClientBase<YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking>, YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking {
         
         public PersistentLinkingClient() {
         }
@@ -443,103 +443,103 @@ namespace YaleIsps.HandleService.YalePersistentLinkingService {
                 base(binding, remoteAddress) {
         }
         
-        public YaleIsps.HandleService.YalePersistentLinkingService.resultMap createBatchSemantic(YaleIsps.HandleService.YalePersistentLinkingService.handleMap handlesToValues, string group, string user, string credential) {
+        public YaleIsps.HandleService.YalePersistentLinkingService2.resultMap createBatchSemantic(YaleIsps.HandleService.YalePersistentLinkingService2.handleMap handlesToValues, string group, string user, string credential) {
             return base.Channel.createBatchSemantic(handlesToValues, group, user, credential);
         }
         
-        public System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService.resultMap> createBatchSemanticAsync(YaleIsps.HandleService.YalePersistentLinkingService.handleMap handlesToValues, string group, string user, string credential) {
+        public System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService2.resultMap> createBatchSemanticAsync(YaleIsps.HandleService.YalePersistentLinkingService2.handleMap handlesToValues, string group, string user, string credential) {
             return base.Channel.createBatchSemanticAsync(handlesToValues, group, user, credential);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        YaleIsps.HandleService.YalePersistentLinkingService.deleteBatchResponse YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking.deleteBatch(YaleIsps.HandleService.YalePersistentLinkingService.deleteBatch request) {
+        YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatchResponse YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking.deleteBatch(YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatch request) {
             return base.Channel.deleteBatch(request);
         }
         
-        public YaleIsps.HandleService.YalePersistentLinkingService.resultMap deleteBatch(string[] values, string user, string credential) {
-            YaleIsps.HandleService.YalePersistentLinkingService.deleteBatch inValue = new YaleIsps.HandleService.YalePersistentLinkingService.deleteBatch();
+        public YaleIsps.HandleService.YalePersistentLinkingService2.resultMap deleteBatch(string[] values, string user, string credential) {
+            YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatch inValue = new YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatch();
             inValue.values = values;
             inValue.user = user;
             inValue.credential = credential;
-            YaleIsps.HandleService.YalePersistentLinkingService.deleteBatchResponse retVal = ((YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking)(this)).deleteBatch(inValue);
+            YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatchResponse retVal = ((YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking)(this)).deleteBatch(inValue);
             return retVal.results;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService.deleteBatchResponse> YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking.deleteBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService.deleteBatch request) {
+        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatchResponse> YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking.deleteBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatch request) {
             return base.Channel.deleteBatchAsync(request);
         }
         
-        public System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService.deleteBatchResponse> deleteBatchAsync(string[] values, string user, string credential) {
-            YaleIsps.HandleService.YalePersistentLinkingService.deleteBatch inValue = new YaleIsps.HandleService.YalePersistentLinkingService.deleteBatch();
+        public System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatchResponse> deleteBatchAsync(string[] values, string user, string credential) {
+            YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatch inValue = new YaleIsps.HandleService.YalePersistentLinkingService2.deleteBatch();
             inValue.values = values;
             inValue.user = user;
             inValue.credential = credential;
-            return ((YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking)(this)).deleteBatchAsync(inValue);
+            return ((YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking)(this)).deleteBatchAsync(inValue);
         }
         
-        public YaleIsps.HandleService.YalePersistentLinkingService.resultMap modifyBatch(YaleIsps.HandleService.YalePersistentLinkingService.handleMap handlesToValues, string user, string credential) {
+        public YaleIsps.HandleService.YalePersistentLinkingService2.resultMap modifyBatch(YaleIsps.HandleService.YalePersistentLinkingService2.handleMap handlesToValues, string user, string credential) {
             return base.Channel.modifyBatch(handlesToValues, user, credential);
         }
         
-        public System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService.resultMap> modifyBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService.handleMap handlesToValues, string user, string credential) {
+        public System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService2.resultMap> modifyBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService2.handleMap handlesToValues, string user, string credential) {
             return base.Channel.modifyBatchAsync(handlesToValues, user, credential);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        YaleIsps.HandleService.YalePersistentLinkingService.resolveBatchResponse YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking.resolveBatch(YaleIsps.HandleService.YalePersistentLinkingService.resolveBatch request) {
+        YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatchResponse YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking.resolveBatch(YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatch request) {
             return base.Channel.resolveBatch(request);
         }
         
-        public YaleIsps.HandleService.YalePersistentLinkingService.resultMap resolveBatch(string[] values, string user, string credential) {
-            YaleIsps.HandleService.YalePersistentLinkingService.resolveBatch inValue = new YaleIsps.HandleService.YalePersistentLinkingService.resolveBatch();
+        public YaleIsps.HandleService.YalePersistentLinkingService2.resultMap resolveBatch(string[] values, string user, string credential) {
+            YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatch inValue = new YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatch();
             inValue.values = values;
             inValue.user = user;
             inValue.credential = credential;
-            YaleIsps.HandleService.YalePersistentLinkingService.resolveBatchResponse retVal = ((YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking)(this)).resolveBatch(inValue);
+            YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatchResponse retVal = ((YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking)(this)).resolveBatch(inValue);
             return retVal.results;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService.resolveBatchResponse> YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking.resolveBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService.resolveBatch request) {
+        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatchResponse> YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking.resolveBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatch request) {
             return base.Channel.resolveBatchAsync(request);
         }
         
-        public System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService.resolveBatchResponse> resolveBatchAsync(string[] values, string user, string credential) {
-            YaleIsps.HandleService.YalePersistentLinkingService.resolveBatch inValue = new YaleIsps.HandleService.YalePersistentLinkingService.resolveBatch();
+        public System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatchResponse> resolveBatchAsync(string[] values, string user, string credential) {
+            YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatch inValue = new YaleIsps.HandleService.YalePersistentLinkingService2.resolveBatch();
             inValue.values = values;
             inValue.user = user;
             inValue.credential = credential;
-            return ((YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking)(this)).resolveBatchAsync(inValue);
+            return ((YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking)(this)).resolveBatchAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        YaleIsps.HandleService.YalePersistentLinkingService.createBatchResponse YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking.createBatch(YaleIsps.HandleService.YalePersistentLinkingService.createBatch request) {
+        YaleIsps.HandleService.YalePersistentLinkingService2.createBatchResponse YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking.createBatch(YaleIsps.HandleService.YalePersistentLinkingService2.createBatch request) {
             return base.Channel.createBatch(request);
         }
         
-        public YaleIsps.HandleService.YalePersistentLinkingService.resultMap createBatch(string[] values, string group, string user, string credential) {
-            YaleIsps.HandleService.YalePersistentLinkingService.createBatch inValue = new YaleIsps.HandleService.YalePersistentLinkingService.createBatch();
+        public YaleIsps.HandleService.YalePersistentLinkingService2.resultMap createBatch(string[] values, string group, string user, string credential) {
+            YaleIsps.HandleService.YalePersistentLinkingService2.createBatch inValue = new YaleIsps.HandleService.YalePersistentLinkingService2.createBatch();
             inValue.values = values;
             inValue.group = group;
             inValue.user = user;
             inValue.credential = credential;
-            YaleIsps.HandleService.YalePersistentLinkingService.createBatchResponse retVal = ((YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking)(this)).createBatch(inValue);
+            YaleIsps.HandleService.YalePersistentLinkingService2.createBatchResponse retVal = ((YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking)(this)).createBatch(inValue);
             return retVal.results;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService.createBatchResponse> YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking.createBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService.createBatch request) {
+        System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService2.createBatchResponse> YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking.createBatchAsync(YaleIsps.HandleService.YalePersistentLinkingService2.createBatch request) {
             return base.Channel.createBatchAsync(request);
         }
         
-        public System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService.createBatchResponse> createBatchAsync(string[] values, string group, string user, string credential) {
-            YaleIsps.HandleService.YalePersistentLinkingService.createBatch inValue = new YaleIsps.HandleService.YalePersistentLinkingService.createBatch();
+        public System.Threading.Tasks.Task<YaleIsps.HandleService.YalePersistentLinkingService2.createBatchResponse> createBatchAsync(string[] values, string group, string user, string credential) {
+            YaleIsps.HandleService.YalePersistentLinkingService2.createBatch inValue = new YaleIsps.HandleService.YalePersistentLinkingService2.createBatch();
             inValue.values = values;
             inValue.group = group;
             inValue.user = user;
             inValue.credential = credential;
-            return ((YaleIsps.HandleService.YalePersistentLinkingService.IPersistentLinking)(this)).createBatchAsync(inValue);
+            return ((YaleIsps.HandleService.YalePersistentLinkingService2.IPersistentLinking)(this)).createBatchAsync(inValue);
         }
     }
 }
