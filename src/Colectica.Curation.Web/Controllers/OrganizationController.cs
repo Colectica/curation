@@ -172,20 +172,16 @@ namespace Colectica.Curation.Web.Controllers
 
 
                 // Create the user.
-                var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-                var user = await UserController.CreateUser(model.UserName, model.Password, model.FirstName, model.LastName,
-                    false,
-                    org,
-                    userManager,
-                    ModelState,
-                    db);
+                var thisUser = db.Users.Where(x => x.UserName == User.Identity.Name)
+                    .FirstOrDefault();
+                thisUser.Organizations.Add(org);
 
-                // Make the user an administrator, with all rights.
-                db.Permissions.Add(CreatePermission(user, org, Right.CanAssignRights));
-                db.Permissions.Add(CreatePermission(user, org, Right.CanAssignCurator));
-                db.Permissions.Add(CreatePermission(user, org, Right.CanViewAllCatalogRecords));
-                db.Permissions.Add(CreatePermission(user, org, Right.CanEditOrganization));
-                db.Permissions.Add(CreatePermission(user, org, Right.CanApprove));
+                // Make the creating user an administrator, with all rights.
+                db.Permissions.Add(CreatePermission(thisUser, org, Right.CanAssignRights));
+                db.Permissions.Add(CreatePermission(thisUser, org, Right.CanAssignCurator));
+                db.Permissions.Add(CreatePermission(thisUser, org, Right.CanViewAllCatalogRecords));
+                db.Permissions.Add(CreatePermission(thisUser, org, Right.CanEditOrganization));
+                db.Permissions.Add(CreatePermission(thisUser, org, Right.CanApprove));
 
                 db.SaveChanges();
 
