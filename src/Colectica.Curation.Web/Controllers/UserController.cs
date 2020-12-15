@@ -106,6 +106,9 @@ namespace Colectica.Curation.Web.Controllers
                 var user = db.Users
                     .Where(x => x.UserName == id)
                     .Include(x => x.Organizations)
+                    .Include(x => x.AuthorFor)
+                    .Include(x => x.CuratorFor)
+                    .Include(x => x.ApproverFor)
                     .FirstOrDefault();
                 if (user == null)
                 {

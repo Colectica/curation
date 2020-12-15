@@ -6,6 +6,7 @@
 
 <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="active"><a href="#history" aria-controls="history" role="tab" data-toggle="tab">History</a></li>
+    <li role="presentation"><a href="#records" aria-controls="records" role="tab" data-toggle="tab">Records</a></li>
 
     @if (Model.CanEditUser)
     {
@@ -26,6 +27,47 @@
 
     <div role="tabpanel" class="tab-pane active" id="history">
         @Html.Partial("_History", Model.Events)
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="records">
+
+        @if (!Model.User.AuthorFor.Any() &&
+            !Model.User.CuratorFor.Any() &&
+            !Model.User.ApproverFor.Any())
+        {
+            <p>This user does not have access to any catalog records.</p>
+        }
+        else
+        {
+            <table class="table">
+                <tr>
+                    <th>Catalog Record</th>
+                    <th>Access</th>
+                </tr>
+
+                @foreach (var record in Model.User.AuthorFor)
+                {
+                    <tr>
+                        <td>@Html.ActionLink(record.Title, "General", "CatalogRecord", new { id = record.Id }, new { } )</td>
+                        <td>Author</td>
+                    </tr>
+                }
+                @foreach (var record in Model.User.CuratorFor)
+                {
+                    <tr>
+                        <td>@Html.ActionLink(record.Title, "General", "CatalogRecord", new { id = record.Id }, new { } )</td>
+                        <td>Curator</td>
+                    </tr>
+                }
+                @foreach (var record in Model.User.ApproverFor)
+                {
+                    <tr>
+                        <td>@Html.ActionLink(record.Title, "General", "CatalogRecord", new { id = record.Id }, new { } )</td>
+                        <td>Approver</td>
+                    </tr>
+                }
+            </table>
+        }
     </div>
 
     @if (Model.CanEditUser)
