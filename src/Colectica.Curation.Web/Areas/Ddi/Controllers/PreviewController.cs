@@ -27,6 +27,9 @@ using Colectica.Curation.Web.Areas.Ddi.Models;
 using System.IO;
 using Colectica.Curation.Common.ViewModels;
 using Colectica.Curation.Web.Controllers;
+using System.Windows.Documents;
+using System.Text;
+using System.Windows;
 
 namespace Colectica.Curation.Web.Areas.Ddi.Controllers
 {
@@ -73,6 +76,28 @@ namespace Colectica.Curation.Web.Areas.Ddi.Controllers
                 else if (file.Name.ToLower().EndsWith(".pdf"))
                 {
                     model.PreviewType = PreviewType.Pdf;
+                }
+                else if (file.Name.ToLower().EndsWith(".rtf"))
+                {
+                    model.PreviewType = PreviewType.Text;
+
+                    string path = string.Empty;
+
+                    string processingDirectory = SettingsHelper.GetProcessingDirectory(file.CatalogRecord.Organization, db);
+                    if (!string.IsNullOrWhiteSpace(processingDirectory))
+                    {
+                        path = Path.Combine(processingDirectory, file.CatalogRecord.Id.ToString(), file.Name);
+
+                        if (System.IO.File.Exists(path))
+                        {
+                            string richContent = System.IO.File.ReadAllText(path);
+                            model.Content = richContent.ConvertRtfToPlainText();
+                        }
+                    }
+                }
+                else if (file.IsImageFile())
+                {
+                    model.PreviewType = PreviewType.Image;
                 }
 
                 return View("~/Areas/Ddi/Views/Preview/Editor.cshtml", model);
@@ -133,5 +158,21 @@ namespace Colectica.Curation.Web.Areas.Ddi.Controllers
             return file;
         }
 
+    }
+
+    public static class PreviewStringExtensions
+    {
+        public static string ConvertRtfToPlainText(this string content)
+        {
+            var flowDocument = new FlowDocument();
+            var textRange = new TextRange(flowDocument.ContentStart, flowDocument.ContentEnd);
+
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(content ?? string.Empty)))
+            {
+                textRange.Load(stream, DataFormats.Rtf);
+            }
+
+            return textRange.Text;
+        }
     }
 }

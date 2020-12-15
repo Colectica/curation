@@ -108,3 +108,13 @@ else if (Model.PreviewType == Colectica.Curation.Web.Areas.Ddi.Models.PreviewTyp
 {
     <iframe src="@Url.Action("DownloadInline", "File", new { id = @Model.File.Id })" width="600" height="500"></iframe>
 }
+else if (Model.PreviewType == Colectica.Curation.Web.Areas.Ddi.Models.PreviewType.Image)
+{
+    <img src="@Url.Action("DownloadInline", "File", new { id = @Model.File.Id })" />
+}
+else if (Model.PreviewType == Colectica.Curation.Web.Areas.Ddi.Models.PreviewType.RichText)
+{
+    <div id="rich-text-preview">
+        @Model.Content
+    </div>
+}

@@ -55,6 +55,8 @@ namespace Colectica.Curation.Web.Areas.Ddi.Models
     public enum PreviewType
     {
         Text,
-        Pdf
+        Pdf,
+        RichText,
+        Image
     }
 }
