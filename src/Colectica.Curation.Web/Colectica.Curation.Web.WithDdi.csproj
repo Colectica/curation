@@ -181,6 +181,8 @@
       <HintPath>..\packages\PDFsharp-MigraDoc-WPF.1.32.2608.0\lib\net20\PdfSharp.Charting-WPF.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="QuickGraph">
       <HintPath>..\..\..\thirdparty\graphsharp\bin\QuickGraph.dll</HintPath>
     </Reference>

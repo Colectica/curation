@@ -97,10 +97,39 @@ namespace Colectica.Curation.Web.Utility
                 ".do",
                 ".sps",
                 ".r",
-                ".xml"
+                ".xml",
+                ".log"
             };
 
             foreach (string str in textFileExtensions)
+            {
+                if (lower.EndsWith(str))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsImageFile(this ManagedFile file)
+        {
+            if (string.IsNullOrWhiteSpace(file.Name))
+            {
+                return false;
+            }
+
+            string lower = file.Name.ToLower();
+
+            var imageFileExtensions = new[]
+            {
+                ".jpg",
+                ".jpeg",
+                ".png",
+                ".gif",
+            };
+
+            foreach (string str in imageFileExtensions)
             {
                 if (lower.EndsWith(str))
                 {
@@ -124,5 +153,6 @@ namespace Colectica.Curation.Web.Utility
 
             return Path.Combine(directory, fileName);
         }
+
     }
 }

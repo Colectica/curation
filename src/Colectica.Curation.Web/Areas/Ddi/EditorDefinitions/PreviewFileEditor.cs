@@ -57,7 +57,9 @@ namespace Colectica.Curation.Web.Areas.Ddi.EditorDefinitions
         public bool IsValidForFile(ManagedFile file)
         {
             return file.IsTextFile() ||
-                file.Name.ToLower().EndsWith(".pdf");
+                file.IsImageFile() ||
+                file.Name.ToLower().EndsWith(".pdf") ||
+                file.Name.ToLower().EndsWith(".rtf");
         }
     }
 }
