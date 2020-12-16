@@ -37,6 +37,7 @@ using Colectica.Curation.Web.Areas.Ddi.Utility;
 using Algenta.Colectica.Model.Utility;
 using Colectica.Curation.Common.Utility;
 using log4net;
+using Colectica.Curation.DdiAddins.Utility;
 
 namespace Colectica.Curation.Addins.Editors.Controllers
 {

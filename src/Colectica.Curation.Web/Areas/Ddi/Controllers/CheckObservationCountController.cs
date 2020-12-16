@@ -20,6 +20,7 @@ using Algenta.Colectica.Repository;
 using Colectica.Curation.Addins.Editors.Models;
 using Colectica.Curation.Addins.Tasks;
 using Colectica.Curation.Data;
+using Colectica.Curation.DdiAddins.Utility;
 using Colectica.Curation.Models;
 using Colectica.Curation.Web.Areas.Ddi.Utility;
 using Colectica.Curation.Web.Controllers;

@@ -30,14 +30,15 @@ namespace Colectica.Curation.DdiAddins.Utility
     {
         public static RepositoryClientBase GetClient()
         {
-            return new LocalRepositoryClient();
-            //var connectionInfo = new RepositoryConnectionInfo()
-            //{
-            //    Url = "localhost",
-            //    AuthenticationMethod = RepositoryAuthenticationMethod.Windows,
-            //    TransportMethod = RepositoryTransportMethod.NetTcp
-            //};
+            //return new LocalRepositoryClient();
+            var connectionInfo = new RepositoryConnectionInfo()
+            {
+                Url = "http://localhost",
+                AuthenticationMethod = RepositoryAuthenticationMethod.Windows,
+                TransportMethod = RepositoryTransportMethod.REST
+            };
 
+            return new RestRepositoryClient(connectionInfo);
             //return new WcfRepositoryClient(connectionInfo);
         }
     }
