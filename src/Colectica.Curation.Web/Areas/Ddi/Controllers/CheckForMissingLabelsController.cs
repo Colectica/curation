@@ -31,6 +31,7 @@ using Newtonsoft.Json;
 using Algenta.Colectica.Model.Repository;
 using Algenta.Colectica.Repository;
 using Colectica.Curation.Web.Controllers;
+using Colectica.Curation.DdiAddins.Utility;
 
 namespace Colectica.Curation.Addins.Editors.Controllers
 {

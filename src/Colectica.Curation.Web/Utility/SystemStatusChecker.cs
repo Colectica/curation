@@ -25,6 +25,7 @@ using System.ServiceProcess;
 using System.Web;
 using System.ComponentModel.Composition;
 using Colectica.Curation.Web.Areas.Ddi.Utility;
+using Colectica.Curation.DdiAddins.Utility;
 
 #if ISPRO
 using Algenta.Colectica.Repository;

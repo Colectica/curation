@@ -351,7 +351,6 @@
     <Compile Include="Areas\Ddi\Tasks\ScriptedTaskBase.cs" />
     <Compile Include="Areas\Ddi\Utility\Extensions.cs" />
     <Compile Include="Areas\Ddi\Utility\DataValueFrequencyGatherer.cs" />
-    <Compile Include="Areas\Ddi\Utility\RepositoryHelper.cs" />
     <Compile Include="Areas\Ddi\Utility\VersionUpdater.cs" />
     <Compile Include="Controllers\ControllerBase.cs" />
     <Compile Include="Controllers\OperationController.cs" />

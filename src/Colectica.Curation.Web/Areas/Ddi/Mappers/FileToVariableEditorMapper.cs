@@ -19,6 +19,7 @@
 using Algenta.Colectica.Repository;
 using Colectica.Curation.Addins.Editors.Models;
 using Colectica.Curation.Data;
+using Colectica.Curation.DdiAddins.Utility;
 using Colectica.Curation.Web.Areas.Ddi.Utility;
 using log4net;
 using System;

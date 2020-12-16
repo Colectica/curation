@@ -20,6 +20,7 @@ using Algenta.Colectica.Model.Ddi;
 using Algenta.Colectica.Model.Repository;
 using Algenta.Colectica.Repository;
 using Colectica.Curation.Addins.Editors.Mappers;
+using Colectica.Curation.DdiAddins.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;

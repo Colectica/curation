@@ -20,6 +20,7 @@ using Algenta.Colectica.Model.Ddi;
 using Algenta.Colectica.Model.Repository;
 using Algenta.Colectica.Model.Utility;
 using Algenta.Colectica.Repository;
+using Colectica.Curation.DdiAddins.Utility;
 using Colectica.Curation.Web.Areas.Ddi.Utility;
 using LumenWorks.Framework.IO.Csv;
 using Spss.Data;
