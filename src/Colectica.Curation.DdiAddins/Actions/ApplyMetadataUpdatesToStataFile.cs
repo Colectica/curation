@@ -246,7 +246,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             // Commit the changes to git.
             try
             {
-                using (Repository repo = new Repository(gitRepositoryPath))
+                using (LibGit2Sharp.Repository repo = new LibGit2Sharp.Repository(gitRepositoryPath))
                 {
                     var author = new Signature(user.UserName, user.Email, DateTime.UtcNow);
                     var committer = new Signature(userId.ToString(), userId.ToString() + "@curator", DateTime.UtcNow);

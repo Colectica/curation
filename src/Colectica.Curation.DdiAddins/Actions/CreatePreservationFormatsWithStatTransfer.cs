@@ -68,7 +68,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             var author = new Signature(user.UserName, user.Email, DateTime.UtcNow);
             var committer = new Signature(userId.ToString(), userId.ToString() + "@curator", DateTime.UtcNow);
 
-            using (Repository repo = new Repository(recordPath))
+            using (LibGit2Sharp.Repository repo = new LibGit2Sharp.Repository(recordPath))
             {
                 // Get a list of the data files of the types we want to convert.
                 var dataFiles = record.Files
