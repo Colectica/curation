@@ -118,7 +118,7 @@ namespace Colectica.Curation.Web.Controllers
                 string path = Path.Combine(processingDirectory, file.CatalogRecord.Id.ToString());
 
 
-                using (var repo = new Repository(path))
+                using (var repo = new LibGit2Sharp.Repository(path))
                 {
                     var blob = repo.Lookup<Blob>(sha);
 
