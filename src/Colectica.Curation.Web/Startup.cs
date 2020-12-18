@@ -40,7 +40,7 @@ namespace Colectica.Curation.Web
 
             using (var db = ApplicationDbContext.Create())
             {
-                db.Database.CreateIfNotExists();
+                //db.Database.CreateIfNotExists();
             }
 
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<ApplicationDbContext, Colectica.Curation.Data.Migrations.Configuration>());
