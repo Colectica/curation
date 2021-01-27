@@ -301,6 +301,17 @@ namespace Colectica.Curation.Operations
                         catch (Exception ex)
                         {
                             logger.Error("Error running file action: " + addin.Name, ex);
+
+                            var note = new Data.Note()
+                            {
+                                CatalogRecord = file.CatalogRecord,
+                                File = file,
+                                Timestamp = DateTime.UtcNow,
+                                User = user,
+                                Text = "Error runnning file action: " + addin.Name + ". " + ex.Message
+                            };
+                            db.Notes.Add(note);
+                            db.SaveChanges();
                         }
                     }
                 }

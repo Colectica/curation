@@ -79,23 +79,38 @@ namespace Colectica.Curation.DdiAddins.Actions
                     .Count() == 0)
             {
                 string path = Path.Combine(processingDirectory, file.Name);
+                string errorMessage = string.Empty;
 
                 if (file.Name.EndsWith(".dta"))
                 {
-                    CreatePhysicalInstanceForStataFile(file.Id, path, agencyId, existingPhysicalInstance?.Version);
+                    errorMessage = CreatePhysicalInstanceForStataFile(file.Id, path, agencyId, existingPhysicalInstance?.Version);
                 }
                 if (file.Name.EndsWith(".sav"))
                 {
-                    CreatePhysicalInstanceForSpssFile(file.Id, path, agencyId, existingPhysicalInstance?.Version);
+                    errorMessage = CreatePhysicalInstanceForSpssFile(file.Id, path, agencyId, existingPhysicalInstance?.Version);
                 }
                 if (file.Name.EndsWith(".csv"))
                 {
-                    CreatePhysicalInstanceForCsvFile(file.Id, path, agencyId, existingPhysicalInstance?.Version);
+                    errorMessage = CreatePhysicalInstanceForCsvFile(file.Id, path, agencyId, existingPhysicalInstance?.Version);
                 }
                 if (file.Name.EndsWith(".rdata") ||
                     file.Name.EndsWith(".rda"))
                 {
-                    CreatePhysicalInstanceForRdataFile(file.Id, path, agencyId, existingPhysicalInstance?.Version);
+                    errorMessage = CreatePhysicalInstanceForRdataFile(file.Id, path, agencyId, existingPhysicalInstance?.Version);
+                }
+
+                if (!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    var note = new Data.Note()
+                    {
+                        CatalogRecord = file.CatalogRecord,
+                        File = file,
+                        Timestamp = DateTime.UtcNow,
+                        User = user,
+                        Text = errorMessage
+                    };
+                    db.Notes.Add(note);
+                    db.SaveChanges();
                 }
             }
         }
@@ -126,7 +141,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             }
         }
 
-        public static void CreatePhysicalInstanceForStataFile(Guid fileId, string stataFilePath, string agencyId, long? existingVersion)
+        public static string CreatePhysicalInstanceForStataFile(Guid fileId, string stataFilePath, string agencyId, long? existingVersion)
         {
             var logger = LogManager.GetLogger("Curation");
             logger.Debug("Stata import file: " + fileId);
@@ -139,7 +154,7 @@ namespace Colectica.Curation.DdiAddins.Actions
 
             if (rp.PhysicalInstances.Count == 0)
             {
-                return;
+                return string.Empty;
             }
 
             PhysicalInstance physicalInstance = rp.PhysicalInstances[0];
@@ -168,6 +183,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             catch (Exception ex)
             {
                 logger.Error("Problem calculating summary statistics.", ex);
+                return "Problem calculating summary statistics. " + ex.Message;
             }
 
 
@@ -182,9 +198,10 @@ namespace Colectica.Curation.DdiAddins.Actions
             }
 
             client.RegisterItems(visitor.FoundItems, new Algenta.Colectica.Model.Repository.CommitOptions());
+            return string.Empty;
         }
 
-        public static void CreatePhysicalInstanceForSpssFile(Guid fileId, string spssFilePath, string agencyId, long? existingVersion)
+        public static string CreatePhysicalInstanceForSpssFile(Guid fileId, string spssFilePath, string agencyId, long? existingVersion)
         {
             var logger = LogManager.GetLogger("Curation");
             logger.Debug("SPSS import file: " + fileId);
@@ -199,7 +216,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             if (rp.PhysicalInstances.Count == 0)
             {
                 logger.Debug("No dataset could be extracted from SPSS");
-                return;
+                return string.Empty;
             }
 
             PhysicalInstance physicalInstance = rp.PhysicalInstances[0];
@@ -228,9 +245,10 @@ namespace Colectica.Curation.DdiAddins.Actions
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                logger.Error("Problem calculating summary statistics.", ex);
+                return "Problem calculating summary statistics. " + ex.Message;
             }
 
 
@@ -253,9 +271,11 @@ namespace Colectica.Curation.DdiAddins.Actions
 
             logger.Debug("Done registering items with the repository");
             logger.Debug("Done with CreatePhysicalInstanceForSpssFile");
+
+            return string.Empty;
         }
 
-        internal static void CreatePhysicalInstanceForCsvFile(Guid fileId, string filePath, string agencyId, long? existingVersion)
+        internal static string CreatePhysicalInstanceForCsvFile(Guid fileId, string filePath, string agencyId, long? existingVersion)
         {
             var logger = LogManager.GetLogger("Curation");
             logger.Debug("CSV import file: " + fileId);
@@ -267,7 +287,7 @@ namespace Colectica.Curation.DdiAddins.Actions
 
             if (rp.PhysicalInstances.Count == 0)
             {
-                return;
+                return string.Empty;
             }
 
             PhysicalInstance physicalInstance = rp.PhysicalInstances[0];
@@ -293,9 +313,10 @@ namespace Colectica.Curation.DdiAddins.Actions
 
                 logger.Debug("CSV statistics generated");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                logger.Error("Problem calculating summary statistics.", ex);
+                return "Problem calculating summary statistics. " + ex.Message;
             }
 
             var client = RepositoryHelper.GetClient();
@@ -310,9 +331,11 @@ namespace Colectica.Curation.DdiAddins.Actions
 
             client.RegisterItems(visitor.FoundItems, new Algenta.Colectica.Model.Repository.CommitOptions());
             logger.Debug("CSV items registered");
+
+            return string.Empty;
         }
 
-        internal static void CreatePhysicalInstanceForRdataFile(Guid fileId, string filePath, string agencyId, long? existingVersion)
+        internal static string CreatePhysicalInstanceForRdataFile(Guid fileId, string filePath, string agencyId, long? existingVersion)
         {
             var logger = LogManager.GetLogger("Curation");
             logger.Debug("RData import file: " + fileId);
@@ -322,7 +345,7 @@ namespace Colectica.Curation.DdiAddins.Actions
 
             if (rp.PhysicalInstances.Count == 0)
             {
-                return;
+                return string.Empty;
             }
 
             PhysicalInstance physicalInstance = rp.PhysicalInstances[0];
@@ -346,9 +369,10 @@ namespace Colectica.Curation.DdiAddins.Actions
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                logger.Error("Problem calculating summary statistics.", ex);
+                return "Problem calculating summary statistics. " + ex.Message;
             }
 
             var client = RepositoryHelper.GetClient();
@@ -362,6 +386,8 @@ namespace Colectica.Curation.DdiAddins.Actions
             }
 
             client.RegisterItems(visitor.FoundItems, new Algenta.Colectica.Model.Repository.CommitOptions());
+
+            return string.Empty;
         }
     }
 }
