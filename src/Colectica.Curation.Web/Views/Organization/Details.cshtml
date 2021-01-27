@@ -45,22 +45,47 @@
     <!-- Users -->
     <div role="tabpanel" class="tab-pane" id="users">
 
-        <h4>Users</h4>
 
-        @if (Model.Organization.ApplicationUsers.Count == 0)
+        @if (Model.AddableUsers.Count > 0)
         {
-            <p>No users are assigned to this organization.</p>
-        }
-        else
-        {
-            <ul>
-                @foreach (var user in Model.Organization.ApplicationUsers.Where(x => !x.IsPlaceholder))
+            <div class="row">
+                <h4>Add a User</h4>
+                @using (Html.BeginForm("AddUser", "Organization"))
                 {
-                    <li>@Html.ActionLink(user.UserName, "Details", "User", new { id = user.UserName }, null)</li>
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("orgId", Model.Organization.Id);
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            @Html.DropDownList("userId", Model.AddableUsers, new { @class = "form-select" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <input type="submit" value="Add" class="btn btn-lg btn-primary" />
+                        </div>
+                    </div>
                 }
-            </ul>
+            </div>
         }
 
+        <div class="row" style="margin-top: 20px;">
+            <h4>Users</h4>
+            @if (Model.Organization.ApplicationUsers.Count == 0)
+            {
+                <p>No users are assigned to this organization.</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var user in Model.Organization.ApplicationUsers.Where(x => !x.IsPlaceholder))
+                    {
+                        <li>@Html.ActionLink(user.FullName + " - " + user.UserName, "Details", "User", new { id = user.UserName }, null)</li>
+                    }
+                </ul>
+            }
+        </div>
     </div>
 
     <!-- Settings -->
