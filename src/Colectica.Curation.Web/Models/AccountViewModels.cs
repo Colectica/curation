@@ -74,6 +74,8 @@ namespace Colectica.Curation.Web.Models
 
         public bool CanCreateOrganization { get; set; }
 
+        public string LoginPageText { get; set; }
+
         public string TermsOfService { get; set; }
 
         public bool CanRegisterForOrganization { get; set; }

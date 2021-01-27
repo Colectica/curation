@@ -109,12 +109,21 @@
                 </div>
 
                 <div class="form-group">
-                    @Html.LabelFor(model => model.Organization.DepositAgreement, "Contact Information", htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.LabelFor(model => model.Organization.ContactInformation, "Contact Information", htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
                         @Html.TextAreaFor(model => model.Organization.ContactInformation, new { @class = "form-control col-md-10", rows = 6 })
                         @Html.ValidationMessageFor(model => model.Organization.ContactInformation, "", new { @class = "text-danger" })
                     </div>
                 </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Organization.LoginPageText, "Text for Login Page", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(model => model.Organization.LoginPageText, new { @class = "form-control col-md-10", rows = 6 })
+                        @Html.ValidationMessageFor(model => model.Organization.LoginPageText, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
 
                 <h4>Storage Locations</h4>
                 <hr />

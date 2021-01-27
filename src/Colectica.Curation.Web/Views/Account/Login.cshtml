@@ -21,12 +21,17 @@
                     <img src="@Model.ImageUrl" alt="@Model.OrganizationName logo" style="margin-bottom: 20px;" />
                 }
 
+                if (!string.IsNullOrWhiteSpace(Model.LoginPageText))
+                {
+                    <p>@Html.Raw(Model.LoginPageText)</p>
+                }
+
                 <p>Log in to the @Model.OrganizationName Data Curation Tool with your username and password.</p>
 
                 if (Model.CanRegisterForOrganization)
                 {
                     <p>
-                        Don’t have a @Model.OrganizationName Data Curation Tool account?
+                        Don't have a @Model.OrganizationName Data Curation Tool account?
                         <br />
                         @Html.ActionLink("Create an account", "Register", "Account")<text>.</text>
                     </p>

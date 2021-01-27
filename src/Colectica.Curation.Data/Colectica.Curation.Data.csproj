@@ -97,6 +97,10 @@
     <Compile Include="Migrations\201603231307187_ManualStudyNumbers.Designer.cs">
       <DependentUpon>201603231307187_ManualStudyNumbers.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202101272130560_AddLoginPageText.cs" />
+    <Compile Include="Migrations\202101272130560_AddLoginPageText.Designer.cs">
+      <DependentUpon>202101272130560_AddLoginPageText.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Note.cs" />
     <Compile Include="Operation.cs" />
@@ -138,6 +142,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603231307187_ManualStudyNumbers.resx">
       <DependentUpon>201603231307187_ManualStudyNumbers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202101272130560_AddLoginPageText.resx">
+      <DependentUpon>202101272130560_AddLoginPageText.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
