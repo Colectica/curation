@@ -96,6 +96,21 @@ namespace Colectica.Curation.Web.Controllers
                 model.Organization = org;
                 model.IsSiteAdministrator = thisUser.IsAdministrator;
 
+                var existingUsers = org.ApplicationUsers.ToList();
+                var addableUsers = db.Users
+                    .Where(x => !x.IsPlaceholder)
+                    .OrderBy(x => x.Email)
+                    .ToList()
+                    .Except(existingUsers)
+                    .ToList();
+                foreach (var user in addableUsers)
+                {
+                    var sel = new SelectListItem();
+                    sel.Text = user.FullName + " - " + user.Email;
+                    sel.Value = user.Id;
+                    model.AddableUsers.Add(sel);
+                }
+
                 return View(model);
             }
         }
@@ -120,6 +135,36 @@ namespace Colectica.Curation.Web.Controllers
                 db.SaveChanges();
 
                 return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddUser(Guid orgId, Guid userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Details", new { id = orgId });
+            }
+
+            using (var db = ApplicationDbContext.Create())
+            {
+                if (!OrganizationHelper.DoesUserHaveRight(db, User, orgId, Right.CanEditOrganization))
+                {
+                    throw new HttpException(403, "Forbidden");
+                }
+
+                var organization = db.Organizations.Find(orgId);
+                var userToAdd = db.Users.FirstOrDefault(x => x.Id == userId.ToString());
+
+                if (organization != null &&
+                    userToAdd != null)
+                {
+                    organization.ApplicationUsers.Add(userToAdd);
+                    db.SaveChanges();
+                }
+
+                return RedirectToAction("Details", new { id = orgId });
             }
         }
 

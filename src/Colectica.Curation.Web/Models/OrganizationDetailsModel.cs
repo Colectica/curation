@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace Colectica.Curation.Web.Models
 {
@@ -29,5 +30,7 @@ namespace Colectica.Curation.Web.Models
         public Organization Organization { get; set; }
 
         public bool IsSiteAdministrator { get; set; }
+
+        public List<SelectListItem> AddableUsers { get; } = new List<SelectListItem>();
     }
 }
