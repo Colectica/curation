@@ -85,6 +85,7 @@ namespace Colectica.Curation.Web.Controllers
                     model.CanRegisterForOrganization = org.IsAnonymousRegistrationAllowed;
                     model.ImageUrl = org.ImageUrl;
                     model.OrganizationName = org.Name;
+                    model.LoginPageText = org.LoginPageText;
                 }
 
                 return View(model);

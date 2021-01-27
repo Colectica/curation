@@ -47,6 +47,8 @@ namespace Colectica.Curation.Data
 
         public string ContactInformation { get; set; }
 
+        public string LoginPageText { get; set; }
+
         public string DepositAgreement { get; set; }
 
         public string TermsOfService { get; set; }
