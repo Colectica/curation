@@ -52,6 +52,12 @@ namespace Colectica.Curation.Service
 
 #if ISPRO
             MefConfig.RegisterMef(addinsPath, typeof(Colectica.Curation.DdiAddins.DdiAddinManifest).Assembly);
+
+            string repositoryHostName = Properties.Settings.Default.RepositoryHostName;
+            if (!string.IsNullOrWhiteSpace(repositoryHostName))
+            {
+                DdiAddins.Utility.RepositoryHelper.RepositoryHostName = repositoryHostName;
+            }
 #else
             MefConfig.RegisterMef(addinsPath, typeof(Colectica.Curation.BaseAddins.BaseAddinManifest).Assembly);
 #endif

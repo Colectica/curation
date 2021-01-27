@@ -28,18 +28,18 @@ namespace Colectica.Curation.DdiAddins.Utility
 {
     public class RepositoryHelper
     {
+        public static string RepositoryHostName = "http://localhost";
+
         public static RepositoryClientBase GetClient()
         {
-            //return new LocalRepositoryClient();
             var connectionInfo = new RepositoryConnectionInfo()
             {
-                Url = "http://localhost",
+                Url = RepositoryHostName,
                 AuthenticationMethod = RepositoryAuthenticationMethod.Windows,
                 TransportMethod = RepositoryTransportMethod.REST
             };
 
             return new RestRepositoryClient(connectionInfo);
-            //return new WcfRepositoryClient(connectionInfo);
         }
     }
 }

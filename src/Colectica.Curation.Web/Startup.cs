@@ -24,6 +24,7 @@ using Owin;
 using System;
 using System.Data.Entity;
 using System.IO;
+using System.Web.Configuration;
 
 #if ISPRO
 using Spss.Data;
@@ -49,6 +50,12 @@ namespace Colectica.Curation.Web
             // Set SPSS path.
             string spssPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin");
             SpssRaw.Instance.Initialize(spssPath);
+
+            string repositoryHostName = WebConfigurationManager.AppSettings["repository:hostName"];
+            if (!string.IsNullOrWhiteSpace(repositoryHostName))
+            {
+                DdiAddins.Utility.RepositoryHelper.RepositoryHostName = repositoryHostName;
+            }
 #endif
 
 
