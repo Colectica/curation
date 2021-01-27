@@ -7,6 +7,10 @@
     <li class="sidebar-list">
         <a href="@Url.Action("Details", "Organization", new { id = Model.Organization.Id } )">Organization Admin <span class="menu-icon glyphicon glyphicon-tower"></span></a>
     </li>
+
+    <li class="sidebar-list">
+        <a href="https://docs.colectica.com/curation/org-admin/">Administrator Guide <span class="menu-icon glyphicon glyphicon-book"></span></a>
+    </li>
 }
 
 @if (Model.IsSiteAdministrator)
@@ -16,5 +20,9 @@
             Site Admin
             <span class="menu-icon glyphicon glyphicon-cog"></span>
         </a>
+    </li>
+
+    <li class="sidebar-list">
+        <a href="https://docs.colectica.com/curation/site-admin/">Site Admin Guide <span class="menu-icon glyphicon glyphicon-book"></span></a>
     </li>
 }
