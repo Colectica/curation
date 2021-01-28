@@ -80,8 +80,40 @@
                 <li>
                     @Html.ActionLink("Revisions", "Revisions", "File", new { id = Model.File.Id }, null)
                 </li>
+                @if (Model.IsUserCurator || Model.IsUserApprover)
+                {
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#delete-file-modal">Delete the file</a>
+                    </li>
+                }
             </ul>
         </div>
     </li>
 
 </ul>
+
+<div id="delete-file-modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="delete-file-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm("Delete", "File", new { id = Model.File.Id }, FormMethod.Post))
+            {
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="delete-file-label">Delete File</h3>
+                </div>
+
+                <div class="modal-body">
+                    <p>Are you sure you would like to delete this file?</p>
+                    <p>This will also remove any tasks and notes associated with the file.</p>
+                </div>
+
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-danger" name="result" value="Yes, delete the file." />
+                    <button type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">Cancel</button>
+                </div>
+
+            }
+        </div>
+    </div>
+</div>
