@@ -695,6 +695,11 @@ namespace Colectica.Curation.Web.Controllers
 
                 logger.Debug("Logged");
 
+                // Update any tasks, in case the file type has changed.
+                logger.Debug("Updating file tasks");
+                TaskHelpers.AddProcessingTasksForFile(file, file.CatalogRecord, db);
+                logger.Debug("Done updating file tasks");
+
                 // Save the updated record.
                 db.SaveChanges();
                 logger.Debug("Wrote to database");
