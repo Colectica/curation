@@ -181,6 +181,12 @@ namespace Colectica.Curation.Web.Areas.Ddi.Utility
                     continue;
                 }
 
+                // If the task already exists, don't add it again.
+                if (db.TaskStatuses.Any(x => x.TaskId == task.Id && x.CatalogRecord.Id == record.Id && x.File.Id == file.Id))
+                {
+                    continue;
+                }
+
                 var status = new TaskStatus()
                 {
                     Id = Guid.NewGuid(),
