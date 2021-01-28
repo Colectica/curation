@@ -564,8 +564,7 @@ namespace Colectica.Curation.Web.Controllers
                 EnsureUserIsAllowed(file.CatalogRecord, db);
                 EnsureUserCanEdit(file.CatalogRecord, db);
 
-                // "Remove" from the database.
-                file.Status = Data.FileStatus.Removed;
+                var record = db.CatalogRecords.FirstOrDefault(x => x.Id == file.CatalogRecord.Id);
 
                 // Remove any tasks that reference this file.
                 var fileTasks = db.TaskStatuses.Where(x => x.File.Id == file.Id);
@@ -574,21 +573,38 @@ namespace Colectica.Curation.Web.Controllers
                     db.TaskStatuses.Remove(task);
                 }
 
+                // Remove any notes that reference this file.
+                var notes = db.Notes.Where(x => x.File.Id == file.Id);
+                foreach (var note in notes)
+                {
+                    db.Notes.Remove(note);
+                }
+
+                // Delete from the database.
+                db.Files.Remove(file);
+
+
                 // Log an event.
                 var log = new Event()
                 {
                     EventType = EventTypes.RemoveFile,
                     Timestamp = DateTime.UtcNow,
                     User = user,
-                    RelatedCatalogRecord = file.CatalogRecord,
+                    RelatedCatalogRecord = record,
                     Title = "Remove file",
                 };
-                log.RelatedManagedFiles.Add(file);
                 db.Events.Add(log);
 
                 db.SaveChanges();
 
-                return RedirectToAction("Files", "CatalogRecord", new { id = file.CatalogRecord.Id });
+                // TODO Also delete from the git repository.
+                // This needs to be an operation, like the AddFiles one.
+                //string path = Path.Combine(GitRepositoryPath, CatalogRecordId.ToString());
+                //using (Repository repo = new Repository(path))
+                //{
+                //}
+
+                return RedirectToAction("Files", "CatalogRecord", new { id = record.Id });
             }
         }
 
