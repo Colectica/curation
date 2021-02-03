@@ -172,11 +172,57 @@ namespace Colectica.Curation.Web.Areas.Ddi.Utility
 
         }
 
-        public static void AddProcessingTasksForFile(ManagedFile file, CatalogRecord record, ApplicationDbContext db)
+        public static bool FileHasAllDataTasks(ManagedFile file, CatalogRecord record, ApplicationDbContext db)
         {
             foreach (var task in MefConfig.AddinManager.AllTasks)
             {
-                if (!task.AppliesToFile(file))
+                if (task.IsForDataFiles)
+                {
+                    if (!db.TaskStatuses.Any(x => x.TaskId == task.Id && x.CatalogRecord.Id == record.Id && x.File.Id == file.Id))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public static bool FileHasAllCodeTasks(ManagedFile file, CatalogRecord record, ApplicationDbContext db)
+        {
+            foreach (var task in MefConfig.AddinManager.AllTasks)
+            {
+                if (task.IsForCodeFiles)
+                {
+                    if (!db.TaskStatuses.Any(x => x.TaskId == task.Id && x.CatalogRecord.Id == record.Id && x.File.Id == file.Id))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public static void AddProcessingTasksForFile(ManagedFile file, CatalogRecord record, ApplicationDbContext db, bool addAllDataTasks = false, bool addAllCodeTasks = false)
+        {
+            foreach (var task in MefConfig.AddinManager.AllTasks)
+            {
+                bool goAhead = false;
+                if (addAllDataTasks && task.IsForDataFiles)
+                {
+                    goAhead = true;
+                }
+                else if (addAllCodeTasks && task.IsForCodeFiles)
+                {
+                    goAhead = true;
+                }
+                else if (task.AppliesToFile(file))
+                {
+                    goAhead = true;
+                }
+
+                if (!goAhead)
                 {
                     continue;
                 }

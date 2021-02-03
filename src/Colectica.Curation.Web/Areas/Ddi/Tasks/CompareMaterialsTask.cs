@@ -41,6 +41,9 @@ namespace Colectica.Curation.Addins.Tasks
             CanUpdate = false;
             Instructions = "Please review the relevant documents and publications and verify that references to variables in this data file are consistent with the metadata below.";
             Controller = "CompareMaterials";
+
+            IsForDataFiles = true;
+            IsForCodeFiles = false;
         }
 
         public override bool AppliesToFile(Data.ManagedFile file)

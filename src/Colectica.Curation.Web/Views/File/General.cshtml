@@ -56,13 +56,36 @@
 
     }
 
-    @if ((Model.IsUserCurator || Model.IsUserApprover) && !string.IsNullOrWhiteSpace(Model.File.PersistentLink))
+    @if (Model.IsUserCurator || Model.IsUserApprover || Model.IsUserAdmin)
     {
         using (Html.BeginForm())
         {
-            <button type="submit" name="RemovePersistentId" value="RemovePersistentId" class="btn btn-primary" style="margin: 12px 0 0 0;">
-                Remove Persistent Link
-            </button>
+            <div class="row">
+                <div class="form-horizontal" role="form">
+                    <div class="col-lg-12">
+                        @if (!string.IsNullOrWhiteSpace(Model.File.PersistentLink))
+                        {
+                            <button type="submit" name="RemovePersistentId" value="RemovePersistentId" class="btn btn-primary" style="margin: 12px 0 0 0;">
+                                Remove Persistent Link
+                            </button>
+                        }
+                        
+                        @if (!Model.HasAllDataTasks)
+                        {
+                            <button type="submit" name="AddDataFileCurationTasks" value="AddDataFileCurationTasks" class="btn btn-primary" style="margin: 12px 0 0 0;">
+                                Add Data File Curation Tasks
+                            </button>
+                        }
+
+                        @if (!Model.HasAllCodeTasks)
+                        {
+                            <button type="submit" name="AddCodeFileCurationTasks" value="AddCodeFileCurationTasks" class="btn btn-primary" style="margin: 12px 0 0 0;">
+                                Add Code File Curation Tasks
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
         }
     }
 

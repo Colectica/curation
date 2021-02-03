@@ -41,6 +41,9 @@ namespace Colectica.Curation.Addins.Tasks
             CanUpdate = false;
             Instructions = "Please verify that the number of observations reported in the relevant documents and publications matches the number of observations in this data file.";
             Controller = "CheckObservationCount";
+
+            IsForDataFiles = true;
+            IsForCodeFiles = false;
         }
 
         public override bool AppliesToFile(Data.ManagedFile file)

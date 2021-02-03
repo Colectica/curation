@@ -39,6 +39,9 @@ namespace Colectica.Curation.Addins.Tasks
             CanUpdate = false;
             Instructions = "Please confirm that the code successfully executes.";
             Controller = "ConfirmCodeExecutes";
+
+            IsForDataFiles = false;
+            IsForCodeFiles = true;
         }
 
         public override bool AppliesToFile(Data.ManagedFile file)

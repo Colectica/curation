@@ -41,6 +41,9 @@ namespace Colectica.Curation.Contracts
 
         bool AppliesToFile(ManagedFile file);
         
+        bool IsForDataFiles { get; }
+        bool IsForCodeFiles { get; }
+
         int Weight { get; set; }
     }
 }
