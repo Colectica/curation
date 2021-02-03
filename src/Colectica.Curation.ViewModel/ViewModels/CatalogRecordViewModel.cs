@@ -109,14 +109,20 @@ namespace Colectica.Curation.Common.ViewModels
 
         public string[] TreatmentAdministrationChoices = new string[]
         {
-            "Mail",
             "Door to door",
-            "Web delivered",
-            "NGO-adminstered program",
-            "Radio",
-            "Television",
+            "Email",
+            "Government-administered program",
+            "Mail",
             "Mobile technology / Text messages",
-            "Other"
+            "NGO-adminstered program",
+            "Phone",
+            "Radio",
+            "School-administered program",
+            "Television",
+            "Web delivered",
+            "Multiple",
+            "Not applicable",
+            "Other",
         };
 
 
@@ -135,7 +141,9 @@ namespace Colectica.Curation.Common.ViewModels
             "Geo: region",
             "Geo: country",
             "Geo: Census track",
+            "Geo: other",
             "Event/process",
+            "Multiple",
             "Other"
         };
 
