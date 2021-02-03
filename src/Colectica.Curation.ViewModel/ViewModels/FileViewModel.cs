@@ -119,8 +119,12 @@ namespace Colectica.Curation.Web.Models
 
         public bool IsUserCurator { get; set; }
         public bool IsUserApprover { get; set; }
+        public bool IsUserAdmin { get; set; }
 
         public string OperationStatus { get; set; }
+
+        public bool HasAllDataTasks { get; set; }
+        public bool HasAllCodeTasks { get; set; }
 
         public FileViewModel()
         {

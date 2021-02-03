@@ -40,6 +40,9 @@ namespace Colectica.Curation.Addins.Tasks
             CanUpdate = false;
             Instructions = "Please review the data file to ensure it does not contain any personally-identifiable information.";
             Controller = "CheckForIdentifiableInformation";
+
+            IsForDataFiles = true;
+            IsForCodeFiles = false;
         }
 
         public override bool AppliesToFile(Data.ManagedFile file)

@@ -40,6 +40,9 @@ namespace Colectica.Curation.Addins.Tasks
             CanUpdate = false;
             Instructions = "Please review the summary statistics to ensure there are no errors in the data.";
             Controller = "IdentifyPotentialDataErrors";
+
+            IsForDataFiles = true;
+            IsForCodeFiles = false;
         }
 
         public override bool AppliesToFile(Data.ManagedFile file)

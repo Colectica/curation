@@ -41,5 +41,8 @@ namespace Colectica.Curation.Addins.Tasks
         {
             return false;
         }
+
+        public bool IsForDataFiles { get; set; }
+        public bool IsForCodeFiles { get; set; }
     }
 }

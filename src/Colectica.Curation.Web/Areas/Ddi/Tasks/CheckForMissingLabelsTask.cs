@@ -40,6 +40,9 @@ namespace Colectica.Curation.Addins.Tasks
             CanUpdate = true;
             Instructions = "Please review the following items that have missing labels. Both variable labels and value labels should be provided before approving this task. Variables and values with missing labels are automatically detected and displayed below.";
             Controller = "CheckForMissingLabels";
+
+            IsForDataFiles = true;
+            IsForCodeFiles = false;
         }
 
         public override bool AppliesToFile(Data.ManagedFile file)

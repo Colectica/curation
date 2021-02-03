@@ -40,6 +40,9 @@ namespace Colectica.Curation.Addins.Tasks
             CanUpdate = false;
             Instructions = "Please confirm that the code replicates the reported results.";
             Controller = "ConfirmCodeReplicatesResults";
+
+            IsForDataFiles = false;
+            IsForCodeFiles = true;
         }
 
         public override bool AppliesToFile(Data.ManagedFile file)

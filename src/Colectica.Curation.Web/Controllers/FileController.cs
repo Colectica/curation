@@ -217,9 +217,15 @@ namespace Colectica.Curation.Web.Controllers
                 model.IsUserApprover = file.CatalogRecord.Approvers.Any(x => x.UserName == User.Identity.Name) ||
                     OrganizationHelper.DoesUserHaveRight(db, User, file.CatalogRecord.Organization.Id, Right.CanApprove);
 
+                var user = db.Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
+                model.IsUserAdmin = user.IsAdministrator;
+
                 string lowerExtension = Path.GetExtension(file.Name).ToLower();
                 string[] autoDetectedFileTypes = { ".dta", ".sav", ".rdata", ".csv", ".do", ".r", ".sps" };
                 model.IsFileTypeAutoDetected = autoDetectedFileTypes.Contains(lowerExtension);
+
+                model.HasAllDataTasks = TaskHelpers.FileHasAllDataTasks(file, file.CatalogRecord, db);
+                model.HasAllCodeTasks = TaskHelpers.FileHasAllCodeTasks(file, file.CatalogRecord, db);
 
                 logger.Debug("Mapped");
 
@@ -649,6 +655,94 @@ namespace Colectica.Curation.Web.Controllers
             }
         }
 
+        public ActionResult AddDataFileCurationTasks(FileViewModel model)
+        {
+            var logger = LogManager.GetLogger("FileController");
+
+            using (var db = ApplicationDbContext.Create())
+            {
+                var user = db.Users
+                    .Where(x => x.UserName == User.Identity.Name)
+                    .FirstOrDefault();
+                if (user == null)
+                {
+                    return RedirectToAction("Index");
+                }
+
+                // Fetch the appropriate ManagedFile by ID.
+                Guid id = model.Id;
+                var file = GetFile(id, db);
+
+                EnsureUserIsAllowed(file.CatalogRecord, db);
+                EnsureUserIsAdminOrCurator(file.CatalogRecord, db);
+
+                // Add the data file tasks, if needed.
+                logger.Debug("Updating file tasks");
+                TaskHelpers.AddProcessingTasksForFile(file, file.CatalogRecord, db, addAllDataTasks: true);
+                logger.Debug("Done updating file tasks");
+
+                // Log the editing of the file.
+                var log = new Event()
+                {
+                    EventType = EventTypes.EditManagedFile,
+                    Timestamp = DateTime.UtcNow,
+                    User = user,
+                    RelatedCatalogRecord = file.CatalogRecord,
+                    Title = "Edit a File",
+                    Details = "Added data file curation tasks"
+                };
+                db.Events.Add(log);
+
+                db.SaveChanges();
+
+                return RedirectToAction("General", new { id = file.Id });
+            }
+        }
+
+        public ActionResult AddCodeFileCurationTasks(FileViewModel model)
+        {
+            var logger = LogManager.GetLogger("FileController");
+
+            using (var db = ApplicationDbContext.Create())
+            {
+                var user = db.Users
+                    .Where(x => x.UserName == User.Identity.Name)
+                    .FirstOrDefault();
+                if (user == null)
+                {
+                    return RedirectToAction("Index");
+                }
+
+                // Fetch the appropriate ManagedFile by ID.
+                Guid id = model.Id;
+                var file = GetFile(id, db);
+
+                EnsureUserIsAllowed(file.CatalogRecord, db);
+                EnsureUserIsAdminOrCurator(file.CatalogRecord, db);
+
+                // Add the code file tasks, if needed.
+                logger.Debug("Updating file tasks");
+                TaskHelpers.AddProcessingTasksForFile(file, file.CatalogRecord, db, addAllCodeTasks: true);
+                logger.Debug("Done updating file tasks");
+
+                // Log the editing of the file.
+                var log = new Event()
+                {
+                    EventType = EventTypes.EditManagedFile,
+                    Timestamp = DateTime.UtcNow,
+                    User = user,
+                    RelatedCatalogRecord = file.CatalogRecord,
+                    Title = "Edit a File",
+                    Details = "Added code file curation tasks"
+                };
+                db.Events.Add(log);
+
+                db.SaveChanges();
+
+                return RedirectToAction("General", new { id = file.Id });
+            }
+        }
+
         [HttpPost]
         public ActionResult General(FileViewModel model)
         {
@@ -660,6 +754,17 @@ namespace Colectica.Curation.Web.Controllers
                 logger.Debug("Removing persistent ID");
                 return RemovePersistentId(model);
             }
+            else if (Request.Form.AllKeys.Contains("AddDataFileCurationTasks"))
+            {
+                logger.Debug("Adding data file curation tasks");
+                return AddDataFileCurationTasks(model);
+            }
+            else if (Request.Form.AllKeys.Contains("AddCodeFileCurationTasks"))
+            {
+                logger.Debug("Adding code file curation tasks");
+                return AddCodeFileCurationTasks(model);
+            }
+
 
             using (var db = ApplicationDbContext.Create())
             {
@@ -782,6 +887,27 @@ namespace Colectica.Curation.Web.Controllers
             }
         }
 
+        void EnsureUserIsAdminOrCurator(CatalogRecord record, ApplicationDbContext db)
+        {
+            var user = db.Users
+                .Where(x => x.UserName == User.Identity.Name)
+                .FirstOrDefault();
+            var permissions = db.Permissions
+                .Where(x => x.User.Id == user.Id && x.Organization.Id == record.Organization.Id);
+            bool isOrgAdmin = permissions.Any(x => x.Right == Right.CanEditOrganization);
+
+            bool isSiteAdmin = user.IsAdministrator;
+            bool isCuratorForRecord = record.Curators.Any(x => x.UserName == User.Identity.Name);
+            bool isApproverForRecord = record.Approvers.Any(x => x.UserName == User.Identity.Name);
+
+            if (!isSiteAdmin &&
+                !isCuratorForRecord &&
+                !isApproverForRecord &&
+                !isOrgAdmin)
+            {
+                throw new HttpException(403, "Forbidden");
+            }
+        }
         void EnsureUserCanDownload(Organization org)
         {
             if (string.IsNullOrWhiteSpace(org.IPAddressesAllowedToDownloadFiles))
