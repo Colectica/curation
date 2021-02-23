@@ -75,9 +75,6 @@
     <Reference Include="Algenta.Colectica.ViewModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
       <HintPath>..\packages\ColecticaSDK.6.1.7976\lib\net472\Algenta.Colectica.ViewModel.dll</HintPath>
     </Reference>
-    <Reference Include="antlr.runtime">
-      <HintPath>..\..\..\thirdparty\antlr-2.7.7\lib\antlr.runtime.dll</HintPath>
-    </Reference>
     <Reference Include="AutoMapper">
       <HintPath>..\packages\AutoMapper.3.2.1\lib\net40\AutoMapper.dll</HintPath>
     </Reference>
@@ -133,12 +130,6 @@
     <Reference Include="Glimpse.Mvc5">
       <HintPath>..\packages\Glimpse.Mvc5.1.5.3\lib\net45\Glimpse.Mvc5.dll</HintPath>
     </Reference>
-    <Reference Include="GraphSharp">
-      <HintPath>..\..\..\thirdparty\graphsharp\bin\GraphSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="GraphSharp.Controls">
-      <HintPath>..\..\..\thirdparty\graphsharp\bin\GraphSharp.Controls.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -183,12 +174,6 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="QuickGraph">
-      <HintPath>..\..\..\thirdparty\graphsharp\bin\QuickGraph.dll</HintPath>
-    </Reference>
-    <Reference Include="RazorEngine">
-      <HintPath>..\packages\RazorEngine.3.0.8\lib\net40\RazorEngine.dll</HintPath>
-    </Reference>
     <Reference Include="Sasr.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=60da220094b43ba7, processorArchitecture=MSIL">
       <HintPath>..\packages\ColecticaRepositoryLibrary.6.0.7832\lib\net472\Sasr.Data.dll</HintPath>
     </Reference>
