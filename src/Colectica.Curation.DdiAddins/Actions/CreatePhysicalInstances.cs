@@ -169,8 +169,9 @@ namespace Colectica.Curation.DdiAddins.Actions
             try
             {
                 var calculator = new PhysicalInstanceSummaryStatisticComputer();
+                SummaryStatisticsOptions options = new SummaryStatisticsOptions() { CalculateQuartiles = true };
                 var stats = calculator.ComputeStatistics(importer, stataFilePath, physicalInstance, 
-                    physicalInstance.FileStructure.CaseQuantity, null);
+                    physicalInstance.FileStructure.CaseQuantity, options, (percent, message) => { });
                 if (stats != null)
                 {
                     physicalInstance.Statistics.Clear();
@@ -232,8 +233,9 @@ namespace Colectica.Curation.DdiAddins.Actions
             {
                 logger.Debug("Calculating summary statistics");
                 var calculator = new PhysicalInstanceSummaryStatisticComputer();
+                SummaryStatisticsOptions options = new SummaryStatisticsOptions() { CalculateQuartiles = true };
                 var stats = calculator.ComputeStatistics(importer, spssFilePath, physicalInstance,
-                    physicalInstance.FileStructure.CaseQuantity, null);
+                    physicalInstance.FileStructure.CaseQuantity, options, (percent, message) => { });
                 logger.Debug("Done calculating summary statistics");
 
                 if (stats != null)
@@ -300,8 +302,9 @@ namespace Colectica.Curation.DdiAddins.Actions
             try
             {
                 var calculator = new PhysicalInstanceSummaryStatisticComputer();
+                SummaryStatisticsOptions options = new SummaryStatisticsOptions() { CalculateQuartiles = true };
                 var stats = calculator.ComputeStatistics(importer, filePath, physicalInstance,
-                    physicalInstance.FileStructure.CaseQuantity, null);
+                    physicalInstance.FileStructure.CaseQuantity, options, (percent, message) => { });
                 if (stats != null)
                 {
                     physicalInstance.Statistics.Clear();
@@ -358,8 +361,9 @@ namespace Colectica.Curation.DdiAddins.Actions
             try
             {
                 var calculator = new PhysicalInstanceSummaryStatisticComputer();
+                SummaryStatisticsOptions options = new SummaryStatisticsOptions() { CalculateQuartiles = true };
                 var stats = calculator.ComputeStatistics(importer, filePath, physicalInstance,
-                    physicalInstance.FileStructure.CaseQuantity, null);
+                    physicalInstance.FileStructure.CaseQuantity, options, (percent, message) => { });
                 if (stats != null)
                 {
                     physicalInstance.Statistics.Clear();
