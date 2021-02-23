@@ -20,7 +20,7 @@ mkdir ..\dist
 
 REM Restore nuget packages
 PUSHD ..\src
-.nuget\nuget.exe restore ColecticaCurationTools-WithColecticaSDK.sln
+dotnet restore ColecticaCurationTools-WithColecticaSDK.sln
 POPD
 
 REM Build the WebDeploy packages.
