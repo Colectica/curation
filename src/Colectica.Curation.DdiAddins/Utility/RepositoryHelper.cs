@@ -41,5 +41,10 @@ namespace Colectica.Curation.DdiAddins.Utility
 
             return new RestRepositoryClient(connectionInfo);
         }
+
+        public static void InitializeLogging(string name)
+        {
+            Algenta.Colectica.Model.Utility.Logger.Instance.InitializeInAppData(name);
+        }
     }
 }

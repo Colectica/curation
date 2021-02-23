@@ -51,6 +51,8 @@ namespace Colectica.Curation.Service
             string addinsPath = Path.Combine(binPath, "CurationAddins");
 
 #if ISPRO
+            DdiAddins.Utility.RepositoryHelper.InitializeLogging("CurationService-.log");
+
             MefConfig.RegisterMef(addinsPath, typeof(Colectica.Curation.DdiAddins.DdiAddinManifest).Assembly);
 
             string repositoryHostName = Properties.Settings.Default.RepositoryHostName;
