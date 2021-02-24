@@ -166,9 +166,7 @@ namespace Colectica.Curation.Web.Controllers
             model.OrganizationName = org.Name;
             model.ImageUrl = org.ImageUrl;
 
-            var markdown = new MarkdownDeep.Markdown();
-            markdown.NewWindowForExternalLinks = true;
-            model.TermsOfService = markdown.Transform(org.TermsOfService);
+            model.TermsOfService = Markdig.Markdown.ToHtml(org.TermsOfService);
         }
 
 
