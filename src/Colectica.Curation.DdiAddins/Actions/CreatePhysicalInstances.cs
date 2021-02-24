@@ -38,6 +38,9 @@ using Colectica.Curation.DdiAddins.Utility;
 using Algenta.Colectica.Model;
 using Algenta.Colectica.Model.Repository;
 using Algenta.Colectica.Commands.SummaryStatistics;
+using Algenta.Colectica.Navigator.NodeTypes;
+using Algenta.Colectica.ViewModel.Import;
+using System.Data;
 
 namespace Colectica.Curation.DdiAddins.Actions
 {
@@ -70,48 +73,42 @@ namespace Colectica.Curation.DdiAddins.Actions
 
             var existingPhysicalInstance = GetExistingPhysicalInstance(file, agencyId);
 
-            // If there is no PhysicalInstance, or if there is one but it has no variables,
-            // then create one.
-            if (existingPhysicalInstance == null ||
-                existingPhysicalInstance.DataRelationships
-                    .SelectMany(x => x.LogicalRecords)
-                    .SelectMany(x => x.VariablesInRecord)
-                    .Count() == 0)
+            string path = Path.Combine(processingDirectory, file.Name);
+            string errorMessage = string.Empty;
+
+            // Create the PhysicalInstance
+            // Calculate the summary statistics.
+            if (file.Name.EndsWith(".dta"))
             {
-                string path = Path.Combine(processingDirectory, file.Name);
-                string errorMessage = string.Empty;
+                errorMessage = CreateOrUpdatePhysicalInstanceForFile<StataImporter>(file.Id, path, agencyId, existingPhysicalInstance);
+            }
+            if (file.Name.EndsWith(".sav"))
+            {
+                errorMessage = CreateOrUpdatePhysicalInstanceForFile<SpssImporter>(file.Id, path, agencyId, existingPhysicalInstance);
+            }
+            if (file.Name.EndsWith(".csv"))
+            {
+                errorMessage = CreateOrUpdatePhysicalInstanceForFile<CsvImporter>(file.Id, path, agencyId, existingPhysicalInstance);
+            }
+            if (file.Name.EndsWith(".rdata") ||
+                file.Name.EndsWith(".rda"))
+            {
+                errorMessage = CreateOrUpdatePhysicalInstanceForFile<RDataImporter>(file.Id, path, agencyId, existingPhysicalInstance);
+            }
 
-                if (file.Name.EndsWith(".dta"))
+            // Log any errors.
+            if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                var note = new Data.Note()
                 {
-                    errorMessage = CreatePhysicalInstanceForStataFile(file.Id, path, agencyId, existingPhysicalInstance?.Version);
-                }
-                if (file.Name.EndsWith(".sav"))
-                {
-                    errorMessage = CreatePhysicalInstanceForSpssFile(file.Id, path, agencyId, existingPhysicalInstance?.Version);
-                }
-                if (file.Name.EndsWith(".csv"))
-                {
-                    errorMessage = CreatePhysicalInstanceForCsvFile(file.Id, path, agencyId, existingPhysicalInstance?.Version);
-                }
-                if (file.Name.EndsWith(".rdata") ||
-                    file.Name.EndsWith(".rda"))
-                {
-                    errorMessage = CreatePhysicalInstanceForRdataFile(file.Id, path, agencyId, existingPhysicalInstance?.Version);
-                }
-
-                if (!string.IsNullOrWhiteSpace(errorMessage))
-                {
-                    var note = new Data.Note()
-                    {
-                        CatalogRecord = file.CatalogRecord,
-                        File = file,
-                        Timestamp = DateTime.UtcNow,
-                        User = user,
-                        Text = errorMessage
-                    };
-                    db.Notes.Add(note);
-                    db.SaveChanges();
-                }
+                    CatalogRecord = file.CatalogRecord,
+                    File = file,
+                    Timestamp = DateTime.UtcNow,
+                    User = user,
+                    Text = errorMessage
+                };
+                db.Notes.Add(note);
+                db.SaveChanges();
             }
         }
 
@@ -141,100 +138,76 @@ namespace Colectica.Curation.DdiAddins.Actions
             }
         }
 
-        public static string CreatePhysicalInstanceForStataFile(Guid fileId, string stataFilePath, string agencyId, long? existingVersion)
+        public static string CreateOrUpdatePhysicalInstanceForFile<TImporter>(Guid fileId, string filePath, string agencyId, PhysicalInstance existingPhysicalInstance)
+                where TImporter : IDataImporter, new()
         {
             var logger = LogManager.GetLogger("Curation");
-            logger.Debug("Stata import file: " + fileId);
+            logger.Debug("File import: " + fileId);
 
-            ResourcePackage rp = new ResourcePackage();
-            using (StataDataReader reader = new StataDataReader(stataFilePath))
+            IDataImporter importer = new TImporter();
+            var client = RepositoryHelper.GetClient();
+            PhysicalInstance physicalInstance = existingPhysicalInstance;
+
+            // For PhysicalInstances that do not exist yet, create from scratch.
+            if (physicalInstance == null)
             {
-                StataImporter.ImportMetadata(reader, rp, "Temp Package", stataFilePath);
-            }
+                // Extract metadata.
+                ResourcePackage rp = importer.Import(filePath, agencyId);
+                logger.Debug("Imported metadata from data file.");
 
-            if (rp.PhysicalInstances.Count == 0)
-            {
-                return string.Empty;
-            }
-
-            PhysicalInstance physicalInstance = rp.PhysicalInstances[0];
-            physicalInstance.Identifier = fileId;
-
-            if (existingVersion.HasValue)
-            {
-                physicalInstance.Version = existingVersion.Value + 1;
-            }
-
-            StataImporter importer = new StataImporter();
-            try
-            {
-                var calculator = new PhysicalInstanceSummaryStatisticComputer();
-                SummaryStatisticsOptions options = new SummaryStatisticsOptions() { CalculateQuartiles = true };
-                var stats = calculator.ComputeStatistics(importer, stataFilePath, physicalInstance, 
-                    physicalInstance.FileStructure.CaseQuantity, options, (percent, message) => { });
-                if (stats != null)
+                if (rp.PhysicalInstances.Count == 0)
                 {
-                    physicalInstance.Statistics.Clear();
-                    foreach (VariableStatistic stat in stats)
+                    logger.Debug("No dataset could be extracted from SPSS");
+                    return string.Empty;
+                }
+
+                physicalInstance = rp.PhysicalInstances[0];
+                physicalInstance.Identifier = fileId;
+            }
+            else
+            {
+                // If there is an existing PhysicalInstance, update it from the data file.
+                var updateCommand = new UpdatePhysicalInstanceFromFile();
+                updateCommand.DataImporters = new List<IDataImporter>();
+                updateCommand.DataImporters.Add(new SpssImporter());
+                updateCommand.DataImporters.Add(new StataImporter());
+                updateCommand.DataImporters.Add(new SasImporter());
+                updateCommand.DataImporters.Add(new RDataImporter());
+                updateCommand.DataImporters.Add(new CsvImporter());
+
+
+                var context = new Algenta.Colectica.ViewModel.Commands.VersionableCommandContext();
+
+                // Update the PhysicalInstance from the data file.
+                var repoNode = new RepositoryNode(client, null);
+                var repoItemNode = new RepositoryItemNode(existingPhysicalInstance.GetMetadata(), repoNode, client);
+                context.Node = repoItemNode;
+                context.Item = physicalInstance;
+
+                try
+                {
+                    updateCommand.Execute(context);
+
+                    physicalInstance.Version++;
+                    foreach (var item in updateCommand.Result.ModifiedItems)
                     {
-                        physicalInstance.Statistics.Add(stat);
+                        item.Version++;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                logger.Error("Problem calculating summary statistics.", ex);
-                return "Problem calculating summary statistics. " + ex.Message;
-            }
-
-
-            var client = RepositoryHelper.GetClient();
-            ItemGathererVisitor visitor = new ItemGathererVisitor();
-            physicalInstance.Accept(visitor);
-
-            // The static default agency id is not thread safe, so set it explicitly here
-            foreach (var item in visitor.FoundItems)
-            {
-                item.AgencyId = agencyId;
+                catch (Exception ex)
+                {
+                    logger.Error("Problem updating PhysicalInstance.", ex);
+                    return "Problem updating PhysicalInstance. " + ex.Message;
+                }
             }
 
-            client.RegisterItems(visitor.FoundItems, new Algenta.Colectica.Model.Repository.CommitOptions());
-            return string.Empty;
-        }
-
-        public static string CreatePhysicalInstanceForSpssFile(Guid fileId, string spssFilePath, string agencyId, long? existingVersion)
-        {
-            var logger = LogManager.GetLogger("Curation");
-            logger.Debug("SPSS import file: " + fileId);
-
-            ResourcePackage rp = new ResourcePackage();
-            using (var reader = new SpssDataReader(spssFilePath))
-            {
-                SpssImporter.ImportMetadata(reader, rp, "Temp Package", spssFilePath);
-                logger.Debug("Imported metadata from SPSS");
-            }
-
-            if (rp.PhysicalInstances.Count == 0)
-            {
-                logger.Debug("No dataset could be extracted from SPSS");
-                return string.Empty;
-            }
-
-            PhysicalInstance physicalInstance = rp.PhysicalInstances[0];
-            physicalInstance.Identifier = fileId;
-            if (existingVersion.HasValue)
-            {
-                physicalInstance.Version = existingVersion.Value + 1;
-            }
-
-
-            var importer = new SpssImporter();
+            // Calculate summary statistics, for both new and updated files.
             try
             {
                 logger.Debug("Calculating summary statistics");
                 var calculator = new PhysicalInstanceSummaryStatisticComputer();
                 SummaryStatisticsOptions options = new SummaryStatisticsOptions() { CalculateQuartiles = true };
-                var stats = calculator.ComputeStatistics(importer, spssFilePath, physicalInstance,
+                var stats = calculator.ComputeStatistics(importer, filePath, physicalInstance,
                     physicalInstance.FileStructure.CaseQuantity, options, (percent, message) => { });
                 logger.Debug("Done calculating summary statistics");
 
@@ -254,14 +227,14 @@ namespace Colectica.Curation.DdiAddins.Actions
             }
 
 
-            var client = RepositoryHelper.GetClient();
-            ItemGathererVisitor visitor = new ItemGathererVisitor();
+            // Register all items that were created with the repository.
+            DirtyItemGatherer visitor = new DirtyItemGatherer(false, true);
             physicalInstance.Accept(visitor);
 
             logger.Debug("Setting agency IDs");
 
             // The static default agency id is not thread safe, so set it explicitly here
-            foreach (var item in visitor.FoundItems)
+            foreach (var item in visitor.DirtyItems)
             {
                 item.AgencyId = agencyId;
             }
@@ -269,129 +242,13 @@ namespace Colectica.Curation.DdiAddins.Actions
             logger.Debug("Done setting agency IDs");
             logger.Debug("Registering items with the repository");
 
-            client.RegisterItems(visitor.FoundItems, new Algenta.Colectica.Model.Repository.CommitOptions());
+            client.RegisterItems(visitor.DirtyItems, new Algenta.Colectica.Model.Repository.CommitOptions());
 
             logger.Debug("Done registering items with the repository");
-            logger.Debug("Done with CreatePhysicalInstanceForSpssFile");
+            logger.Debug("Done with CreatePhysicalInstanceForFile");
 
             return string.Empty;
         }
 
-        internal static string CreatePhysicalInstanceForCsvFile(Guid fileId, string filePath, string agencyId, long? existingVersion)
-        {
-            var logger = LogManager.GetLogger("Curation");
-            logger.Debug("CSV import file: " + fileId);
-
-            var importer = new CsvImporter();
-            ResourcePackage rp = importer.Import(filePath, agencyId);
-
-            logger.Debug("CSV parsed");
-
-            if (rp.PhysicalInstances.Count == 0)
-            {
-                return string.Empty;
-            }
-
-            PhysicalInstance physicalInstance = rp.PhysicalInstances[0];
-            physicalInstance.Identifier = fileId;
-            if (existingVersion.HasValue)
-            {
-                physicalInstance.Version = existingVersion.Value + 1;
-            }
-
-            try
-            {
-                var calculator = new PhysicalInstanceSummaryStatisticComputer();
-                SummaryStatisticsOptions options = new SummaryStatisticsOptions() { CalculateQuartiles = true };
-                var stats = calculator.ComputeStatistics(importer, filePath, physicalInstance,
-                    physicalInstance.FileStructure.CaseQuantity, options, (percent, message) => { });
-                if (stats != null)
-                {
-                    physicalInstance.Statistics.Clear();
-                    foreach (VariableStatistic stat in stats)
-                    {
-                        physicalInstance.Statistics.Add(stat);
-                    }
-                }
-
-                logger.Debug("CSV statistics generated");
-            }
-            catch (Exception ex)
-            {
-                logger.Error("Problem calculating summary statistics.", ex);
-                return "Problem calculating summary statistics. " + ex.Message;
-            }
-
-            var client = RepositoryHelper.GetClient();
-            ItemGathererVisitor visitor = new ItemGathererVisitor();
-            physicalInstance.Accept(visitor);
-
-            // The static default agency id is not thread safe, so set it explicitly here
-            foreach (var item in visitor.FoundItems)
-            {
-                item.AgencyId = agencyId;
-            }
-
-            client.RegisterItems(visitor.FoundItems, new Algenta.Colectica.Model.Repository.CommitOptions());
-            logger.Debug("CSV items registered");
-
-            return string.Empty;
-        }
-
-        internal static string CreatePhysicalInstanceForRdataFile(Guid fileId, string filePath, string agencyId, long? existingVersion)
-        {
-            var logger = LogManager.GetLogger("Curation");
-            logger.Debug("RData import file: " + fileId);
-
-            var importer = new RDataImporter();
-            ResourcePackage rp = importer.Import(filePath, agencyId);
-
-            if (rp.PhysicalInstances.Count == 0)
-            {
-                return string.Empty;
-            }
-
-            PhysicalInstance physicalInstance = rp.PhysicalInstances[0];
-            physicalInstance.Identifier = fileId;
-            if (existingVersion.HasValue)
-            {
-                physicalInstance.Version = existingVersion.Value + 1;
-            }
-
-            try
-            {
-                var calculator = new PhysicalInstanceSummaryStatisticComputer();
-                SummaryStatisticsOptions options = new SummaryStatisticsOptions() { CalculateQuartiles = true };
-                var stats = calculator.ComputeStatistics(importer, filePath, physicalInstance,
-                    physicalInstance.FileStructure.CaseQuantity, options, (percent, message) => { });
-                if (stats != null)
-                {
-                    physicalInstance.Statistics.Clear();
-                    foreach (VariableStatistic stat in stats)
-                    {
-                        physicalInstance.Statistics.Add(stat);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.Error("Problem calculating summary statistics.", ex);
-                return "Problem calculating summary statistics. " + ex.Message;
-            }
-
-            var client = RepositoryHelper.GetClient();
-            ItemGathererVisitor visitor = new ItemGathererVisitor();
-            physicalInstance.Accept(visitor);
-
-            // The static default agency id is not thread safe, so set it explicitly here
-            foreach (var item in visitor.FoundItems)
-            {
-                item.AgencyId = agencyId;
-            }
-
-            client.RegisterItems(visitor.FoundItems, new Algenta.Colectica.Model.Repository.CommitOptions());
-
-            return string.Empty;
-        }
     }
 }
