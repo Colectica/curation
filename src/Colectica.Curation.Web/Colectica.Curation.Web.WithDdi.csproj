@@ -98,7 +98,7 @@
     <PackageReference Include="Knockout-Sortable" Version="0.9.0" />
     <PackageReference Include="LibGit2Sharp" Version="0.24.0" />
     <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="1.0.185" />
-    <PackageReference Include="log4net" Version="1.2.10" />
+    <PackageReference Include="log4net" Version="2.0.10" />
     <PackageReference Include="LumenWorks.Framework.IO" Version="3.8.0" />
     <PackageReference Include="Markdig.Signed">
       <Version>0.23.0</Version>
