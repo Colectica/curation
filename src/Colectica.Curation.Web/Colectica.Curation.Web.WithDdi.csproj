@@ -82,7 +82,7 @@
     <PackageReference Include="AutoMapper" Version="3.2.1" />
     <PackageReference Include="bootstrap" Version="3.3.2" />
     <PackageReference Include="bootstrap-sortable" Version="1.9.0" />
-    <PackageReference Include="ColecticaSDK" Version="6.1.7976" />
+    <PackageReference Include="ColecticaSDK" Version="6.1.7996" />
     <PackageReference Include="dropzone" Version="3.8.4" />
     <PackageReference Include="elmah.corelibrary" Version="1.2.2" />
     <PackageReference Include="Elmah.MVC" Version="2.1.1" />
