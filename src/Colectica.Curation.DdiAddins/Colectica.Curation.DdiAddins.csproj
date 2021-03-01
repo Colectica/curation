@@ -59,6 +59,7 @@
     <Compile Include="Actions\CreateHandles.cs" />
     <Compile Include="Actions\CreatePhysicalInstances.cs" />
     <Compile Include="Actions\CreatePreservationFormatsWithStatTransfer.cs" />
+    <Compile Include="Actions\RecalculateSummaryStatistics.cs" />
     <Compile Include="DdiAddinManifest.cs" />
     <Compile Include="Mappers\CatalogRecordToStudyUnitMapper.cs" />
     <Compile Include="Mappers\CurationToDdiMapper.cs" />

@@ -76,6 +76,7 @@ namespace Colectica.Curation.Operations
                 var user = db.Users.Find(UserId.ToString());
 
                 // Give any ApplyMetadataUpdate addins the chance to act on this.
+                bool anyErrors = false;
                 foreach (var addin in ApplyMetadataUpdateActions)
                 {
                     try
@@ -88,13 +89,15 @@ namespace Colectica.Curation.Operations
                     catch (Exception ex)
                     {
                         logger.Error($"Error applying metadata update via addin: {addin.Name}.", ex);
+                        anyErrors = true;
                     }
                 }
 
                 // If no addins are registered to handle the updates for this file type, 
                 // mark the file as not pending. Otherwise it will be stuck in that state
                 // forever.
-                if (ApplyMetadataUpdateActions.Count == 0)
+                if (ApplyMetadataUpdateActions.Count == 0 ||
+                    !anyErrors)
                 {
                     file.HasPendingMetadataUpdates = false;
                 }
