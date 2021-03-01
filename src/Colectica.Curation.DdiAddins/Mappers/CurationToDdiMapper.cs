@@ -68,8 +68,7 @@ namespace Colectica.Curation.Addins.Editors.Mappers
             // Add each file as either a PhysicalInstance or an OtherMaterial.
             foreach (var file in record.Files.Where(x => x.Status != FileStatus.Removed))
             {
-                if (file.IsStatisticalDataFile() &&
-                    !file.Name.EndsWith(".csv")) // TODO CSV is eventually allowed
+                if (file.IsStatisticalDataFile())
                 {
                     try
                     {
@@ -109,6 +108,7 @@ namespace Colectica.Curation.Addins.Editors.Mappers
                     // Perform the mapping.
                     var mapper = new ManagedFileToOtherMaterialMapper();
                     mapper.Map(file, material);
+                    material.Version++;
                 }
             }
 
