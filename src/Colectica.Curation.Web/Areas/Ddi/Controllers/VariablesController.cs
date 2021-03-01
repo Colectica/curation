@@ -333,8 +333,7 @@ namespace Colectica.Curation.Addins.Editors.Controllers
                     {
                         var file = db.Files.Where(x => x != null && x.Id == piID)
                             .FirstOrDefault();
-                        if (file != null &&
-                            file.IsStataDataFile())
+                        if (file != null)
                         {
                             file.HasPendingMetadataUpdates = true;
                             db.SaveChanges();
@@ -403,8 +402,7 @@ namespace Colectica.Curation.Addins.Editors.Controllers
                 {
                     var file = db.Files.Where(x => x.Id == physicalInstanceId)
                         .FirstOrDefault();
-                    if (file != null &&
-                        file.IsStataDataFile())
+                    if (file != null)
                     {
                         file.HasPendingMetadataUpdates = true;
                         db.SaveChanges();
