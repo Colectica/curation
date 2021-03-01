@@ -41,6 +41,8 @@ namespace Colectica.Curation.Web.Areas.Ddi.Utility
         {
             var result = new Dictionary<string, int>();
 
+            // Only create up to 20 codes, in case they are trying to create a code list
+            // for a numeric variable that contains many, many unique values.
             while (reader.Read())
             {
                 if (reader.IsDBNull(columnIdx))
@@ -66,7 +68,11 @@ namespace Colectica.Curation.Web.Areas.Ddi.Utility
 
                     result[value]++;
                 }
-                
+
+                if (result.Count >= 20)
+                {
+                    return result;
+                }
             }
 
             return result;
