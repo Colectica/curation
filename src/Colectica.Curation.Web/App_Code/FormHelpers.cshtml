@@ -199,13 +199,11 @@
 {
     var html = ((System.Web.Mvc.WebViewPage)CurrentPage).Html;
 
-    var markdown = new MarkdownDeep.Markdown();
-
     string renderedContent = string.Empty;
 
     if (transformMarkdown)
     {
-        renderedContent = markdown.Transform(content);
+        renderedContent = Markdig.Markdown.ToHtml(content);
     }
     else
     {
