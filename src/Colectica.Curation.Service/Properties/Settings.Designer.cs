@@ -31,5 +31,23 @@ namespace Colectica.Curation.Service.Properties {
                 return ((string)(this["RepositoryHostName"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RepositoryUserName {
+            get {
+                return ((string)(this["RepositoryUserName"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RepositoryPassword {
+            get {
+                return ((string)(this["RepositoryPassword"]));
+            }
+        }
     }
 }
