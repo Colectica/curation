@@ -201,7 +201,8 @@
 
     string renderedContent = string.Empty;
 
-    if (transformMarkdown)
+    if (transformMarkdown &&
+        !string.IsNullOrWhiteSpace(content))
     {
         renderedContent = Markdig.Markdown.ToHtml(content);
     }

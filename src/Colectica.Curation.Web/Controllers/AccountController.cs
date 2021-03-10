@@ -166,7 +166,10 @@ namespace Colectica.Curation.Web.Controllers
             model.OrganizationName = org.Name;
             model.ImageUrl = org.ImageUrl;
 
-            model.TermsOfService = Markdig.Markdown.ToHtml(org.TermsOfService);
+            if (!string.IsNullOrWhiteSpace(org.TermsOfService))
+            {
+                model.TermsOfService = Markdig.Markdown.ToHtml(org.TermsOfService);
+            }
         }
 
 

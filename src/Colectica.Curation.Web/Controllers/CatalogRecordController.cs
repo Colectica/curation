@@ -651,7 +651,12 @@ namespace Colectica.Curation.Web.Controllers
 
         string ProcessDepositAgreement(string depositAgreement, string userFullName, string catalogRecordTitle)
         {
-            string text = Markdig.Markdown.ToHtml(depositAgreement);
+            string text = string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(depositAgreement))
+            {
+                Markdig.Markdown.ToHtml(depositAgreement);
+            }
 
             text = text.Replace("@UserName", User.Identity.Name);
             text = text.Replace("@TermsOfServiceLink", "<a href=\"#tosModal\" data-toggle=\"modal\">Terms of Service</a>");
