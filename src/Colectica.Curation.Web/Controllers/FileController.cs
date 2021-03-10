@@ -421,8 +421,6 @@ namespace Colectica.Curation.Web.Controllers
 
                 db.Events.Add(log);
 
-                db.SaveChanges();
-
                 var applyMetadataUpdatesOp = new ApplyMetadataUpdates()
                 {
                     Name = "Apply Metadata Updates",
@@ -431,6 +429,8 @@ namespace Colectica.Curation.Web.Controllers
                     ProcessingDirectory = SettingsHelper.GetProcessingDirectory(file.CatalogRecord.Organization, db)
                 };
                 bool locked = db.Enqueue(file.CatalogRecord.Id, user.Id, applyMetadataUpdatesOp);
+
+                db.SaveChanges();
 
                 return RedirectToAction("Files", "CatalogRecord", new { id = file.CatalogRecord.Id });
             }
