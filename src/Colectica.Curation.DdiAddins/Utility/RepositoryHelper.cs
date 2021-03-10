@@ -28,16 +28,29 @@ namespace Colectica.Curation.DdiAddins.Utility
 {
     public class RepositoryHelper
     {
-        public static string RepositoryHostName = "http://localhost";
+        public static string RepositoryHostName { get; set; } = "http://localhost";
+        public static string UserName { get; set; } 
+        public static string Password { get; set; } 
 
         public static RepositoryClientBase GetClient()
         {
             var connectionInfo = new RepositoryConnectionInfo()
             {
                 Url = RepositoryHostName,
-                AuthenticationMethod = RepositoryAuthenticationMethod.Windows,
                 TransportMethod = RepositoryTransportMethod.REST
             };
+
+            if (string.IsNullOrWhiteSpace(UserName) ||
+                string.IsNullOrWhiteSpace(Password))
+            {
+                connectionInfo.AuthenticationMethod = RepositoryAuthenticationMethod.Windows;
+            }
+            else
+            {
+                connectionInfo.AuthenticationMethod = RepositoryAuthenticationMethod.UserName;
+                connectionInfo.UserName = UserName;
+                connectionInfo.Password = Password;
+            }
 
             return new RestRepositoryClient(connectionInfo);
         }

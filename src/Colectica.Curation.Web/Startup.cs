@@ -56,6 +56,9 @@ namespace Colectica.Curation.Web
             {
                 DdiAddins.Utility.RepositoryHelper.RepositoryHostName = repositoryHostName;
             }
+
+            DdiAddins.Utility.RepositoryHelper.RepositoryHostName = WebConfigurationManager.AppSettings["repository:userName"];
+            DdiAddins.Utility.RepositoryHelper.RepositoryHostName = WebConfigurationManager.AppSettings["repository:password"];
 #endif
 
 

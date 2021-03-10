@@ -60,6 +60,10 @@ namespace Colectica.Curation.Service
             {
                 DdiAddins.Utility.RepositoryHelper.RepositoryHostName = repositoryHostName;
             }
+
+            DdiAddins.Utility.RepositoryHelper.UserName = Properties.Settings.Default.RepositoryUserName;
+            DdiAddins.Utility.RepositoryHelper.Password = Properties.Settings.Default.RepositoryPassword;
+
 #else
             MefConfig.RegisterMef(addinsPath, typeof(Colectica.Curation.BaseAddins.BaseAddinManifest).Assembly);
 #endif
