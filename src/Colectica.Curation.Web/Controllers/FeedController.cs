@@ -123,7 +123,15 @@ namespace Colectica.Curation.Web.Controllers
                         if (fieldDatesModel != null)
                         {
                             hasFieldDates = true;
-                            recordElement.Add(new XElement("FieldDates", fieldDatesModel.date));
+
+                            if (fieldDatesModel.isRange)
+                            {
+                                recordElement.Add(new XElement("FieldDates", $"{fieldDatesModel.date} - {fieldDatesModel.endDate}"));
+                            }
+                            else
+                            {
+                                recordElement.Add(new XElement("FieldDates", fieldDatesModel.date));
+                            }
                         }
                     }
                     if (!hasFieldDates)
