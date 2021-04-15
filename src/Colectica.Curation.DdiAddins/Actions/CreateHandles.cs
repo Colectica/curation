@@ -124,14 +124,14 @@ namespace Colectica.Curation.DdiAddins.Actions
                     var client = new YaleIsps.HandleService.YalePersistentLinkingService3.PersistentLinkingClient(binding, address);
                     var map = client.createBatch(valuesToRequest, org.HandleGroupName, org.HandleUserName, org.HandlePassword);
                     failMap = map.failMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
-                    successMap = map.failMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
+                    successMap = map.successMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
                 }
                 else
                 {
                     var client = new YaleIsps.HandleService.YalePersistentLinkingService.PersistentLinkingClient(binding, address);
                     var map = client.createBatch(valuesToRequest, org.HandleGroupName, org.HandleUserName, org.HandlePassword);
                     failMap = map.failMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
-                    successMap = map.failMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
+                    successMap = map.successMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
                 }
 
 
