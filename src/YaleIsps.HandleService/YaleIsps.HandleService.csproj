@@ -48,6 +48,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Service References\YalePersistentLinkingService3\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Service References\YalePersistentLinkingService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -72,6 +77,25 @@
     <None Include="Service References\YalePersistentLinkingService2\YaleIsps.HandleService.YalePersistentLinkingService2.resultMap.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\YalePersistentLinkingService3\PersistentLinkingService.wsdl" />
+    <None Include="Service References\YalePersistentLinkingService3\webservices.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\YalePersistentLinkingService3\webservices1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\YalePersistentLinkingService3\YaleIsps.HandleService.YalePersistentLinkingService3.createBatchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\YalePersistentLinkingService3\YaleIsps.HandleService.YalePersistentLinkingService3.deleteBatchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\YalePersistentLinkingService3\YaleIsps.HandleService.YalePersistentLinkingService3.resolveBatchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\YalePersistentLinkingService3\YaleIsps.HandleService.YalePersistentLinkingService3.resultMap.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\YalePersistentLinkingService\PersistentLinkingService.wsdl" />
     <None Include="Service References\YalePersistentLinkingService\YaleIsps.HandleService.YalePersistentLinkingService.createBatchResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -88,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\YalePersistentLinkingService2\" />
+    <WCFMetadataStorage Include="Service References\YalePersistentLinkingService3\" />
     <WCFMetadataStorage Include="Service References\YalePersistentLinkingService\" />
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +135,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\YalePersistentLinkingService2\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\YalePersistentLinkingService3\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\YalePersistentLinkingService3\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\YalePersistentLinkingService3\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

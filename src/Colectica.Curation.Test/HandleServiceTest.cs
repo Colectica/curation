@@ -34,19 +34,34 @@ namespace Colectica.Curation.Test
         public void RequestHandleTest()
         {
             var binding = CreateBasicHttpBinding();
-            var address = new EndpointAddress("https://linktest.its.yale.edu/ypls-ws/PersistentLinking");
-            //var address = new EndpointAddress("http://link.its.yale.edu/ypls-ws/PersistentLinking");
-            var client = new PersistentLinkingClient(binding, address);
-            var client2 = new YaleIsps.HandleService.YalePersistentLinkingService2.PersistentLinkingClient(binding, address);
-
             string[] ids = new string[]
             {
                 "http://example.org/test1", "test2", "asdf asdf", "test2", "cb340d03-67a3-47c1-bec5-f25df1d6cd87"
             };
 
-            string username = Environment.GetEnvironmentVariable("Handle_Username");
-            string password = Environment.GetEnvironmentVariable("Handle_Password");
-            var result = client.createBatch(ids, username, username, password);
+            //string username = Environment.GetEnvironmentVariable("Handle_Username");
+            //string password = Environment.GetEnvironmentVariable("Handle_Password");
+
+            bool isNew = true;
+            if (isNew)
+            {
+                var address = new EndpointAddress("https://linktest.its.yale.edu/ypls/webservices");
+                var client = new YaleIsps.HandleService.YalePersistentLinkingService3.PersistentLinkingClient(binding, address);
+
+                string username = "10079.1/ISPS";
+                string password = "isps";
+
+                var result = client.createBatch(ids, username, username, password);
+            }
+            else
+            {
+                var address = new EndpointAddress("https://link.its.yale.edu/ypls-ws/PersistentLinking");
+                var client = new PersistentLinkingClient(binding, address);
+
+                string username = "10079/ISPS";
+                string password = "isps";
+                var result = client.createBatch(ids, username, username, password);
+            }
 
             Console.WriteLine("test");
         }

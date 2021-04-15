@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:tns="http://ws.ypls.dam.its.yale.edu/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" name="PersistentLinkingService" targetNamespace="http://ws.ypls.dam.its.yale.edu/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema>
+      <xsd:import schemaLocation="https://linktest.its.yale.edu:443/ypls/webservices?xsd=1" namespace="http://ws.ypls.dam.its.yale.edu/" />
+    </xsd:schema>
+    <xsd:schema>
+      <xsd:import schemaLocation="https://linktest.its.yale.edu:443/ypls/webservices?xsd=2" namespace="http://jaxb.dev.java.net/array" />
+    </xsd:schema>
+  </types>
+  <message name="createBatchSemantic">
+    <part name="handlesToValues" type="tns:handleMap" />
+    <part name="group" type="xsd:string" />
+    <part name="user" type="xsd:string" />
+    <part name="credential" type="xsd:string" />
+  </message>
+  <message name="createBatchSemanticResponse">
+    <part name="results" type="tns:resultMap" />
+  </message>
+  <message name="modifyBatch">
+    <part name="handlesToValues" type="tns:handleMap" />
+    <part name="user" type="xsd:string" />
+    <part name="credential" type="xsd:string" />
+  </message>
+  <message name="modifyBatchResponse">
+    <part name="results" type="tns:resultMap" />
+  </message>
+  <message name="resolveBatch">
+    <part xmlns:ns1="http://jaxb.dev.java.net/array" name="values" type="ns1:stringArray" />
+    <part name="user" type="xsd:string" />
+    <part name="credential" type="xsd:string" />
+  </message>
+  <message name="resolveBatchResponse">
+    <part name="results" type="tns:resultMap" />
+  </message>
+  <message name="deleteBatch">
+    <part xmlns:ns2="http://jaxb.dev.java.net/array" name="values" type="ns2:stringArray" />
+    <part name="user" type="xsd:string" />
+    <part name="credential" type="xsd:string" />
+  </message>
+  <message name="deleteBatchResponse">
+    <part name="results" type="tns:resultMap" />
+  </message>
+  <message name="createBatch">
+    <part xmlns:ns3="http://jaxb.dev.java.net/array" name="values" type="ns3:stringArray" />
+    <part name="group" type="xsd:string" />
+    <part name="user" type="xsd:string" />
+    <part name="credential" type="xsd:string" />
+  </message>
+  <message name="createBatchResponse">
+    <part name="results" type="tns:resultMap" />
+  </message>
+  <portType name="IPersistentLinking">
+    <operation name="createBatchSemantic" parameterOrder="handlesToValues group user credential">
+      <input wsam:Action="http://ws.ypls.dam.its.yale.edu/IPersistentLinking/createBatchSemanticRequest" message="tns:createBatchSemantic" />
+      <output wsam:Action="http://ws.ypls.dam.its.yale.edu/IPersistentLinking/createBatchSemanticResponse" message="tns:createBatchSemanticResponse" />
+    </operation>
+    <operation name="modifyBatch" parameterOrder="handlesToValues user credential">
+      <input wsam:Action="http://ws.ypls.dam.its.yale.edu/IPersistentLinking/modifyBatchRequest" message="tns:modifyBatch" />
+      <output wsam:Action="http://ws.ypls.dam.its.yale.edu/IPersistentLinking/modifyBatchResponse" message="tns:modifyBatchResponse" />
+    </operation>
+    <operation name="resolveBatch" parameterOrder="values user credential">
+      <input wsam:Action="http://ws.ypls.dam.its.yale.edu/IPersistentLinking/resolveBatchRequest" message="tns:resolveBatch" />
+      <output wsam:Action="http://ws.ypls.dam.its.yale.edu/IPersistentLinking/resolveBatchResponse" message="tns:resolveBatchResponse" />
+    </operation>
+    <operation name="deleteBatch" parameterOrder="values user credential">
+      <input wsam:Action="http://ws.ypls.dam.its.yale.edu/IPersistentLinking/deleteBatchRequest" message="tns:deleteBatch" />
+      <output wsam:Action="http://ws.ypls.dam.its.yale.edu/IPersistentLinking/deleteBatchResponse" message="tns:deleteBatchResponse" />
+    </operation>
+    <operation name="createBatch" parameterOrder="values group user credential">
+      <input wsam:Action="http://ws.ypls.dam.its.yale.edu/IPersistentLinking/createBatchRequest" message="tns:createBatch" />
+      <output wsam:Action="http://ws.ypls.dam.its.yale.edu/IPersistentLinking/createBatchResponse" message="tns:createBatchResponse" />
+    </operation>
+  </portType>
+  <binding name="PersistentLinkingPortBinding" type="tns:IPersistentLinking">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    <operation name="createBatchSemantic">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" namespace="http://ws.ypls.dam.its.yale.edu/" />
+      </input>
+      <output>
+        <soap:body use="literal" namespace="http://ws.ypls.dam.its.yale.edu/" />
+      </output>
+    </operation>
+    <operation name="modifyBatch">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" namespace="http://ws.ypls.dam.its.yale.edu/" />
+      </input>
+      <output>
+        <soap:body use="literal" namespace="http://ws.ypls.dam.its.yale.edu/" />
+      </output>
+    </operation>
+    <operation name="resolveBatch">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" namespace="http://ws.ypls.dam.its.yale.edu/" />
+      </input>
+      <output>
+        <soap:body use="literal" namespace="http://ws.ypls.dam.its.yale.edu/" />
+      </output>
+    </operation>
+    <operation name="deleteBatch">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" namespace="http://ws.ypls.dam.its.yale.edu/" />
+      </input>
+      <output>
+        <soap:body use="literal" namespace="http://ws.ypls.dam.its.yale.edu/" />
+      </output>
+    </operation>
+    <operation name="createBatch">
+      <soap:operation soapAction="" />
+      <input>
+        <soap:body use="literal" namespace="http://ws.ypls.dam.its.yale.edu/" />
+      </input>
+      <output>
+        <soap:body use="literal" namespace="http://ws.ypls.dam.its.yale.edu/" />
+      </output>
+    </operation>
+  </binding>
+  <service name="PersistentLinkingService">
+    <port name="PersistentLinkingPort" binding="tns:PersistentLinkingPortBinding">
+      <soap:address location="https://linktest.its.yale.edu:443/ypls/webservices" />
+    </port>
+  </service>
+</definitions>

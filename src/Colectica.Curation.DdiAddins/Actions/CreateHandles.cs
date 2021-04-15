@@ -26,7 +26,6 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using YaleIsps.HandleService.YalePersistentLinkingService;
 
 namespace Colectica.Curation.DdiAddins.Actions
 {
@@ -105,36 +104,54 @@ namespace Colectica.Curation.DdiAddins.Actions
                 Id = result.DdiFileId,
                 Url = $"http://{record.Organization.Hostname}/File/Download/{result.DdiFileId}"
             });
+            string[] valuesToRequest = handleRequests.Select(x => x.Url).ToArray();
 
             // Request the Handles.
-            var binding = CreateBasicHttpBinding();
-            var address = new EndpointAddress(org.HandleServerEndpoint);
-            var client = new PersistentLinkingClient(binding, address);
-
             try
             {
                 logger.Debug("Requesting Handles for " + handleRequests.Count + " items");
 
-                string[] valuesToRequest = handleRequests.Select(x => x.Url).ToArray();
-                resultMap map = client.createBatch(valuesToRequest, org.HandleGroupName, org.HandleUserName, org.HandlePassword);
+                var binding = CreateBasicHttpBinding();
+                var address = new EndpointAddress(org.HandleServerEndpoint);
+                
+
+                // Choose the web service client based on the URL.
+                bool isNewServiceContract = org.HandleServerEndpoint.Contains("linktest");
+                List<KeyValuePair<string, string>> failMap = null;
+                List<KeyValuePair<string, string>> successMap = null;
+                if (isNewServiceContract)
+                {
+                    var client = new YaleIsps.HandleService.YalePersistentLinkingService3.PersistentLinkingClient(binding, address);
+                    var map = client.createBatch(valuesToRequest, org.HandleGroupName, org.HandleUserName, org.HandlePassword);
+                    failMap = map.failMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
+                    successMap = map.failMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
+                }
+                else
+                {
+                    var client = new YaleIsps.HandleService.YalePersistentLinkingService.PersistentLinkingClient(binding, address);
+                    var map = client.createBatch(valuesToRequest, org.HandleGroupName, org.HandleUserName, org.HandlePassword);
+                    failMap = map.failMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
+                    successMap = map.failMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
+                }
+
 
                 // Handle any failures.
-                if (map.failMap.Length > 0)
+                if (failMap.Count > 0)
                 {
                     result.Successful = false;
-                    foreach (resultMapEntry item in map.failMap)
+                    foreach (KeyValuePair<string, string> item in failMap)
                     {
-                        string msg = $"{item.key}: {item.value}";
+                        string msg = $"{item.Key}: {item.Value}";
                         result.Messages.Add(msg);
                         logger.Warn(msg);
                     }
                 }
 
                 // Assign the Handles to the CatalogRecord and files.
-                foreach (resultMapEntry1 item in map.successMap)
+                foreach (KeyValuePair<string, string> item in successMap)
                 {
-                    string handle = "http://hdl.handle.net/" + item.key;
-                    string url = item.value;
+                    string handle = "http://hdl.handle.net/" + item.Key;
+                    string url = item.Value;
 
                     logger.Debug("Assigning Handle for " + handle + ", " + url);
 

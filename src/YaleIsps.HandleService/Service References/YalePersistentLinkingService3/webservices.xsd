@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://ws.ypls.dam.its.yale.edu/" targetNamespace="http://ws.ypls.dam.its.yale.edu/" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="handleMap" type="tns:handleMap" />
+  <xs:element name="resultMap" type="tns:resultMap" />
+  <xs:complexType name="handleMap">
+    <xs:sequence>
+      <xs:element name="map">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" name="key" type="xs:string" />
+                  <xs:element minOccurs="0" name="value" type="xs:string" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="resultMap">
+    <xs:sequence>
+      <xs:element name="failMap">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" name="key" type="xs:string" />
+                  <xs:element minOccurs="0" name="value" type="xs:string" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="successMap">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="entry">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" name="key" type="xs:string" />
+                  <xs:element minOccurs="0" name="value" type="xs:string" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
