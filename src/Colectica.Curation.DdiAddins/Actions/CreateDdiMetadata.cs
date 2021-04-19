@@ -39,7 +39,15 @@ namespace Colectica.Curation.DdiAddins.Actions
             Guid reservedUniqueId, string reservedPersistentId)
         {
             // Update the DDI StudyUnit.
-            CurationToDdiMapper.UpdateRepositoryItemFromModel(record);
+            try
+            {
+                CurationToDdiMapper.UpdateRepositoryItemFromModel(record);
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(ex, "Error updating repository from catalog record");
+                EventService.LogEvent(record, user, db, EventTypes.FinalizeCatalogRecordFailed, "Failed to update repository from catalog record.", ex.Message);
+            }
 
             // Export the DDI XML.
             string fileName = string.Empty;
@@ -53,7 +61,15 @@ namespace Colectica.Curation.DdiAddins.Actions
             }
 
             string ddiFilePath = Path.Combine(processingDirectory, record.Id.ToString(), fileName);
-            CurationToDdiMapper.SaveCatalogRecordXml(record, ddiFilePath);
+            try
+            {
+                CurationToDdiMapper.SaveCatalogRecordXml(record, ddiFilePath);
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(ex, "Error creating DDI XML file.");
+                EventService.LogEvent(record, user, db, EventTypes.FinalizeCatalogRecordFailed, "Failed to create DDI XML file.", ex.Message);
+            }
 
             // Make a checksum.
             string checksum = string.Empty;

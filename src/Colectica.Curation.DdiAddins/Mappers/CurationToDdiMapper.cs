@@ -131,10 +131,10 @@ namespace Colectica.Curation.Addins.Editors.Mappers
             var study = GetStudyUnit(record);
 
             var client = RepositoryHelper.GetClient();
-            var populator = new GraphPopulator(client);
+            var populator = new SetPopulator(client);
             study.Accept(populator);
 
-            var serializer = new Ddi32Serializer();
+            var serializer = new Ddi33Serializer();
             serializer.UseConciseBoundedDescription = true;
             serializer.SerializeFragments(ddiFilePath, study);
         }
