@@ -258,6 +258,8 @@ namespace Colectica.Curation.Operations
                 catch (Exception ex)
                 {
                     logger.Error($"Error exporting metadata via addin {addin.Name}", ex);
+                    this.messages.Add("Error exporting metadata via addin {addin.Name}. " + ex.Message);
+                    hasFailure = true;
                 }
             }
 
