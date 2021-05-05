@@ -80,16 +80,18 @@ else
                         @number
                     </td>
 
-                    <td data-value="@item.CatalogRecord.CreatedDate.Value.ToString("s")">
+                    <td data-value="@item.CatalogRecord.CreatedDate.Value.ToString("yyyy-MM-DD")"
+                        data-dateformat="YYYY-MM-DD">
                         @if (item.CatalogRecord.CreatedDate.HasValue)
                         {
-                            <time datetime="@item.CatalogRecord.CreatedDate.Value.ToString("s")-0000">@item.CatalogRecord.CreatedDate</time>
+                            <time datetime="@item.CatalogRecord.CreatedDate.Value.ToString("yyyy-MM-DD")">@item.CatalogRecord.CreatedDate.Value.ToString("yyyy-MM-dd")</time>
                         }
                     </td>
-                    <td data-value="@item.CatalogRecord.LastUpdatedDate?.Value.ToString("s")">
+                    <td data-value="@item.CatalogRecord.LastUpdatedDate?.Value.ToString("s")"
+                        data-dateformat="YYYY-MM-DD">
                         @if (item.CatalogRecord.LastUpdatedDate.HasValue)
                         {
-                            <time datetime="@item.CatalogRecord.LastUpdatedDate.Value.ToString("s")-0000">@item.CatalogRecord.LastUpdatedDate</time>
+                            <time datetime="@item.CatalogRecord.LastUpdatedDate.Value.ToString("yyyy-MM-DD")">@item.CatalogRecord.LastUpdatedDate.Value.ToString("yyyy-MM-dd")</time>
                         }
                     </td>
 
@@ -143,9 +145,9 @@ else
     <script>
         $(".status").tooltip();
 
-        $("time").each(function (i, e) {
-            var time = moment($(e).attr('datetime'));
-            $(e).html("<span>" + time.calendar() + "</span>");
-        });
+        //$("time").each(function (i, e) {
+            //var time = moment($(e).attr('datetime'));
+            //$(e).html("<span>" + time.calendar() + "</span>");
+        //});
     </script>
 }
