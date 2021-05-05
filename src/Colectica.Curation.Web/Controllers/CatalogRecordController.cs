@@ -655,7 +655,7 @@ namespace Colectica.Curation.Web.Controllers
 
             if (!string.IsNullOrWhiteSpace(depositAgreement))
             {
-                Markdig.Markdown.ToHtml(depositAgreement);
+                text = Markdig.Markdown.ToHtml(depositAgreement);
             }
 
             text = text.Replace("@UserName", User.Identity.Name);
