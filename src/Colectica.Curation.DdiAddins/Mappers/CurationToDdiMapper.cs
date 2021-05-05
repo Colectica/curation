@@ -53,6 +53,7 @@ namespace Colectica.Curation.Addins.Editors.Mappers
             {
                 // StudyUnit does not exist yet. That is okay, because we are making one from
                 // scratch anyway.
+                logger.Debug("StudyUnit does not yet exist in the repository");
             }
 
             var study = new StudyUnit()
