@@ -20,6 +20,7 @@ using Colectica.Curation.Addins.Editors.Mappers;
 using Colectica.Curation.Common.Utility;
 using Colectica.Curation.Contracts;
 using Colectica.Curation.Data;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -42,6 +43,8 @@ namespace Colectica.Curation.DdiAddins.Actions
             string agencyId = record.Organization.AgencyID;
             VersionableBase.DefaultAgencyId = agencyId;
 
+            var logger = LogManager.GetLogger("Curation");
+
             // Update the DDI StudyUnit.
             try
             {
@@ -49,7 +52,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "Error updating repository from catalog record");
+                logger.Error("Error updating repository from catalog record", ex);
                 EventService.LogEvent(record, user, db, EventTypes.FinalizeCatalogRecordFailed, "Failed to update repository from catalog record.", ex.Message);
             }
 
@@ -71,7 +74,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             }
             catch (Exception ex)
             {
-                Serilog.Log.Error(ex, "Error creating DDI XML file.");
+                logger.Error("Error creating DDI XML file.", ex);
                 EventService.LogEvent(record, user, db, EventTypes.FinalizeCatalogRecordFailed, "Failed to create DDI XML file.", ex.Message);
             }
 
