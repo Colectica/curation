@@ -71,6 +71,65 @@ namespace Colectica.Curation.DdiAddins.Actions
             try
             {
                 CurationToDdiMapper.SaveCatalogRecordXml(record, ddiFilePath);
+
+                // Make a checksum.
+                string checksum = string.Empty;
+                using (var hasher = SHA256Managed.Create())
+                using (var fileStream = new FileStream(ddiFilePath, FileMode.Open))
+                {
+                    byte[] hashValue = hasher.ComputeHash(fileStream);
+                    checksum = BitConverter.ToString(hashValue).Replace("-", String.Empty);
+                }
+
+                var existingFile = record.Files.Where(x => x.Name == fileName).FirstOrDefault();
+                if (existingFile == null)
+                {
+                    var id = (reservedUniqueId != Guid.Empty) ? reservedUniqueId : Guid.NewGuid();
+
+                    // Make a ManagedFile for the DDI XML file.
+                    var managedFile = new ManagedFile()
+                    {
+                        Id = id,
+                        PersistentLink = reservedPersistentId,
+                        PersistentLinkDate = DateTime.UtcNow,
+                        CatalogRecord = record,
+                        CreationDate = DateTime.UtcNow,
+                        Name = fileName,
+                        FormatName = Path.GetExtension(fileName).ToLower(),
+                        Size = new FileInfo(ddiFilePath).Length,
+                        Source = "Curation System",
+                        PublicName = fileName,
+                        Type = "Codebook",
+                        Software = "DDI",
+                        UploadedDate = DateTime.UtcNow,
+                        Status = Colectica.Curation.Data.FileStatus.Accepted,
+                        Owner = user,
+                        Checksum = checksum,
+                        ChecksumMethod = "SHA256",
+                        ChecksumDate = DateTime.UtcNow
+                    };
+
+                    record.Files.Add(managedFile);
+                }
+                else
+                {
+                    // Update the file existing information.
+                    existingFile.CreationDate = DateTime.UtcNow;
+                    existingFile.UploadedDate = DateTime.UtcNow;
+                    existingFile.Size = new FileInfo(ddiFilePath).Length;
+                    existingFile.Checksum = checksum;
+                    existingFile.ChecksumMethod = "SHA256";
+                    existingFile.ChecksumDate = DateTime.UtcNow;
+
+                    if (string.IsNullOrWhiteSpace(existingFile.PersistentLink) &&
+                        !string.IsNullOrWhiteSpace(reservedPersistentId))
+                    {
+                        existingFile.PersistentLink = reservedPersistentId;
+                        existingFile.PersistentLinkDate = DateTime.UtcNow;
+                    }
+                }
+
+                EventService.LogEvent(record, user, db, EventTypes.GenerateMetadata, "Generated DDI 3 Metadata");
             }
             catch (Exception ex)
             {
@@ -78,64 +137,6 @@ namespace Colectica.Curation.DdiAddins.Actions
                 EventService.LogEvent(record, user, db, EventTypes.FinalizeCatalogRecordFailed, "Failed to create DDI XML file.", ex.Message);
             }
 
-            // Make a checksum.
-            string checksum = string.Empty;
-            using (var hasher = SHA256Managed.Create())
-            using (var fileStream = new FileStream(ddiFilePath, FileMode.Open))
-            {
-                byte[] hashValue = hasher.ComputeHash(fileStream);
-                checksum = BitConverter.ToString(hashValue).Replace("-", String.Empty);
-            }
-
-            var existingFile = record.Files.Where(x => x.Name == fileName).FirstOrDefault();
-            if (existingFile == null)
-            {
-                var id = (reservedUniqueId != Guid.Empty) ? reservedUniqueId : Guid.NewGuid();
-
-                // Make a ManagedFile for the DDI XML file.
-                var managedFile = new ManagedFile()
-                {
-                    Id = id,
-                    PersistentLink = reservedPersistentId,
-                    PersistentLinkDate = DateTime.UtcNow,
-                    CatalogRecord = record,
-                    CreationDate = DateTime.UtcNow,
-                    Name = fileName,
-                    FormatName = Path.GetExtension(fileName).ToLower(),
-                    Size = new FileInfo(ddiFilePath).Length,
-                    Source = "Curation System",
-                    PublicName = fileName,
-                    Type = "Codebook",
-                    Software = "DDI",
-                    UploadedDate = DateTime.UtcNow,
-                    Status = Colectica.Curation.Data.FileStatus.Accepted,
-                    Owner = user,
-                    Checksum = checksum,
-                    ChecksumMethod = "SHA256",
-                    ChecksumDate = DateTime.UtcNow
-                };
-
-                record.Files.Add(managedFile);
-            }
-            else
-            {
-                // Update the file existing information.
-                existingFile.CreationDate = DateTime.UtcNow;
-                existingFile.UploadedDate = DateTime.UtcNow;
-                existingFile.Size = new FileInfo(ddiFilePath).Length;
-                existingFile.Checksum = checksum;
-                existingFile.ChecksumMethod = "SHA256";
-                existingFile.ChecksumDate = DateTime.UtcNow;
-
-                if (string.IsNullOrWhiteSpace(existingFile.PersistentLink) &&
-                    !string.IsNullOrWhiteSpace(reservedPersistentId))
-                {
-                    existingFile.PersistentLink = reservedPersistentId;
-                    existingFile.PersistentLinkDate = DateTime.UtcNow;
-                }
-            }
-
-            EventService.LogEvent(record, user, db, EventTypes.GenerateMetadata, "Generated DDI 3 Metadata");
         }
     }
 }
