@@ -15,7 +15,8 @@
 // You should have received a copy of the GNU Affero General Public License along
 // with Colectica Curation Tools. If not, see <https://www.gnu.org/licenses/>.
 
-﻿using Colectica.Curation.Addins.Editors.Mappers;
+using Algenta.Colectica.Model;
+using Colectica.Curation.Addins.Editors.Mappers;
 using Colectica.Curation.Common.Utility;
 using Colectica.Curation.Contracts;
 using Colectica.Curation.Data;
@@ -38,6 +39,9 @@ namespace Colectica.Curation.DdiAddins.Actions
         public void FinalizeMetadata(CatalogRecord record, ApplicationUser user, ApplicationDbContext db, string processingDirectory, 
             Guid reservedUniqueId, string reservedPersistentId)
         {
+            string agencyId = record.Organization.AgencyID;
+            VersionableBase.DefaultAgencyId = agencyId;
+
             // Update the DDI StudyUnit.
             try
             {
