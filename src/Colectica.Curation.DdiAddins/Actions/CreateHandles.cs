@@ -54,6 +54,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             }
 
             var org = record.Organization;
+            bool isNewServiceContract = org.HandleServerEndpoint.Contains("linktest");
 
             if (string.IsNullOrWhiteSpace(org.HandleServerEndpoint))
             {
@@ -63,6 +64,13 @@ namespace Colectica.Curation.DdiAddins.Actions
 
             // Determine which items need handles and make a list of their IDs.
 
+            // Determine the Drupal URL to point to, based on whether this is a test environment or not.
+            string drupalHostName = "isps.yale.edu";
+            if (isNewServiceContract)
+            {
+                drupalHostName = "dev.isps.yale.edu";
+            }
+
             // Handle for the CatalogRecord.
             var handleRequests = new List<HandleRequestInformation>();
             if (string.IsNullOrWhiteSpace(record.PersistentId))
@@ -70,7 +78,7 @@ namespace Colectica.Curation.DdiAddins.Actions
                 var req = new HandleRequestInformation
                 {
                     Id = record.Id,
-                    Url = $"https://isps.yale.edu/research/data/{record.Number.ToLower()}"
+                    Url = $"https://{drupalHostName}/research/data/{record.Number.ToLower()}"
                 };
                 handleRequests.Add(req);
             }
@@ -116,7 +124,6 @@ namespace Colectica.Curation.DdiAddins.Actions
                 
 
                 // Choose the web service client based on the URL.
-                bool isNewServiceContract = org.HandleServerEndpoint.Contains("linktest");
                 List<KeyValuePair<string, string>> failMap = null;
                 List<KeyValuePair<string, string>> successMap = null;
                 if (isNewServiceContract)
