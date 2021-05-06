@@ -242,7 +242,9 @@ namespace Colectica.Curation.DdiAddins.Actions
             logger.Debug("Done setting agency IDs");
             logger.Debug("Registering items with the repository");
 
-            client.RegisterItems(visitor.DirtyItems, new Algenta.Colectica.Model.Repository.CommitOptions());
+            var options = new Algenta.Colectica.Model.Repository.CommitOptions();
+            options.NamedOptions.Add("RegisterOrReplace");
+            client.RegisterItems(visitor.DirtyItems, options);
 
             logger.Debug("Done registering items with the repository");
             logger.Debug("Done with CreatePhysicalInstanceForFile");
