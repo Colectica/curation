@@ -54,7 +54,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             }
 
             var org = record.Organization;
-            bool isNewServiceContract = org.HandleServerEndpoint.Contains("linktest");
+            bool isDev = org.HandleServerEndpoint.Contains("linktest");
 
             if (string.IsNullOrWhiteSpace(org.HandleServerEndpoint))
             {
@@ -66,7 +66,7 @@ namespace Colectica.Curation.DdiAddins.Actions
 
             // Determine the Drupal URL to point to, based on whether this is a test environment or not.
             string drupalHostName = "isps.yale.edu";
-            if (isNewServiceContract)
+            if (isDev)
             {
                 drupalHostName = "dev.isps.yale.edu";
             }
@@ -118,28 +118,41 @@ namespace Colectica.Curation.DdiAddins.Actions
             try
             {
                 logger.Debug("Requesting Handles for " + handleRequests.Count + " items");
+                logger.Debug("Handle request is for " + string.Join(", ", valuesToRequest));
 
                 var binding = CreateBasicHttpBinding();
                 var address = new EndpointAddress(org.HandleServerEndpoint);
                 
 
-                // Choose the web service client based on the URL.
+                // Try the new service contract, first.
                 List<KeyValuePair<string, string>> failMap = null;
                 List<KeyValuePair<string, string>> successMap = null;
-                if (isNewServiceContract)
+                try
                 {
                     var client = new YaleIsps.HandleService.YalePersistentLinkingService3.PersistentLinkingClient(binding, address);
                     var map = client.createBatch(valuesToRequest, org.HandleGroupName, org.HandleUserName, org.HandlePassword);
                     failMap = map.failMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
                     successMap = map.successMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
+                    logger.Debug("First Handle request succeeded");
                 }
-                else
+                catch (Exception ex)
                 {
-                    var client = new YaleIsps.HandleService.YalePersistentLinkingService.PersistentLinkingClient(binding, address);
-                    var map = client.createBatch(valuesToRequest, org.HandleGroupName, org.HandleUserName, org.HandlePassword);
-                    failMap = map.failMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
-                    successMap = map.successMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
+                    // If this failed, try the old service contract.
+                    logger.Warn("First Handle request failed. Trying the other service contract.", ex);
+                    try
+                    {
+                        var client = new YaleIsps.HandleService.YalePersistentLinkingService.PersistentLinkingClient(binding, address);
+                        var map = client.createBatch(valuesToRequest, org.HandleGroupName, org.HandleUserName, org.HandlePassword);
+                        failMap = map.failMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
+                        successMap = map.successMap.Select(x => new KeyValuePair<string, string>(x.key, x.value)).ToList();
+                        logger.Debug("Second Handle request succeeded");
+                    }
+                    catch (Exception ex2)
+                    {
+                        logger.Warn("Second Handle request failed. Trying the other service contract.", ex2);
+                    }
                 }
+
 
 
                 // Handle any failures.
