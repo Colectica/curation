@@ -51,6 +51,7 @@ namespace Colectica.Curation.Web.Utility
             var gatherer = new DirtyItemGatherer(true);
             group.Accept(gatherer);
 
+            options.NamedOptions.Add("RegisterOrReplace");
             client.RegisterItems(gatherer.DirtyItems, options);
         }
 

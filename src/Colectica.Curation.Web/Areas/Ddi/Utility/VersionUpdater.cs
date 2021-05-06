@@ -82,6 +82,7 @@ namespace Colectica.Curation.Web.Areas.Ddi.Utility
 
             // Register all the changes.
             var options = new CommitOptions();
+            options.NamedOptions.Add("RegisterOrReplace");
             client.RegisterItems(itemsToRegister, options);
         }
     }
