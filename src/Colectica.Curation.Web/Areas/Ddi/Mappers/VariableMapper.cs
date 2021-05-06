@@ -94,7 +94,9 @@ namespace Colectica.Curation.Addins.Editors.Mappers
                 codeList.Accept(gatherer);
 
                 var client = RepositoryHelper.GetClient();
-                client.RegisterItems(gatherer.FoundItems, new CommitOptions());
+                var repoOptions = new CommitOptions();
+                repoOptions.NamedOptions.Add("RegisterOrReplace");
+                client.RegisterItems(gatherer.FoundItems, repoOptions);
             }
         }
 
