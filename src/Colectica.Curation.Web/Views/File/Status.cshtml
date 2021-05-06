@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = Model.FileName;
+    bool isInCuration = Model.File.CatalogRecord.Processing;
 }
 
 @section breadcrumb
@@ -66,6 +67,16 @@ else
 
             @foreach (var task in Model.Tasks)
             {
+                bool curationTasksAllowed = !task.IsComplete &&
+                    Model.IsUserCurator &&
+                    isInCuration;
+
+                if (!task.IsComplete && Model.IsUserAdmin)
+                {
+                    curationTasksAllowed = true;
+                }
+
+
                 <tr>
                     <td>
                         @if (task.IsComplete)
@@ -78,7 +89,7 @@ else
                         }
                     </td>
                     <td>
-                        @if (task.IsComplete || !Model.IsUserCurator)
+                        @if (!curationTasksAllowed)
                         {
                             @task.TaskType
                         }

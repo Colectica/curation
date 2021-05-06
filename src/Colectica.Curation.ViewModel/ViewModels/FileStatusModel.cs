@@ -37,6 +37,7 @@ namespace Colectica.Curation.Web.Models
 
         public bool IsUserCurator { get; set; }
         public bool IsUserApprover { get; set; }
+        public bool IsUserAdmin { get; set; }
 
         List<FileTaskModel> tasks = new List<FileTaskModel>();
         public List<FileTaskModel> Tasks

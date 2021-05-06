@@ -252,7 +252,7 @@ namespace Colectica.Curation.Web.Controllers
                 model.IsUserCurator = file.CatalogRecord.Curators.Any(x => x.UserName == User.Identity.Name);
                 model.IsUserApprover = file.CatalogRecord.Approvers.Any(x => x.UserName == User.Identity.Name) ||
                     OrganizationHelper.DoesUserHaveRight(db, User, file.CatalogRecord.Organization.Id, Right.CanApprove);
-
+                model.IsUserAdmin = OrganizationHelper.DoesUserHaveRight(db, User, file.CatalogRecord.Organization.Id, Right.CanEditOrganization);
 
                 return View(model);
             }
