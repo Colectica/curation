@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = Model.FileName;
-    bool isInCuration = Model.File.CatalogRecord.Processing;
+    bool isInCuration = Model.File.CatalogRecord.Status == Colectica.Curation.Data.CatalogRecordStatus.Processing;
 }
 
 @section breadcrumb
