@@ -206,6 +206,12 @@ namespace Colectica.Curation.Web.Areas.Ddi.Utility
 
         public static void AddProcessingTasksForFile(ManagedFile file, CatalogRecord record, ApplicationDbContext db, bool addAllDataTasks = false, bool addAllCodeTasks = false)
         {
+            // Don't add tasks for the auto-generated CSV file.
+            if (file.Source == "Curation System")
+            {
+                return;
+            }
+
             foreach (var task in MefConfig.AddinManager.AllTasks)
             {
                 bool goAhead = false;
