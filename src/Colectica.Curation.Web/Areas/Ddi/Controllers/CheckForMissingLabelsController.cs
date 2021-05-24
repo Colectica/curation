@@ -106,7 +106,7 @@ namespace Colectica.Curation.Addins.Editors.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw new HttpException(500, "Could not retrieve the PhysicalInstance for a file", ex);
+                    return View("~/Areas/Ddi/Views/CheckForMissingLabels/Details.cshtml", model);
                 }
             }
         }
