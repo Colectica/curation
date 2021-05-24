@@ -1547,10 +1547,13 @@ namespace Colectica.Curation.Web.Controllers
 
                 var user = db.Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
 
+                bool isCurator = record.Curators.Any(x => x.UserName == User.Identity.Name);
+
                 // Ensure the user has rights to submit this.
                 // For now we give these rights to Curators.
                 if (!user.IsAdministrator &&
-                    record.CreatedBy.UserName != User.Identity.Name)
+                    record.CreatedBy.UserName != User.Identity.Name &&
+                    !isCurator)
                 {
                     throw new HttpException(403, "Forbidden");
                 }
