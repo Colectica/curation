@@ -670,12 +670,14 @@ namespace Colectica.Curation.Web.Controllers
                     return RedirectToAction("Index");
                 }
 
+                if (!user.IsAdministrator)
+                {
+                    throw new HttpException(403, "This is only allowed for administrators.");
+                }
+
                 // Fetch the appropriate ManagedFile by ID.
                 Guid id = model.Id;
                 var file = GetFile(id, db);
-
-                EnsureUserIsAllowed(file.CatalogRecord, db);
-                EnsureUserIsAdminOrCurator(file.CatalogRecord, db);
 
                 // Add the data file tasks, if needed.
                 logger.Debug("Updating file tasks");
@@ -715,12 +717,14 @@ namespace Colectica.Curation.Web.Controllers
                     return RedirectToAction("Index");
                 }
 
+                if (!user.IsAdministrator)
+                {
+                    throw new HttpException(403, "This is only allowed for administrators.");
+                }
+
                 // Fetch the appropriate ManagedFile by ID.
                 Guid id = model.Id;
                 var file = GetFile(id, db);
-
-                EnsureUserIsAllowed(file.CatalogRecord, db);
-                EnsureUserIsAdminOrCurator(file.CatalogRecord, db);
 
                 // Add the code file tasks, if needed.
                 logger.Debug("Updating file tasks");
