@@ -647,6 +647,7 @@ namespace Colectica.Curation.Web.Controllers
                     Title = "Edit a File",
                     Details = "Remove persistent link"
                 };
+                log.RelatedManagedFiles.Add(file);
                 db.Events.Add(log);
 
                 db.SaveChanges();
@@ -691,6 +692,7 @@ namespace Colectica.Curation.Web.Controllers
                     Title = "Edit a File",
                     Details = "Added data file curation tasks"
                 };
+                log.RelatedManagedFiles.Add(file);
                 db.Events.Add(log);
 
                 db.SaveChanges();
@@ -735,6 +737,7 @@ namespace Colectica.Curation.Web.Controllers
                     Title = "Edit a File",
                     Details = "Added code file curation tasks"
                 };
+                log.RelatedManagedFiles.Add(file);
                 db.Events.Add(log);
 
                 db.SaveChanges();
