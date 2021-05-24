@@ -70,7 +70,7 @@ namespace Colectica.Curation.Web.Areas.Ddi.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw new HttpException(500, "Could not retrieve the PhysicalInstance for a file", ex);
+                    return View("~/Areas/Ddi/Views/CheckObservationCount/Details.cshtml", model);
                 }
             }
         }
