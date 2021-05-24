@@ -70,14 +70,14 @@
                             </button>
                         }
                         
-                        @if (!Model.HasAllDataTasks)
+                        @if (!Model.HasAllDataTasks && Model.IsUserAdmin)
                         {
                             <button type="submit" name="AddDataFileCurationTasks" value="AddDataFileCurationTasks" class="btn btn-primary" style="margin: 12px 0 0 0;">
                                 Add Data File Curation Tasks
                             </button>
                         }
 
-                        @if (!Model.HasAllCodeTasks)
+                        @if (!Model.HasAllCodeTasks && Model.IsUserAdmin)
                         {
                             <button type="submit" name="AddCodeFileCurationTasks" value="AddCodeFileCurationTasks" class="btn btn-primary" style="margin: 12px 0 0 0;">
                                 Add Code File Curation Tasks
