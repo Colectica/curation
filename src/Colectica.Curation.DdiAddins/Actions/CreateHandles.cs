@@ -54,7 +54,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             }
 
             var org = record.Organization;
-            bool isDev = org.HandleServerEndpoint.Contains("linktest");
+            bool isDev = org.HandleServerEndpoint != null && org.HandleServerEndpoint.Contains("linktest");
 
             if (string.IsNullOrWhiteSpace(org.HandleServerEndpoint))
             {

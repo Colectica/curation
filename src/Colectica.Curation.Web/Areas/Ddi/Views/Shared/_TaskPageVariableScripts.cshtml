@@ -1,7 +1,11 @@
 ﻿@model Colectica.Curation.Models.ScriptedTaskModel
 
 @{
-    string escapedJson = Model.VariablesJson.Replace("'", "\\'");
+    string escapedJson = string.Empty;
+    if (Model.VariablesJson != null)
+    {
+        Model.VariablesJson.Replace("'", "\\'");
+    }
 }
 
 

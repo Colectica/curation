@@ -115,6 +115,7 @@ namespace Colectica.Curation.Addins.Editors.Mappers
 
             // Register the updated item with the repository.
             var commitOptions = new CommitOptions();
+            commitOptions.NamedOptions.Add("RegisterOrReplace");
 
             var dirty = new DirtyItemGatherer();
             study.Accept(dirty);
