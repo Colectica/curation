@@ -297,6 +297,11 @@ namespace Colectica.Curation.DdiAddins.Actions
 
         StataCodeList CreateStataCodeList(CodeList codeList)
         {
+            if (codeList == null)
+            {
+                codeList = new CodeList();
+            }
+
             var stataCodeList = new StataCodeList();
 
             stataCodeList.Name = codeList.ItemName.Best;
@@ -306,7 +311,12 @@ namespace Colectica.Curation.DdiAddins.Actions
                 int value = 0;
                 if (int.TryParse(code.Value, out value))
                 {
-                    string label = code.Category.Label.Best;
+                    string label = code.Category?.Label.Best;
+                    if (label == null)
+                    {
+                        label = string.Empty;
+                    }
+
                     stataCodeList.Codes.Add(value, label);
                 }
             }
