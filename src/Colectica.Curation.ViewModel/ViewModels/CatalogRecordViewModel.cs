@@ -240,7 +240,7 @@ namespace Colectica.Curation.Common.ViewModels
 
             ReviewType = catalogRecord.ReviewType;
             OwnerContact = catalogRecord.Organization.ContactInformation;
-            TermsOfUse = catalogRecord.Organization.OrganizationPolicy;
+            TermsOfUse = catalogRecord.Organization.TermsOfService;
         }
 
     }

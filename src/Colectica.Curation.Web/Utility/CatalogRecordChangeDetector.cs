@@ -21,7 +21,6 @@ namespace Colectica.Curation.Web.Utility
             ManagedFileChangeDetector.CheckProperty("Authors", record.AuthorsText, model.Authors, builder);
             ManagedFileChangeDetector.CheckProperty("Description", record.Description, model.Description, builder);
             ManagedFileChangeDetector.CheckProperty("Keywords", record.Keywords, model.Keywords, builder);
-            ManagedFileChangeDetector.CheckProperty("TermsOfUse", record.DepositAgreement, model.TermsOfService, builder);
             ManagedFileChangeDetector.CheckProperty("PersistentId", record.PersistentId, model.PersistentId, builder);
             ManagedFileChangeDetector.CheckProperty("Funding", record.Funding, model.Funding, builder);
             ManagedFileChangeDetector.CheckProperty("Access Statement", record.AccessStatement, model.AccessStatement, builder);
