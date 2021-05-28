@@ -395,7 +395,9 @@ namespace Colectica.Curation.Addins.Editors.Controllers
                 CategoryMapper.UpdateCategoryProperty(category, name, value);
 
                 category.Version++;
-                client.RegisterItem(category, new CommitOptions());
+                var commitOptions = new CommitOptions();
+                commitOptions.NamedOptions.Add("RegisterOrReplace");
+                client.RegisterItem(category, commitOptions);
 
 
                 using (var db = ApplicationDbContext.Create())

@@ -57,7 +57,9 @@ namespace Colectica.Curation.Addins.Editors.CatalogRecordInitializers
             // Store the item in the repository.
             // Where is this configured?
             var client = RepositoryHelper.GetClient();
-            client.RegisterItem(studyUnit, new Algenta.Colectica.Model.Repository.CommitOptions());
+            var repoOptions = new Algenta.Colectica.Model.Repository.CommitOptions();
+            repoOptions.NamedOptions.Add("RegisterOrReplace");
+            client.RegisterItem(studyUnit, repoOptions);
 
             // Assign the identification to the catalog record.
             catalogRecord.Id = studyUnit.Identifier;
