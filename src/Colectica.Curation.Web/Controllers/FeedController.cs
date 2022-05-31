@@ -106,7 +106,7 @@ namespace Colectica.Curation.Web.Controllers
                         string pid = record.PersistentId;
                         if (!pid.StartsWith("http"))
                         {
-                            pid = "http://hdl.handle.net/" + pid;
+                            pid = "https://hdl.handle.net/" + pid;
                         }
 
                         recordElement.Add(new XElement("PersistentId", pid));
@@ -170,7 +170,7 @@ namespace Colectica.Curation.Web.Controllers
                         {
                             if (!fileUrl.StartsWith("http"))
                             {
-                                fileUrl = "http://hdl.handle.net/" + fileUrl;
+                                fileUrl = "https://hdl.handle.net/" + fileUrl;
                             }
                             fileinfo.Add(new XElement("FileUrl", fileUrl));
                         }
