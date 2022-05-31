@@ -100,7 +100,7 @@ namespace Colectica.Curation.DdiAddins.Actions
                 var req = new HandleRequestInformation
                 {
                     Id = file.Id,
-                    Url = $"http://{record.Organization.Hostname}/File/Download/{file.Id}"
+                    Url = $"https://{record.Organization.Hostname}/File/Download/{file.Id}"
                 };
                 handleRequests.Add(req);
             }
@@ -110,7 +110,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             handleRequests.Add(new HandleRequestInformation
             {
                 Id = result.DdiFileId,
-                Url = $"http://{record.Organization.Hostname}/File/Download/{result.DdiFileId}"
+                Url = $"https://{record.Organization.Hostname}/File/Download/{result.DdiFileId}"
             });
             string[] valuesToRequest = handleRequests.Select(x => x.Url).ToArray();
 
@@ -170,7 +170,7 @@ namespace Colectica.Curation.DdiAddins.Actions
                 // Assign the Handles to the CatalogRecord and files.
                 foreach (KeyValuePair<string, string> item in successMap)
                 {
-                    string handle = "http://hdl.handle.net/" + item.Key;
+                    string handle = "https://hdl.handle.net/" + item.Key;
                     string url = item.Value;
 
                     logger.Debug("Assigning Handle for " + handle + ", " + url);
