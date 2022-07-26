@@ -50,48 +50,9 @@
     <Compile Include="CatalogRecord.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="ManagedFile.cs" />
-    <Compile Include="Migrations\201502271552095_Initial.cs" />
-    <Compile Include="Migrations\201502271552095_Initial.Designer.cs">
-      <DependentUpon>201502271552095_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201504271837493_OperationProperties.cs" />
-    <Compile Include="Migrations\201504271837493_OperationProperties.Designer.cs">
-      <DependentUpon>201504271837493_OperationProperties.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201504281657006_Notes.cs" />
-    <Compile Include="Migrations\201504281657006_Notes.Designer.cs">
-      <DependentUpon>201504281657006_Notes.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201504292000053_CatalogRecordRestictions.cs" />
-    <Compile Include="Migrations\201504292000053_CatalogRecordRestictions.Designer.cs">
-      <DependentUpon>201504292000053_CatalogRecordRestictions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201507081257066_NotesForVariables.cs" />
-    <Compile Include="Migrations\201507081257066_NotesForVariables.Designer.cs">
-      <DependentUpon>201507081257066_NotesForVariables.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201507141758134_TrackMetadataChanges.cs" />
-    <Compile Include="Migrations\201507141758134_TrackMetadataChanges.Designer.cs">
-      <DependentUpon>201507141758134_TrackMetadataChanges.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201509102143217_AddIPAddressesToOrganization.cs" />
-    <Compile Include="Migrations\201509102143217_AddIPAddressesToOrganization.Designer.cs">
-      <DependentUpon>201509102143217_AddIPAddressesToOrganization.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201602092143315_AddUserAffiliation.cs" />
-    <Compile Include="Migrations\201602092143315_AddUserAffiliation.Designer.cs">
-      <DependentUpon>201602092143315_AddUserAffiliation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603231307187_ManualStudyNumbers.cs" />
-    <Compile Include="Migrations\201603231307187_ManualStudyNumbers.Designer.cs">
-      <DependentUpon>201603231307187_ManualStudyNumbers.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202101272130560_AddLoginPageText.cs" />
-    <Compile Include="Migrations\202101272130560_AddLoginPageText.Designer.cs">
-      <DependentUpon>202101272130560_AddLoginPageText.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Note.cs" />
+    <Compile Include="NpgsqlConfiguration.cs" />
     <Compile Include="Operation.cs" />
     <Compile Include="Organization.cs" />
     <Compile Include="Permission.cs" />
@@ -104,43 +65,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201502271552095_Initial.resx">
-      <DependentUpon>201502271552095_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201504271837493_OperationProperties.resx">
-      <DependentUpon>201504271837493_OperationProperties.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201504281657006_Notes.resx">
-      <DependentUpon>201504281657006_Notes.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201504292000053_CatalogRecordRestictions.resx">
-      <DependentUpon>201504292000053_CatalogRecordRestictions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201507081257066_NotesForVariables.resx">
-      <DependentUpon>201507081257066_NotesForVariables.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201507141758134_TrackMetadataChanges.resx">
-      <DependentUpon>201507141758134_TrackMetadataChanges.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201509102143217_AddIPAddressesToOrganization.resx">
-      <DependentUpon>201509102143217_AddIPAddressesToOrganization.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201602092143315_AddUserAffiliation.resx">
-      <DependentUpon>201602092143315_AddUserAffiliation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603231307187_ManualStudyNumbers.resx">
-      <DependentUpon>201603231307187_ManualStudyNumbers.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202101272130560_AddLoginPageText.resx">
-      <DependentUpon>202101272130560_AddLoginPageText.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="RevisionNumber.txt" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="EntityFramework">
-      <Version>6.1.1</Version>
+      <Version>6.4.4</Version>
+    </PackageReference>
+    <PackageReference Include="EntityFramework6.Npgsql">
+      <Version>6.4.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNet.Identity.Core">
       <Version>2.2.3</Version>
