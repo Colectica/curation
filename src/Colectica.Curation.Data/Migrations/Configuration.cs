@@ -27,6 +27,7 @@ namespace Colectica.Curation.Data.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
         }
 
         protected override void Seed(Colectica.Curation.Data.ApplicationDbContext context)

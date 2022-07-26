@@ -32,7 +32,6 @@ using Colectica.Curation.Web.Areas.Ddi.Utility;
 using System.IO;
 using Colectica.Curation.Operations;
 using Algenta.Colectica.Core.Utility;
-using System.Data.SqlClient;
 using Algenta.Colectica.Model.Utility;
 using Colectica.Curation.Common.ViewModels;
 
@@ -82,7 +81,7 @@ namespace Colectica.Curation.Web.Utility
 
                     // See if we can find a user with the contributor name.
                     // Otherwise just use the current user.
-                    string contributorName = study.DublinCoreMetadata.Contributor.Best;
+                    string contributorName = study.DublinCoreMetadata.Contributors.FirstOrDefault()?.Name.Best;
                     string[] parts = contributorName.Split(new char[] { ' ' });
                     if (parts.Length == 2)
                     {
@@ -127,7 +126,7 @@ namespace Colectica.Curation.Web.Utility
 
                     record.Keywords = study.Coverage.TopicalCoverage.Subjects.Select(x => x.Value).FirstOrDefault();
                     record.AccessStatement = FixString(study.DublinCoreMetadata.Rights.Current);
-                    record.AuthorsText = study.DublinCoreMetadata.Creator.Current;
+                    record.AuthorsText = study.DublinCoreMetadata.Creators.FirstOrDefault()?.Name.Current;
                     record.ResearchDesign = study.DataCollections.First().Methodology.Methodology.First().Description.Best;
                     record.Location = study.Coverage.SpatialCoverage.Description.Current;
                     record.InclusionExclusionCriteria = study.DataCollections.First().Methodology.SamplingProcedure.First().Description.Best;
@@ -147,7 +146,7 @@ namespace Colectica.Curation.Web.Utility
                         record.FieldDates = Newtonsoft.Json.JsonConvert.SerializeObject(dateModel);
                     }
 
-                    record.OwnerText = study.DublinCoreMetadata.Publisher.Current;
+                    record.OwnerText = study.DublinCoreMetadata.Publishers.FirstOrDefault()?.Name.Current;
 
                     List<string> kindofdata = new List<string>();
                     foreach(var data in study.KindsOfData)
