@@ -80,7 +80,7 @@
   <ItemGroup>
     <PackageReference Include="Antlr" Version="3.4.1.9004" />
     <PackageReference Include="AutoMapper" Version="3.2.1" />
-    <PackageReference Include="bootstrap" Version="3.3.2" />
+    <PackageReference Include="bootstrap" Version="3.4.1" />
     <PackageReference Include="bootstrap-sortable" Version="1.9.0" />
     <PackageReference Include="ColecticaSDK" Version="7.0.8892" />
     <PackageReference Include="dropzone" Version="3.8.4" />
