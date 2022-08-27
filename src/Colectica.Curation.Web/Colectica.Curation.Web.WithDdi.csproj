@@ -113,7 +113,7 @@
     <PackageReference Include="Microsoft.AspNet.WebPages" Version="3.2.3" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.24.0" />
     <PackageReference Include="Microsoft.jQuery.Unobtrusive.Validation" Version="3.1.2" />
-    <PackageReference Include="Microsoft.Owin" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Owin" Version="4.1.1" />
     <PackageReference Include="Microsoft.Owin.Host.SystemWeb" Version="2.1.0" />
     <PackageReference Include="Microsoft.Owin.Security" Version="2.1.0" />
     <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="2.1.0" />
