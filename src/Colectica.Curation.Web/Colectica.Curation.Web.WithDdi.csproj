@@ -94,7 +94,7 @@
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.4.0" />
     <PackageReference Include="jQuery" Version="1.10.2" />
     <PackageReference Include="jQuery.UI.Combined" Version="1.10.2" />
-    <PackageReference Include="jQuery.Validation" Version="1.11.1" />
+    <PackageReference Include="jQuery.Validation" Version="1.19.3" />
     <PackageReference Include="knockoutjs" Version="2.0.0" />
     <PackageReference Include="Knockout-Sortable" Version="0.9.0" />
     <PackageReference Include="LibGit2Sharp" Version="0.24.0" />
