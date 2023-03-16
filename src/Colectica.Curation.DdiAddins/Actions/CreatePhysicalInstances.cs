@@ -206,7 +206,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             {
                 logger.Debug("Calculating summary statistics");
                 var calculator = new PhysicalInstanceSummaryStatisticComputer();
-                SummaryStatisticsOptions options = new SummaryStatisticsOptions() { CalculateQuartiles = true };
+                SummaryStatisticsOptions options = new SummaryStatisticsOptions(physicalInstance) { CalculateQuartiles = true };
                 var stats = calculator.ComputeStatistics(importer, filePath, physicalInstance,
                     physicalInstance.FileStructure.CaseQuantity, options, (percent, message) => { });
                 logger.Debug("Done calculating summary statistics");

@@ -24,6 +24,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Colectica.Curation.Addins.Editors.Utility;
 using Colectica.Curation.ViewModel.Utility;
+using Algenta.Colectica.Model;
 
 namespace Colectica.Curation.Common.Mappers
 {
@@ -68,7 +69,9 @@ namespace Colectica.Curation.Common.Mappers
             study.SetUserId("StudyId", record.StudyId);
             study.SetUserId("StudyNumber", record.Number?.ToString());
 
-            study.DublinCoreMetadata.Creator.Current = record.AuthorsText;
+            var creator = new Algenta.Colectica.Model.Contributor();
+            creator.Name.Current = record.AuthorsText;
+            study.DublinCoreMetadata.Creators.Add(creator);
             study.DublinCoreMetadata.Description.Current = record.Description;
 
             if (record.Keywords != null)
@@ -82,12 +85,16 @@ namespace Colectica.Curation.Common.Mappers
 
             if (record.CreatedBy != null)
             {
-                study.DublinCoreMetadata.Contributor.Current = record.CreatedBy.FullName;
+                var contributor = new ContributorWithRoles();
+                contributor.Name.Current = record.CreatedBy.FullName;
+                study.DublinCoreMetadata.Contributors.Add(contributor);
             }
 
             if (record.Owner != null)
             {
-                study.DublinCoreMetadata.Publisher.Current = record.Owner.FullName;
+                var publisher = new ContributorWithRoles();
+                publisher.Name.Current = record.Owner.FullName;
+                study.DublinCoreMetadata.Publishers.Add(publisher);
             }
 
             study.SetUserId("Handle", record.PersistentId);
