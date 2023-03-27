@@ -3,6 +3,8 @@
 @{
     ViewBag.Title = Model.CatalogRecordName;
     //Layout = "~/Views/Shared/_AnonymousLayout.cshtml";
+
+    string safeReturnUrl =  "/CatalogRecord/" + @Model.CatalogRecordId;
 }
 
 <div class="row">
@@ -27,7 +29,7 @@
                 <div id="timeout-div" class="hide">
                     <p>The operation is taking longer than expected. You can try the link below, or contact the administrator if the operation does not complete.</p>
                     <p>
-                        <a href="@Model.ReturnUrl" class="btn btn-primary">Try again</a>
+                        <a href="@safeReturnUrl" class="btn btn-primary">Try again</a>
                     </p>
                 </div>
             </div>
@@ -42,7 +44,7 @@
             $.get("/CatalogRecord/IsUnlocked/" + "@Model.CatalogRecordId", {}, function (result) {
                 var isUnlocked = result == "true";
                 if (isUnlocked) {
-                    window.location = "@Model.ReturnUrl";
+                    window.location = @safeReturnUrl;
                 }
                 else {
                     if (attempt > 3) {
