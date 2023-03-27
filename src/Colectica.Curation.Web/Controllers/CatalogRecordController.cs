@@ -926,15 +926,15 @@ namespace Colectica.Curation.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(CatalogRecordGeneralViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("General", model);
+            }
+
             using (var db = ApplicationDbContext.Create())
             {
                 using (var dbContextTransaction = db.Database.BeginTransaction())
                 {
-                    if (!ModelState.IsValid)
-                    {
-                        return View("General", model);
-                    }
-
                     var user = db.Users.Where(x => x.UserName == User.Identity.Name)
                         .FirstOrDefault();
                     if (user == null)
