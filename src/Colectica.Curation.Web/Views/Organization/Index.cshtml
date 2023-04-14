@@ -1,5 +1,7 @@
 ﻿@model Colectica.Curation.Web.Models.OrganizationIndexModel
 
+@using Microsoft.Security.Application
+
 @{
     ViewBag.Title = "Curator Administration"; 
 }
@@ -20,11 +22,11 @@
 
 <h2>Organization Management</h2>
 
-<table class="table">
+<table class="table" style="max-width: 800px; table-layout: fixed">
     <tr>
-        <th width="20"></th>
-        <th>Organization</th>
-        <th>Host Name</th>
+        <th width="20%"></th>
+        <th width="40%">Organization</th>
+        <th width="40%">Host Name</th>
     </tr>
 
     <tbody>
@@ -39,7 +41,7 @@
                 </td>
                 <td>@Html.ActionLink(org.Organization.Name, "Details", new { id = org.Organization.Id })</td>
                 <td>
-                    <a href="http://@org.Organization.Hostname">@org.Organization.Hostname</a>
+                    <a href="http://@Encoder.HtmlEncode(org.Organization.Hostname)">@Encoder.HtmlEncode(org.Organization.Hostname)</a>
                 </td>
             </tr>
         }
