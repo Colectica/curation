@@ -112,6 +112,7 @@ namespace Colectica.Curation.Web.Utility
             client.Host = settings.SmtpHost;
             client.Port = settings.SmtpPort;
             client.UseDefaultCredentials = false;
+            client.EnableSsl = true;
             client.Credentials = new NetworkCredential(settings.SmtpUserName, settings.SmtpPassword);
 
             // Send the mail.
