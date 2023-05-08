@@ -32,7 +32,6 @@ using System.Threading.Tasks;
 using Colectica.Curation.Web.Utility;
 using System.IO;
 using Algenta.Colectica.Commands.Import;
-using Algenta.Colectica.Commands.TypeSpecific;
 using Spss.Data;
 using Colectica.Curation.DdiAddins.Utility;
 using Algenta.Colectica.Model;
@@ -41,6 +40,7 @@ using Algenta.Colectica.Commands.SummaryStatistics;
 using Algenta.Colectica.Navigator.NodeTypes;
 using Algenta.Colectica.ViewModel.Import;
 using System.Data;
+using Algenta.Colectica.Commands.Data;
 
 namespace Colectica.Curation.DdiAddins.Actions
 {
@@ -167,29 +167,21 @@ namespace Colectica.Curation.DdiAddins.Actions
             else
             {
                 // If there is an existing PhysicalInstance, update it from the data file.
-                var updateCommand = new UpdatePhysicalInstanceFromFile();
-                updateCommand.DataImporters = new List<IDataImporter>();
-                updateCommand.DataImporters.Add(new SpssImporter());
-                updateCommand.DataImporters.Add(new StataImporter());
-                updateCommand.DataImporters.Add(new SasImporter());
-                updateCommand.DataImporters.Add(new RDataImporter());
-                updateCommand.DataImporters.Add(new CsvImporter());
-
-
-                var context = new Algenta.Colectica.ViewModel.Commands.VersionableCommandContext();
+                var dataImporters = new List<IDataImporter>();
+                dataImporters.Add(new SpssImporter());
+                dataImporters.Add(new StataImporter());
+                dataImporters.Add(new SasImporter());
+                dataImporters.Add(new RDataImporter());
+                dataImporters.Add(new CsvImporter());
 
                 // Update the PhysicalInstance from the data file.
-                var repoNode = new RepositoryNode(client, null);
-                var repoItemNode = new RepositoryItemNode(existingPhysicalInstance.GetMetadata(), repoNode, client);
-                context.Node = repoItemNode;
-                context.Item = physicalInstance;
-
                 try
                 {
-                    updateCommand.Execute(context);
+                    var updater = new UpdatePhysicalInstanceFromFile(dataImporters);
+                    updater.VerifyPhysicalInstance(physicalInstance);
 
                     physicalInstance.Version++;
-                    foreach (var item in updateCommand.Result.ModifiedItems)
+                    foreach (var item in updater.ModifiedItems)
                     {
                         item.Version++;
                     }

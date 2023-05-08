@@ -103,7 +103,10 @@
       <Version>3.2.1</Version>
     </PackageReference>
     <PackageReference Include="ColecticaRepositoryLibrary">
-      <Version>7.1.9252</Version>
+      <Version>7.1.9307</Version>
+    </PackageReference>
+    <PackageReference Include="ColecticaSDK.Data">
+      <Version>7.1.9307</Version>
     </PackageReference>
     <PackageReference Include="LibGit2Sharp">
       <Version>0.24.0</Version>

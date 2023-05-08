@@ -96,7 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ColecticaRepositoryLibrary">
-      <Version>6.1.8011</Version>
+      <Version>7.1.9307</Version>
     </PackageReference>
     <PackageReference Include="EntityFramework">
       <Version>6.1.1</Version>

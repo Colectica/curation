@@ -31,7 +31,6 @@ using Colectica.Curation.Addins.Tasks;
 using Colectica.Curation.Web.Areas.Ddi.Utility;
 using System.IO;
 using Colectica.Curation.Operations;
-using Algenta.Colectica.Core.Utility;
 using Algenta.Colectica.Model.Utility;
 using Colectica.Curation.Common.ViewModels;
 
@@ -335,7 +334,10 @@ namespace Colectica.Curation.Web.Utility
             str = str
                 .Replace("amp;amp;amp;amp;", string.Empty)
                 .Replace("&amp;", "&");
-            return Algenta.Colectica.Core.Utility.HttpUtility.HtmlDecode(str);
+
+            // Decode the HTML string.
+            return HttpUtility.HtmlDecode(str);
+
         }
 
         TaskStatus GetTaskStatus(ApplicationDbContext db, ApplicationUser user, CatalogRecord catalogRecord, int weight, string name, string stageName, bool isComplete)
