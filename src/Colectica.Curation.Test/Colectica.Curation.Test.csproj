@@ -99,7 +99,7 @@
       <Version>7.1.9307</Version>
     </PackageReference>
     <PackageReference Include="EntityFramework">
-      <Version>6.1.1</Version>
+      <Version>6.4.4</Version>
     </PackageReference>
     <PackageReference Include="log4net">
       <Version>1.2.10</Version>

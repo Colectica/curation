@@ -157,7 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="EntityFramework">
-      <Version>6.1.1</Version>
+      <Version>6.4.4</Version>
     </PackageReference>
     <PackageReference Include="LibGit2Sharp">
       <Version>0.24.0</Version>
@@ -169,7 +169,7 @@
       <Version>2.2.3</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
+      <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="Serilog.Sinks.Console">
       <Version>3.1.1</Version>
