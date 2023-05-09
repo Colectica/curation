@@ -57,10 +57,6 @@
     <StartupObject>Colectica.Curation.Service.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LumenWorks.Framework.IO, Version=3.7.0.0, Culture=neutral, PublicKeyToken=73fbe30fa556d216, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\LumenWorks.Framework.IO.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
