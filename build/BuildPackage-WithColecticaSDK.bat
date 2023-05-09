@@ -52,7 +52,7 @@ REM ren %serviceDir%\log4net.config log4net.config.dist
 ren %serviceDir%\ConnectionStrings.config ConnectionStrings.config.dist
 ren %serviceDir%\log4net.config log4net.config.dist
 
-ren %webDir%\ConnectionStrings.config ConnectionStrings.config.dist
+ren %webDir%\ConnectionStrings.config.dist ConnectionStrings.config.dist
 ren %webDir%\Web.config Web.config.dist
 ren %webDir%\log4net.config log4net.config.dist
 
