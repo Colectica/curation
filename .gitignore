@@ -9,3 +9,4 @@ src/Colectica.Curation.Web/CurationAddins
 /src/Colectica.Curation.Web/App_Data/isConfigured.txt
 /src/Colectica.Curation.Web/App_Data/Errors
 /.vs
+/src/Colectica.Curation.Web/ConnectionStrings.config
