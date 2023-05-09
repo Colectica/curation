@@ -136,6 +136,9 @@
     <PackageReference Include="Modernizr" Version="2.6.2" />
     <PackageReference Include="Moment.js" Version="2.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Npgsql">
+      <Version>7.0.4</Version>
+    </PackageReference>
     <PackageReference Include="Owin" Version="1.0" />
     <PackageReference Include="PDFsharp-MigraDoc-WPF" Version="1.32.2608.0" />
     <PackageReference Include="Respond" Version="1.2.0" />
