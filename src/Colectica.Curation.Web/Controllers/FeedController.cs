@@ -197,9 +197,10 @@ namespace Colectica.Curation.Web.Controllers
 
             XDocument document = new XDocument(root);
             string xmlStr = document.Root.ToString();
-            return Content(xmlStr, "text/xml");
 
             logger.Debug("Leaving Records()");
+
+            return Content(xmlStr, "text/xml");
         }
 
         public ActionResult Keywords()

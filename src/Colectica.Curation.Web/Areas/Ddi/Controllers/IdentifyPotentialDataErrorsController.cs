@@ -58,7 +58,7 @@ namespace Colectica.Curation.Web.Areas.Ddi.Controllers
 
                     return View("~/Areas/Ddi/Views/IdentifyPotentialDataErrors/Details.cshtml", model);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return View("~/Areas/Ddi/Views/IdentifyPotentialDataErrors/Details.cshtml", model);
                 }

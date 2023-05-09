@@ -104,7 +104,7 @@ namespace Colectica.Curation.Addins.Editors.Controllers
 
                     return View("~/Areas/Ddi/Views/CheckForMissingLabels/Details.cshtml", model);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return View("~/Areas/Ddi/Views/CheckForMissingLabels/Details.cshtml", model);
                 }

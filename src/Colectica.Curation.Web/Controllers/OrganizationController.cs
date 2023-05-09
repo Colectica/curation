@@ -183,7 +183,7 @@ namespace Colectica.Curation.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AllowAnonymous]
-        public async Task<ActionResult> Create(CreateOrganizationViewModel model)
+        public ActionResult Create(CreateOrganizationViewModel model)
         {
             if (!ModelState.IsValid)
             {
