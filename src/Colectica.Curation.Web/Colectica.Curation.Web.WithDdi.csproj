@@ -473,9 +473,6 @@
     <Content Include="Areas\Ddi\Views\Shared\_TaskPageActions.cshtml" />
     <Content Include="Areas\Ddi\Views\Shared\_TaskPageVariableScripts.cshtml" />
     <Content Include="Areas\Ddi\Views\Preview\Editor.cshtml" />
-    <Content Include="ConnectionStrings.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Areas\Ddi\Views\Variables\MissingPhysicalInstance.cshtml" />
     <Content Include="Areas\Ddi\Views\CreatePreservationFormat\Details.cshtml" />
     <Content Include="fonts\montserrat-regular-webfont.eot" />
