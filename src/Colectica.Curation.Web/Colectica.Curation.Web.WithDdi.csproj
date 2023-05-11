@@ -100,6 +100,7 @@
     <PackageReference Include="EntityFramework6.Npgsql">
       <Version>6.4.3</Version>
     </PackageReference>
+    <PackageReference Include="Npgsql" Version="4.1.12.0" />
     <PackageReference Include="jQuery" Version="1.10.2" />
     <PackageReference Include="jQuery.UI.Combined" Version="1.10.2" />
     <PackageReference Include="jQuery.Validation" Version="1.11.1" />
@@ -134,9 +135,6 @@
     <PackageReference Include="Modernizr" Version="2.6.2" />
     <PackageReference Include="Moment.js" Version="2.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Npgsql">
-      <Version>6.0.9</Version>
-    </PackageReference>
     <PackageReference Include="Owin" Version="1.0" />
     <PackageReference Include="PDFsharp-MigraDoc-WPF" Version="1.32.2608.0" />
     <PackageReference Include="Respond" Version="1.2.0" />
@@ -497,6 +495,7 @@
     <Content Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="ConnectionStrings.config" />
     <None Include="ConnectionStrings.config.dist">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
