@@ -495,7 +495,6 @@
     <Content Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="ConnectionStrings.config" />
     <None Include="ConnectionStrings.config.dist">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
