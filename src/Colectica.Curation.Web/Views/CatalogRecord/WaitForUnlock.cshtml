@@ -44,7 +44,7 @@
             $.get("/CatalogRecord/IsUnlocked/" + "@Model.CatalogRecordId", {}, function (result) {
                 var isUnlocked = result == "true";
                 if (isUnlocked) {
-                    window.location = @safeReturnUrl;
+                    window.location = "@safeReturnUrl";
                 }
                 else {
                     if (attempt > 3) {
