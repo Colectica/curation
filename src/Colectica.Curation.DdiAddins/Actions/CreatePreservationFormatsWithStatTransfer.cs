@@ -141,6 +141,12 @@ namespace Colectica.Curation.DdiAddins.Actions
                             logger.Warn("StatTransfer Output: " + stOutput);
                         }
 
+                        if (!File.Exists(csvFilePath))
+                        {
+                            logger.Warn("StatTransfer did not create the CSV file " + csvFilePath);
+                            continue;
+                        }
+
 
                         // Add the new file to the git repository.
                         hasNewFiles = true;
