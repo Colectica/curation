@@ -4,7 +4,7 @@
     string escapedJson = string.Empty;
     if (Model.VariablesJson != null)
     {
-        Model.VariablesJson.Replace("'", "\\'");
+        escapedJson = Model.VariablesJson.Replace("'", "\\'");
     }
 }
 
