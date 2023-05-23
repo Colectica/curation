@@ -44,6 +44,7 @@ namespace Colectica.Curation.Web
             string addinsPath = System.IO.Path.Combine(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath, 
                 "CurationAddins");
 
+            MvcHandler.DisableMvcResponseHeader = true;
             HostingEnvironment.RegisterVirtualPathProvider(new EmbeddedViewPathProvider());
 
 #if ISPRO
