@@ -60,6 +60,15 @@ namespace Colectica.Curation.Web
             ControllerBuilder.Current.SetControllerFactory(new CurationControllerFactory());
         }
 
+        protected void Application_PreSendRequestHeaders()
+        {
+            //Try really hard to remove these headers
+            Response.Headers.Remove("Server");
+            Response.Headers.Remove("X-Powered-By");
+            Response.Headers.Remove("X-AspNet-Version");
+            Response.Headers.Remove("X-AspNetMvc-Version");
+        }
+
         protected void Application_Error(object sender, EventArgs e)
         {
             var logger = LogManager.GetLogger("Application_Error");
