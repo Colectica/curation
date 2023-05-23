@@ -101,7 +101,7 @@
       <Version>6.4.3</Version>
     </PackageReference>
     <PackageReference Include="Npgsql" Version="4.1.12.0" />
-    <PackageReference Include="jQuery" Version="1.10.2" />
+    <PackageReference Include="jQuery" Version="3.7.0" />
     <PackageReference Include="jQuery.UI.Combined" Version="1.10.2" />
     <PackageReference Include="jQuery.Validation" Version="1.11.1" />
     <PackageReference Include="knockoutjs" Version="2.0.0" />
@@ -429,6 +429,11 @@
     <Content Include="Scripts\inputmask\jquery.inputmask.date.extensions.js" />
     <Content Include="Scripts\inputmask\jquery.inputmask.extensions.js" />
     <Content Include="Scripts\inputmask\jquery.inputmask.js" />
+    <None Include="Scripts\jquery-3.7.0-vsdoc.js" />
+    <Content Include="Scripts\jquery-3.7.0.js" />
+    <Content Include="Scripts\jquery-3.7.0.min.js" />
+    <Content Include="Scripts\jquery-3.7.0.slim.js" />
+    <Content Include="Scripts\jquery-3.7.0.slim.min.js" />
     <Content Include="Scripts\moment-with-locales.js" />
     <Content Include="Scripts\moment-with-locales.min.js" />
     <Content Include="Scripts\npm.js" />
@@ -500,7 +505,6 @@
     </None>
     <None Include="Properties\PublishProfiles\FileBundle.pubxml" />
     <None Include="Properties\PublishProfiles\Staging.pubxml" />
-    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\dropzone\dropzone-amd-module.js" />
     <Content Include="Scripts\dropzone\dropzone-amd-module.min.js" />
     <Content Include="Scripts\dropzone\dropzone.js" />
@@ -519,8 +523,8 @@
     <Content Include="Scripts\inputs-ext\wysihtml5\bootstrap-wysihtml5-0.0.2\wysihtml5-0.3.0.min.js" />
     <Content Include="Scripts\inputs-ext\wysihtml5\bootstrap-wysihtml5-0.0.2\wysiwyg-color.css" />
     <Content Include="Scripts\inputs-ext\wysihtml5\wysihtml5.js" />
-    <Content Include="Scripts\jquery-1.10.2.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\jquery-3.7.0.min.map" />
+    <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-ui-1.10.2.js" />
     <Content Include="Scripts\jquery-ui-1.10.2.min.js" />
@@ -615,7 +619,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\_RemoveAccountPartial.cshtml" />
