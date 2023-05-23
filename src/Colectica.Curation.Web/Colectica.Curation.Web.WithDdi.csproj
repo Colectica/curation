@@ -133,7 +133,7 @@
     <PackageReference Include="Microsoft.Web.Infrastructure" Version="1.0.0.0" />
     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.17763.1000" />
     <PackageReference Include="Modernizr" Version="2.6.2" />
-    <PackageReference Include="Moment.js" Version="2.7.0" />
+    <PackageReference Include="Moment.js" Version="2.29.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Owin" Version="1.0" />
     <PackageReference Include="PDFsharp-MigraDoc-WPF" Version="1.32.2608.0" />
