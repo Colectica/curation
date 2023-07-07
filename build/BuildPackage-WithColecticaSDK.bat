@@ -1,5 +1,5 @@
 set zip="c:\Program Files\7-Zip\7z.exe"
-set msbuild="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
+set msbuild="C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe"
 
 set WORKSPACE=c:\svn\curation
 IF "%computername%"=="MARGOT" (
