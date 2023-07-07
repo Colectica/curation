@@ -770,9 +770,9 @@ if not exist "$(TargetDir)NativeBinaries\x86" md "$(TargetDir)NativeBinaries\x86
 if not exist "$(TargetDir)NativeBinaries\amd64" md "$(TargetDir)NativeBinaries\amd64"
 
 
-xcopy /s /y /d "%25userprofile%25\.nuget\packages\LibGit2Sharp.NativeBinaries\1.0.185\runtimes\win7-x86\native\*.*" "$(TargetDir)NativeBinaries\x86"
+xcopy /s /y /d "%userprofile%\.nuget\packages\LibGit2Sharp.NativeBinaries\1.0.185\runtimes\win7-x86\native\*.*" "$(TargetDir)NativeBinaries\x86"
 
-xcopy /s /y /d "%25userprofile%25\.nuget\packages\LibGit2Sharp.NativeBinaries\1.0.185\runtimes\win7-x64\native\*.*" "$(TargetDir)NativeBinaries\amd64"
+xcopy /s /y /d "%userprofile%\.nuget\packages\LibGit2Sharp.NativeBinaries\1.0.185\runtimes\win7-x64\native\*.*" "$(TargetDir)NativeBinaries\amd64"
 
 
 
