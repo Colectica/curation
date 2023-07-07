@@ -778,7 +778,7 @@ xcopy /s /y /d "%userprofile%\.nuget\packages\LibGit2Sharp.NativeBinaries\1.0.18
 
 
 
-if not exist "$(TargetDir)spss-redist\" xcopy /e /y "$(SolutionDir)..\..\algenta\Spss.Data\spss-redist" "$(TargetDir)spss-redist\"
+if not exist "$(TargetDir)spss-redist\" xcopy /e /y "%userprofile%\.nuget\packages\ColecticaSDK.Data\7.1.9316\build\spss-redist" "$(TargetDir)spss-redist\"
 </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
