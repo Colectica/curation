@@ -1,0 +1,66 @@
+﻿using Serilog;
+using System.CommandLine.Invocation;
+using System.CommandLine;
+using Colectica.Curation.Cli.Commands;
+using Microsoft.Extensions.Configuration;
+using System.Runtime.CompilerServices;
+
+namespace Colectica.Curation.Cli
+{
+    internal class Program
+    {
+        static IConfiguration config;
+
+        static void Main(string[] args)
+        {
+            // Set up logging.
+            var log = new LoggerConfiguration()
+                .WriteTo.Console()
+                .MinimumLevel.Verbose()
+                .CreateLogger();
+            Log.Logger = log;
+
+            // Load the configuration.
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            IConfigurationBuilder builder = new ConfigurationBuilder()
+               .SetBasePath(basePath)
+               .AddJsonFile("appsettings.json")
+               .AddEnvironmentVariables();
+
+            string devPath = Path.Combine(basePath, "appsettings.Development.json");
+            if (File.Exists(devPath))
+            {
+                builder.AddJsonFile(devPath);
+            }
+
+            builder.AddEnvironmentVariables();
+            config = builder.Build();
+
+
+            // Build the commands.
+            var root = new RootCommand("Colectica Curation Command Line Tool");
+
+            // copy-published-files
+            var copyPublishedFilesCommand = new Command("copy-published-files", "Copies any published files to a new location");
+            copyPublishedFilesCommand.Add(new Option<string>("--destination", "The folder to which the published files should be copied"));
+            copyPublishedFilesCommand.Handler = CommandHandler.Create<string>(CopyPublishedFiles);
+            root.Add(copyPublishedFilesCommand);
+
+            // Run the command
+            try
+            {
+                root.InvokeAsync(args).Wait();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unhandled error.");
+            }
+        }
+
+        private static void CopyPublishedFiles(string destination)
+        {
+            var copyPublishedFiles = new CopyPublishedFiles();
+            copyPublishedFiles.Copy(destination, config);
+        }
+    }
+}

@@ -10,3 +10,6 @@ src/Colectica.Curation.Web/CurationAddins
 /src/Colectica.Curation.Web/App_Data/Errors
 /.vs
 /src/Colectica.Curation.Web/ConnectionStrings.config
+/src/Colectica.Curation.Cli/Properties/launchSettings.json
+/src/Colectica.Curation.Cli/appsettings.Development.json
+/src/Colectica.Curation.Cli/appsettings.json
