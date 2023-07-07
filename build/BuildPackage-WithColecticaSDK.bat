@@ -47,7 +47,7 @@ ren ..\dist\ColecticaCurationWeb ColecticaCurationWeb-%revisionNumber%
 REM Build and copy CLI application
 PUSHD ..\src\Colectica.Curation.Cli
 %msbuild22% /P:Configuration=Release /P:Platform=AnyCPU 
-xcopy /e /y bin\Release\net6.0 ..\..\dist\ColectitcaCurationPackage-%revisionNumber%\ColecticaCurationCli\
+xcopy /e /y bin\Release\net6.0 ..\..\dist\ColecticaCurationPackage-%revisionNumber%\ColecticaCurationCli\
 POPD
 if %errorlevel% neq 0 exit /b %errorlevel%
 
