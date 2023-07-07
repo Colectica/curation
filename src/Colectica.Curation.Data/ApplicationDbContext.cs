@@ -51,6 +51,11 @@ namespace Colectica.Curation.Data
 
         }
 
+        public ApplicationDbContext(string nameOrConnectionString)
+        : base(nameOrConnectionString, throwIfV1Schema: false)
+        {
+        }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();

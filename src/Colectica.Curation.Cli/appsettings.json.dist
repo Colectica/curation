@@ -1,0 +1,12 @@
+{
+  "Data": {
+    "DefaultConnection": {
+      "ConnectionString": "Host=localhost;Database=curation;Username=postgres;Password=4dhs;",
+      "ProviderName": "Npgsql"
+    },
+    "ColecticaRepository": {
+      "ConnectionString": "Host=localhost;Database=colectica;Username=postgres;Password=4dhs;",
+      "ProviderName": "Npgsql"
+    }
+  }
+}
