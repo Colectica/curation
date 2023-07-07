@@ -31,12 +31,6 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 %msbuild% ..\src\Colectica.Curation.Service\Colectica.Curation.Service.WithDdi.csproj  /P:Configuration=Release /P:Platform=AnyCPU /P:SolutionDir=%WORKSPACE%\src\
 if %errorlevel% neq 0 exit /b %errorlevel%
 
-REM CLI
-PUSHD ..\src\Colectica.Curation.Cli
-%msbuild22% /P:Configuration=Release /P:Platform=AnyCPU 
-xcopy /e /y bin\Release\net6.0 ..\..\dist\ColecticaCurationCli\
-POPD
-if %errorlevel% neq 0 exit /b %errorlevel%
 
 REM Include the version number in the file names.
 REM set /p revisionNumber= <"..\src\Colectica.Curation.Data\RevisionNumber.txt"
@@ -48,6 +42,14 @@ set serviceDir=..\dist\ColecticaCurationPackage-%revisionNumber%\ColecticaCurati
 set webDir=..\dist\ColecticaCurationWeb-%revisionNumber%
 
 ren ..\dist\ColecticaCurationWeb ColecticaCurationWeb-%revisionNumber%
+
+
+REM Build and copy CLI application
+PUSHD ..\src\Colectica.Curation.Cli
+%msbuild22% /P:Configuration=Release /P:Platform=AnyCPU 
+xcopy /e /y bin\Release\net6.0 ..\..\dist\ColectitcaCurationPackage-%revisionNumber%\ColecticaCurationCli\
+POPD
+if %errorlevel% neq 0 exit /b %errorlevel%
 
 REM Copy service binaries to the dist/ folder.
 xcopy ..\src\Colectica.Curation.Service\bin\Release %serviceDir% /i /s /y
@@ -82,6 +84,8 @@ set clamDir=..\dist\ColecticaCurationPackage-%revisionNumber%\clamav
 mkdir %clamDir%
 xcopy ..\src\clamav %clamDir% /i /e /y
 del %clamDir%\win64\EICAR-testfile.txt
+
+
 
 REM ZIP everything
 %zip% a ..\dist\ColecticaCurationPackage-%revisionNumber%.zip ..\dist\ColecticaCurationPackage-%revisionNumber%
