@@ -34,7 +34,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 REM CLI
 PUSHD ..\src\Colectica.Curation.Cli
 %msbuild22% /P:Configuration=Release /P:Platform=AnyCPU 
-xcopy /e /y bin\Release\net6.0\ ..\..\dist\ColecticaCurationCli\
+xcopy /e /y bin\Release\net6.0 ..\..\dist\ColecticaCurationCli\
 POPD
 if %errorlevel% neq 0 exit /b %errorlevel%
 
