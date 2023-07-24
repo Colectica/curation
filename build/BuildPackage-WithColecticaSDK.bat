@@ -53,7 +53,6 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 
 REM Copy service binaries to the dist/ folder.
 xcopy ..\src\Colectica.Curation.Service\bin\Release %serviceDir% /i /s /y
-copy ..\src\lib\CsvHelper.dll %serviceDir%
 
 
 REM TODO Rename config files to end in .dist
