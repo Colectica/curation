@@ -87,11 +87,11 @@
     <PackageReference Include="bootstrap" Version="3.3.2" />
     <PackageReference Include="bootstrap-sortable" Version="1.9.0" />
     <PackageReference Include="ColecticaRepositoryLibrary">
-      <Version>7.1.9316</Version>
+      <Version>7.2.9408</Version>
     </PackageReference>
-    <PackageReference Include="ColecticaSDK" Version="7.1.9316" />
+    <PackageReference Include="ColecticaSDK" Version="7.2.9408" />
     <PackageReference Include="ColecticaSDK.Data">
-      <Version>7.1.9316</Version>
+      <Version>7.2.9408</Version>
     </PackageReference>
     <PackageReference Include="dropzone" Version="3.8.4" />
     <PackageReference Include="elmah.corelibrary" Version="1.2.2" />
@@ -109,7 +109,6 @@
     <PackageReference Include="LibGit2Sharp" Version="0.24.0" />
     <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="1.0.185" />
     <PackageReference Include="log4net" Version="1.2.10" />
-    <PackageReference Include="LumenWorks.Framework.IO" Version="3.8.0" />
     <PackageReference Include="Markdig.Signed">
       <Version>0.23.0</Version>
     </PackageReference>

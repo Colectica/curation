@@ -22,7 +22,8 @@ using Algenta.Colectica.Model.Utility;
 using Algenta.Colectica.Repository;
 using Colectica.Curation.DdiAddins.Utility;
 using Colectica.Curation.Web.Areas.Ddi.Utility;
-using LumenWorks.Framework.IO.Csv;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Spss.Data;
 using System;
 using System.Collections.Generic;
@@ -192,7 +193,13 @@ namespace Colectica.Curation.Addins.Editors.Mappers
             {
                 // TODO Use a stream and close it.
                 string contents = File.ReadAllText(fileName);
-                return new CsvReader(new StringReader(contents), true);
+
+                var csvConfig = new CsvConfiguration(System.Globalization.CultureInfo.CurrentCulture);
+                csvConfig.Encoding = System.Text.Encoding.UTF8;
+                csvConfig.HasHeaderRecord = true;
+                var stringReader = new StringReader(contents);
+                var csvReader = new CsvReader(stringReader, csvConfig);
+                return new CsvDataReader(csvReader);
             }
             else if (ext == ".rdata" ||
                 ext == ".rda")
