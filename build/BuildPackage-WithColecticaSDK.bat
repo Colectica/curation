@@ -60,6 +60,7 @@ del %serviceDir%\Colectica.Curation.Service.vhost.exe.config
 REM ren %serviceDir%\Colectica.Curation.Service.exe.config Colectica.Curation.Service.exe.config.dist
 REM ren %serviceDir%\log4net.config log4net.config.dist
 ren %serviceDir%\ConnectionStrings.config ConnectionStrings.config.dist
+ren %serviceDir%\Colectica.Curation.Service.exe.config Colectica.Curation.Service.exe.config.dist
 ren %serviceDir%\log4net.config log4net.config.dist
 
 ren %webDir%\ConnectionStrings.config.dist ConnectionStrings.config.dist
