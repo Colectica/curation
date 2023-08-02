@@ -66,11 +66,19 @@ namespace Colectica.Curation.Cli.Commands
                         Directory.CreateDirectory(directory);
                     }
 
-                    File.Copy(sourcePath, targetPath);
+                    try
+                    {
+                        File.Copy(sourcePath, targetPath);
 
-                    // Add to CSV that maps the Handles to the new URLs
-                    string url = $"/published/{record.Id.ToString()}/{file.Name}";
-                    builder.AppendLine($"\"{file.PersistentLink}\",\"{url}\"");
+                        // Add to CSV that maps the Handles to the new URLs
+                        string url = $"/published/{record.Id}/{file.Name}";
+                        builder.AppendLine($"\"{file.PersistentLink}\",\"{url}\"");
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Error copying the file.");
+                    }
+
                 }
             }
 
