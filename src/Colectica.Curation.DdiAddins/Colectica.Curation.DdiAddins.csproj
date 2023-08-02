@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\ApplyMetadataUpdatesToStataFile.cs" />
+    <Compile Include="Actions\CopyPublishedFiles.cs" />
     <Compile Include="Actions\CreateDdiMetadata.cs" />
     <Compile Include="Actions\CreateHandles.cs" />
     <Compile Include="Actions\CreatePhysicalInstances.cs" />
