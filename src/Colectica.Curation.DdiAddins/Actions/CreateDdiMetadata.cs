@@ -60,11 +60,11 @@ namespace Colectica.Curation.DdiAddins.Actions
             string fileName = string.Empty;
             if (!string.IsNullOrWhiteSpace(record.StudyId))
             {
-                fileName = record.StudyId + ".ddi32.xml";
+                fileName = record.StudyId + ".ddi33.xml";
             }
             else
             {
-                fileName = record.Id.ToString() + ".ddi32.xml";
+                fileName = record.Id.ToString() + ".ddi33.xml";
             }
 
             string ddiFilePath = Path.Combine(processingDirectory, record.Id.ToString(), fileName);
