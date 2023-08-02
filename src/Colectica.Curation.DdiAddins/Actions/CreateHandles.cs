@@ -18,7 +18,9 @@
 ﻿using Colectica.Curation.Common.Utility;
 using Colectica.Curation.Contracts;
 using Colectica.Curation.Data;
+using Colectica.Curation.Web.Models;
 using log4net;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -83,6 +85,21 @@ namespace Colectica.Curation.DdiAddins.Actions
                 handleRequests.Add(req);
             }
 
+            // Get the base URL to use for Handles for the files.
+            var settings = GetSiteSettings(db);
+            string baseUrl = settings.HandleTargetUrlBase;
+            if (string.IsNullOrWhiteSpace(baseUrl))
+            {
+                logger.Info("Skipping Handle request for files because no target URL is configured." + record.Title);
+                result.Skipped = true;
+                return result;
+            }
+
+            if (baseUrl.EndsWith("/"))
+            {
+                baseUrl = baseUrl.Substring(0, baseUrl.Length - 1);
+            }
+
             // Handle for each ManagedFile.
             foreach (var file in record.Files)
             {
@@ -100,17 +117,22 @@ namespace Colectica.Curation.DdiAddins.Actions
                 var req = new HandleRequestInformation
                 {
                     Id = file.Id,
-                    Url = $"https://{record.Organization.Hostname}/File/Download/{file.Id}"
+                    Url = $"{baseUrl}/{record.Id}/{file.Name}"
                 };
                 handleRequests.Add(req);
             }
 
             // Handle for the (to-be-created) DDI file.
             result.DdiFileId = Guid.NewGuid();
+
+            string ddiFileName = !string.IsNullOrWhiteSpace(record.StudyId) ? 
+                ddiFileName = record.StudyId + ".ddi33.xml"
+                : ddiFileName = record.Id.ToString() + ".ddi33.xml";
+
             handleRequests.Add(new HandleRequestInformation
             {
                 Id = result.DdiFileId,
-                Url = $"https://{record.Organization.Hostname}/File/Download/{result.DdiFileId}"
+                Url = $"{baseUrl}/{record.Id}/{ddiFileName}"
             });
             string[] valuesToRequest = handleRequests.Select(x => x.Url).ToArray();
 
@@ -244,6 +266,19 @@ namespace Colectica.Curation.DdiAddins.Actions
             binding.ReaderQuotas.MaxStringContentLength = int.MaxValue;
 
             return binding;
+        }
+
+        SiteSettings GetSiteSettings(ApplicationDbContext db)
+        {
+            var settingsRow = db.Settings.Where(x => x.Name == "SiteSettings").FirstOrDefault();
+            if (settingsRow != null)
+            {
+                return JsonConvert.DeserializeObject<SiteSettings>(settingsRow.Value);
+            }
+            else
+            {
+                return new SiteSettings();
+            }
         }
 
     }
