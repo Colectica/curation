@@ -45,5 +45,8 @@ namespace Colectica.Curation.Web.Models
         public string SmtpUserName { get; set; }
 
         public string SmtpPassword { get; set; }
+
+        public string PublishedFilesDirectory { get; set; }
+        public string HandleTargetUrlBase { get; set; }
     }
 }
