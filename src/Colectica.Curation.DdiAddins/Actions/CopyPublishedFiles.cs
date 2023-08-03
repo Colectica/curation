@@ -46,6 +46,7 @@ namespace Colectica.Curation.DdiAddins.Actions
         {
             var settings = GetSiteSettings();
             string destination = settings.PublishedFilesDirectory;
+            logger.Debug($"Using destination folder: {destination}");
             if (!Directory.Exists(destination))
             {
                 logger.Warn("Destination folder does not exist. Exiting.");
