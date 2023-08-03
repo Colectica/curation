@@ -308,6 +308,8 @@ namespace Colectica.Curation.Operations
                 {
                     logger.Error($"Error in publication addin {addin.Name}", ex);
                 }
+
+                LogEvent(EventTypes.Publish, addin.Name);
             }
 
             // For now just record the date.
