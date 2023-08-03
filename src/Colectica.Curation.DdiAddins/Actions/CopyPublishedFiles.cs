@@ -18,8 +18,8 @@
 using Colectica.Curation.Contracts;
 using Colectica.Curation.Data;
 using Colectica.Curation.Web.Models;
+using log4net;
 using Newtonsoft.Json;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -33,7 +33,14 @@ namespace Colectica.Curation.DdiAddins.Actions
     [Export(typeof(IPublishAction))]
     public class CopyPublishedFiles : IPublishAction
     {
+        ILog logger;
+
         public string Name => "Copy published files";
+
+        public CopyPublishedFiles()
+        {
+            logger = LogManager.GetLogger("Curation");
+        }
 
         public void PublishRecord(CatalogRecord record, ApplicationUser user, ApplicationDbContext db, string ProcessingDirectory)
         {
@@ -41,11 +48,11 @@ namespace Colectica.Curation.DdiAddins.Actions
             string destination = settings.PublishedFilesDirectory;
             if (!Directory.Exists(destination))
             {
-                Log.Logger.Warning("Destination folder does not exist. Exiting.");
+                logger.Warn("Destination folder does not exist. Exiting.");
                 return;
             }
 
-            Log.Debug("Copying published files for record {recordId} {recordTitle}", record.Id, record.Title);
+            logger.Debug($"Copying published files for record {record.Id} {record.Title}");
 
             foreach (var file in record.Files)
             {
@@ -54,7 +61,7 @@ namespace Colectica.Curation.DdiAddins.Actions
                     continue;
                 }
 
-                Log.Debug("Processing file {file}", file.Title);
+                logger.Debug($"Processing file {file.Title}");
 
                 // Copy the file.
                 string sourcePath = Path.Combine(
@@ -66,7 +73,7 @@ namespace Colectica.Curation.DdiAddins.Actions
                     record.Id.ToString(),
                     file.Name);
 
-                Log.Debug("Copying from {sourcePath} to {targetPath}", sourcePath, targetPath);
+                logger.Debug($"Copying from {sourcePath} to {targetPath}");
                 string directory = Path.GetDirectoryName(targetPath);
                 if (!Directory.Exists(directory))
                 {
@@ -79,13 +86,11 @@ namespace Colectica.Curation.DdiAddins.Actions
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "Error copying the file.");
+                    logger.Error("Error copying the file.", ex);
                 }
-
             }
 
-
-            Log.Debug("Done copying files");
+            logger.Debug("Done copying files");
 
             SiteSettings GetSiteSettings()
             {
