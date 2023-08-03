@@ -17,6 +17,8 @@
 
 using Colectica.Curation.Contracts;
 using Colectica.Curation.Data;
+using Colectica.Curation.Web.Models;
+using Newtonsoft.Json;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -35,8 +37,8 @@ namespace Colectica.Curation.DdiAddins.Actions
 
         public void PublishRecord(CatalogRecord record, ApplicationUser user, ApplicationDbContext db, string ProcessingDirectory)
         {
-            string destination = "TODO";
-
+            var settings = GetSiteSettings();
+            string destination = settings.PublishedFilesDirectory;
             if (!Directory.Exists(destination))
             {
                 Log.Logger.Warning("Destination folder does not exist. Exiting.");
@@ -84,6 +86,19 @@ namespace Colectica.Curation.DdiAddins.Actions
 
 
             Log.Debug("Done copying files");
+
+            SiteSettings GetSiteSettings()
+            {
+                var settingsRow = db.Settings.Where(x => x.Name == "SiteSettings").FirstOrDefault();
+                if (settingsRow != null)
+                {
+                    return JsonConvert.DeserializeObject<SiteSettings>(settingsRow.Value);
+                }
+                else
+                {
+                    return new SiteSettings();
+                }
+            }
         }
     }
 }
