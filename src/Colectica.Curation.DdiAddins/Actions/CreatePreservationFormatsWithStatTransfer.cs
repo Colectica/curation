@@ -166,6 +166,7 @@ namespace Colectica.Curation.DdiAddins.Actions
                             Type = "Data",
                             Software = "Text Editor",
                             UploadedDate = DateTime.UtcNow,
+                            IsPublicAccess = managedFile.IsPublicAccess,
                             Status = Colectica.Curation.Data.FileStatus.Accepted,
                             Owner = user
                         };
