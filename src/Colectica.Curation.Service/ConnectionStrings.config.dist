@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<connectionStrings>
+  <add name="DefaultConnection" connectionString="Host=localhost;Database=curation;Username=postgres;Password=PASSWORD;" providerName="Npgsql" />
+  <add name="ColecticaRepository" connectionString="Host=localhost;Database=colectica;Username=postgres;Password=PASSWORD;" providerName="Npgsql" />
+</connectionStrings>
