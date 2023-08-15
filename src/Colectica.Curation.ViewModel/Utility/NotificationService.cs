@@ -18,14 +18,16 @@
 ﻿using Colectica.Curation.Common.ViewModels;
 using Colectica.Curation.Data;
 using Colectica.Curation.Web.Models;
+using log4net;
+using log4net.Repository.Hierarchy;
+using MailKit.Net.Smtp;
+using MimeKit;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Mail;
-using System.Net.Mime;
 using System.Reflection;
 using System.Text;
 using System.Web;
@@ -33,7 +35,7 @@ using System.Web;
 namespace Colectica.Curation.Web.Utility
 {
     public class NotificationService
-    {
+    {      
         public static void SendActionEmail(string toAddress, string toName, string fromAddress, string fromName, string subject, string paragraph1, string paragraph2, string actionText, string actionUrl, string closing, string mailPreferencesUrl, ApplicationDbContext db)
         {
             if (string.IsNullOrWhiteSpace(toAddress))
@@ -85,19 +87,25 @@ namespace Colectica.Curation.Web.Utility
         static void SendEmail(string toAddress, string toName, string fromAddress, string fromName, string subject, string htmlBody, string plainBody, ApplicationDbContext db)
         {
             // Build the mail message.
-            var from = new MailAddress(fromAddress, fromName);
-            var to = new MailAddress(toAddress, toName);
-            var mail = new MailMessage(from, to);
+            var from = new MailboxAddress(fromName, fromAddress);
+            var to = new MailboxAddress(toName, toAddress);
+            var mail = new MimeMessage();
+            mail.From.Add(from);
+            mail.To.Add(to);
+
+
+            var builder = new BodyBuilder();
+            if (!string.IsNullOrWhiteSpace(plainBody))
+            {
+                builder.TextBody = plainBody;
+            }
+            if (!string.IsNullOrWhiteSpace(htmlBody))
+            {
+                builder.HtmlBody = htmlBody;
+            }
+
             mail.Subject = subject;
-            mail.Body = plainBody;
-            mail.IsBodyHtml = false;
-
-            //mail.BodyEncoding = Encoding.UTF8;
-            //mail.SubjectEncoding = Encoding.UTF8;
-
-            // Add a plain text version.
-            var htmlView = AlternateView.CreateAlternateViewFromString(htmlBody, new ContentType(MediaTypeNames.Text.Html));
-            mail.AlternateViews.Add(htmlView);
+            mail.Body = builder.ToMessageBody();
 
             // Configure the server.
             var settings = GetSiteSettings(db);
@@ -107,17 +115,30 @@ namespace Colectica.Curation.Web.Utility
                 return;
             }
 
-            var client = new SmtpClient();
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.Host = settings.SmtpHost;
-            client.Port = settings.SmtpPort;
-            client.UseDefaultCredentials = false;
-            client.EnableSsl = true;
-            client.Credentials = new NetworkCredential(settings.SmtpUserName, settings.SmtpPassword);
-
             // Send the mail.
-            client.Send(mail);
+            try
+            {
+                using (var client = new SmtpClient())
+                {
+                    client.Connect(settings.SmtpHost, settings.SmtpPort);
+
+                    if (!string.IsNullOrWhiteSpace(settings.SmtpUserName) &&
+                        !string.IsNullOrWhiteSpace(settings.SmtpPassword))
+                    {
+                        client.Authenticate(settings.SmtpUserName, settings.SmtpPassword);
+                    }
+
+                    client.Send(mail);
+                    client.Disconnect(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                ILog logger = LogManager.GetLogger("Curation");
+                logger.Error("Error sending email.", ex);
+            }
         }
+
 
         static string ReplaceTokens(string str, string subject, string alertText, string paragraph1, string paragraph2, string actionText, string actionUrl, string closing, string mailPreferencesUrl)
         {
