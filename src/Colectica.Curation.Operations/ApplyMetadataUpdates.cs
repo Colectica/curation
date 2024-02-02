@@ -105,7 +105,7 @@ namespace Colectica.Curation.Operations
                 db.SaveChanges();
             }
 
-            logger.Debug("Finished applying metadata updates to Stata file.");
+            logger.Debug("Finished applying metadata updates.");
 
             return true;
         }
