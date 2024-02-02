@@ -16,7 +16,7 @@ namespace Colectica.Curation.DdiAddins.Actions
     {
         ILog logger;
 
-        public string Name { get { return "Apply Metadata Updates to Stata File"; } }
+        public string Name { get { return "Recalculate summary statistics"; } }
 
         public RecalculateSummaryStatistics()
         {
