@@ -164,34 +164,6 @@ namespace Colectica.Curation.DdiAddins.Actions
                 physicalInstance = rp.PhysicalInstances[0];
                 physicalInstance.Identifier = fileId;
             }
-            else
-            {
-                // If there is an existing PhysicalInstance, update it from the data file.
-                var dataImporters = new List<IDataImporter>();
-                dataImporters.Add(new SpssImporter());
-                dataImporters.Add(new StataImporter());
-                dataImporters.Add(new SasImporter());
-                dataImporters.Add(new RDataImporter());
-                dataImporters.Add(new CsvImporter());
-
-                // Update the PhysicalInstance from the data file.
-                try
-                {
-                    var updater = new UpdatePhysicalInstanceFromFile(dataImporters);
-                    updater.VerifyPhysicalInstance(physicalInstance);
-
-                    physicalInstance.Version++;
-                    foreach (var item in updater.ModifiedItems)
-                    {
-                        item.Version++;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.Error("Problem updating PhysicalInstance.", ex);
-                    return "Problem updating PhysicalInstance. " + ex.Message;
-                }
-            }
 
             // Calculate summary statistics, for both new and updated files.
             try
