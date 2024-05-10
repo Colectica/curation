@@ -100,7 +100,7 @@
     <PackageReference Include="EntityFramework6.Npgsql">
       <Version>6.4.3</Version>
     </PackageReference>
-    <PackageReference Include="Npgsql" Version="4.1.12.0" />
+    <PackageReference Include="Npgsql" Version="4.1.13" />
     <PackageReference Include="jQuery" Version="3.7.0" />
     <PackageReference Include="jQuery.UI.Combined" Version="1.10.2" />
     <PackageReference Include="jQuery.Validation" Version="1.11.1" />
