@@ -4,6 +4,9 @@
     ViewBag.Title = Model.CatalogRecord.Title;
     
     string hasAgreement = string.IsNullOrWhiteSpace(Model.DepositAgreement) ? "false" : "true";
+
+    string rawJson = Newtonsoft.Json.JsonConvert.SerializeObject(Model.AvailableExistingFileNames)
+    string escapedJson = rawJson.Replace("'", "\\'");
 }
 
 @section scripts{
@@ -18,7 +21,7 @@
 
     <script>
         $(document).ready(function () {
-            ko.applyBindings(new FileDepositViewModel('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.AvailableExistingFileNames))', @hasAgreement));
+            ko.applyBindings(new FileDepositViewModel('@Html.Raw(escapedJson)', @hasAgreement));
         });
     </script>
 }
