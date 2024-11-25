@@ -9,8 +9,8 @@ enable a seamless framework for collecting, processing, archiving, and
 publishing data. The platform enables open access to data resources that have
 been fully reviewed and enhanced for long term usability and analysis.
 
-Development has been supported by the Yale Institution for Social and Policy
-Studies and Innovations for Poverty Action.
+Development has been supported by the [Yale Institution for Social and Policy
+Studies](https://isps.yale.edu/) and [Innovations for Poverty Action](https://poverty-action.org/).
 
 For further details, see the documentation at https://docs.colectica.com/curation/.
 
