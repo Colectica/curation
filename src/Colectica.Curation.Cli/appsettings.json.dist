@@ -8,5 +8,12 @@
       "ConnectionString": "Host=localhost;Database=colectica;Username=postgres;Password=TODO;",
       "ProviderName": "Npgsql"
     }
+  },
+  "Curation": {
+    "PublishedDataDirectory":  "TODO"
+  },
+  "Dataverse": {
+    "ApiToken": "TODO",
+    "DataverseName": "TODO"
   }
 }

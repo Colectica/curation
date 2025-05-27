@@ -46,6 +46,12 @@ namespace Colectica.Curation.Cli
             copyPublishedFilesCommand.Handler = CommandHandler.Create<string>(CopyPublishedFiles);
             root.Add(copyPublishedFilesCommand);
 
+            // publish-all-to-dataverse
+            var publishAllToDataverseCommand = new Command("publish-all-to-dataverse", "Publish all records to Dataverse");
+            publishAllToDataverseCommand.Add(new Option<string>("--dataverse-url", "The URL of the Dataverse instance"));
+            publishAllToDataverseCommand.Handler = CommandHandler.Create<string>(PublishAllToDataverse);
+            root.Add(publishAllToDataverseCommand);
+
             // Run the command
             try
             {
@@ -57,10 +63,18 @@ namespace Colectica.Curation.Cli
             }
         }
 
+
         private static void CopyPublishedFiles(string destination)
         {
             var copyPublishedFiles = new CopyPublishedFiles();
             copyPublishedFiles.Copy(destination, config);
         }
+
+        private static void PublishAllToDataverse(string dataverseUrl)
+        {
+            var publisher = new PublishToDataverse(dataverseUrl, config);
+            publisher.Publish().Wait();
+        }
+
     }
 }
