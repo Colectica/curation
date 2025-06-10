@@ -83,7 +83,7 @@ function FileDepositViewModel(existingFileNamesJson, hasAgreement) {
         autoProcessQueue: false,
         uploadMultiple: true,
         parallelUploads: 100,
-        maxFilesize: 500,
+        maxFilesize: 1000,
         maxFiles: 100,
         previewsContainer: "#previews",
         clickable: ".fileinput-button",
