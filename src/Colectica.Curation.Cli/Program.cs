@@ -9,7 +9,7 @@ namespace Colectica.Curation.Cli
 {
     internal class Program
     {
-        static IConfiguration config;
+        static IConfiguration? config;
 
         static void Main(string[] args)
         {
@@ -35,7 +35,11 @@ namespace Colectica.Curation.Cli
 
             builder.AddEnvironmentVariables();
             config = builder.Build();
-
+            if (config == null)
+            {
+                Log.Error("Failed to load configuration.");
+                return;
+            }
 
             // Build the commands.
             var root = new RootCommand("Colectica Curation Command Line Tool");
@@ -66,12 +70,22 @@ namespace Colectica.Curation.Cli
 
         private static void CopyPublishedFiles(string destination)
         {
+            if (config == null)
+            {
+                return;
+            }
+
             var copyPublishedFiles = new CopyPublishedFiles();
             copyPublishedFiles.Copy(destination, config);
         }
 
         private static void PublishAllToDataverse(string dataverseUrl)
         {
+            if (config == null)
+            {
+                return;
+            }
+
             var publisher = new PublishToDataverse(dataverseUrl, config);
             publisher.Publish().Wait();
         }
