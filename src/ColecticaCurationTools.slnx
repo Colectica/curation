@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Colectica.Curation.Cli/Colectica.Curation.Cli.csproj" />
+  <Project Path="Colectica.Curation.Data/Colectica.Curation.Data.csproj" />
+  <Project Path="Colectica.Curation.Dataverse/Colectica.Curation.Dataverse.csproj" />
+</Solution>
