@@ -20,6 +20,7 @@ namespace Colectica.Curation.Cli.Commands
         private readonly string? connectionString;
         private readonly string apiToken;
         private readonly string dataverseName;
+        private readonly string? debugDir;
 
         public PublishToDataverse(string dataverseUrl, IConfiguration config)
         {
@@ -29,6 +30,8 @@ namespace Colectica.Curation.Cli.Commands
             connectionString = config["Data:DefaultConnection:ConnectionString"] ?? "";
             apiToken = config["Dataverse:ApiToken"] ?? "";
             dataverseName = config["Dataverse:DataverseName"] ?? "";
+            debugDir = config["Data:DebugDirectory"] ?? "";
+
         }
 
         public async Task Publish()
@@ -44,7 +47,7 @@ namespace Colectica.Curation.Cli.Commands
                 return;
             }
 
-            foreach (var record in publishedRecords.Take(10))
+            foreach (var record in publishedRecords.Take(1))
             {
                 await PublishRecord(record);
             }
@@ -72,21 +75,38 @@ namespace Colectica.Curation.Cli.Commands
             string datasetJson = JsonSerializer.Serialize(datasetDto, options);
             StringContent datasetContent = new StringContent(datasetJson, Encoding.UTF8, "application/json");
 
-            string datasetResponse = await PostToApiAsync(createDatasetUrl, apiToken, datasetContent);
-            ApiResponseDto? datasetApiResponse = JsonSerializer.Deserialize<ApiResponseDto>(datasetResponse, options);
-            if (datasetApiResponse == null)
+            if (debugDir != null)
             {
-                Log.Error("Failed to deserialize API response. Response: {response}", datasetResponse);
+                File.WriteAllText(Path.Combine(debugDir, record.Id.ToString() + ".json"), datasetJson);
+            }
+
+            string datasetResponse = "";
+            ApiResponseDto? datasetApiResponse = null;
+            try
+            {
+                datasetResponse = await PostToApiAsync(createDatasetUrl, apiToken, datasetContent);
+                datasetApiResponse = JsonSerializer.Deserialize<ApiResponseDto>(datasetResponse, options);
+
+                if (datasetApiResponse == null)
+                {
+                    Log.Error("Failed to deserialize API response. Response: {response}", datasetResponse);
+                    return;
+                }
+
+                if (datasetApiResponse.Status != "OK")
+                {
+                    Log.Error("Failed to create dataset. Response: {response}", datasetResponse);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to create dataset. Response: {response}", datasetResponse);
+                File.WriteAllText("/home/jeremy/tmp/test.json", datasetJson);
                 return;
             }
 
-            if (datasetApiResponse.Status != "OK")
-            {
-                Log.Error("Failed to create dataset. Response: {response}", datasetResponse);
-                return;
-            }
-
-            string datasetDoi = datasetApiResponse.Data.PersistentId;
+            string? datasetDoi = datasetApiResponse.Data?.PersistentId;
             string addFileUrl = $"{dataverseUrl}/api/datasets/:persistentId/add?persistentId={datasetDoi}";
 
             foreach (var file in record.Files)

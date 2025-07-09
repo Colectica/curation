@@ -10,7 +10,7 @@ namespace Colectica.Curation.Dataverse
 {
     public class DatasetDto
     {
-        public DatasetVersionDto DatasetVersion { get; set; }
+        public DatasetVersionDto? DatasetVersion { get; set; }
 
         public static DatasetDto FromCatalogRecord(CatalogRecord record)
         {
@@ -21,19 +21,84 @@ namespace Colectica.Curation.Dataverse
             MetadataBlocksDto metadataBlocks = new();
             datasetVersion.MetadataBlocks = metadataBlocks;
 
-            // Citation
-            CitationDto citation = new();
-            metadataBlocks.Citation = citation;
-            citation.DisplayName = "Citation Metadata";
-            citation.Fields = new List<FieldDto>();
+            // ---- Terms fields ----
+            GenericBlockDto termsBlock = new();
+            metadataBlocks.Terms = termsBlock;
+            termsBlock.DisplayName = "Terms of Use and Access";
+            termsBlock.Fields = [];
+
+            termsBlock.Fields.Add(new("restrictions", record.AccessStatement));
+            termsBlock.Fields.Add(new("confidentialitydeclaration", record.ConfidentialityStatement));
+            termsBlock.Fields.Add(new("depositorrequirements", record.DepositAgreement));
+            termsBlock.Fields.Add(new("availabilitystatus", record.EmbargoStatement));
+
+            // ---- Custom ISPS block ----
+            GenericBlockDto ispsBlock = new();
+            metadataBlocks.Isps = ispsBlock;
+            ispsBlock.DisplayName = "ISPS Custom Metadata";
+            ispsBlock.Fields = [];
+
+            if (record.ArchiveDate != null)
+            {
+                ispsBlock.Fields.Add(new("ispsArchiveDate", record.ArchiveDate.Value.ToString("yyyy-MM-dd"), typeClass: "primitive"));
+            }
+
+            if (record.CertifiedDate != null)
+            {
+                ispsBlock.Fields.Add(new("ispsCertifiedDate", record.CertifiedDate.Value.ToString("yyyy-MM-dd"), typeClass: "primitive"));
+            }
+
+            ispsBlock.Fields.Add(new("ispsOutcomeMeasures", new List<string>() { record.OutcomeMeasures }, multiple:true));
+            ispsBlock.Fields.Add(new("randomizationProcedure", record.RandomizationProcedure));
+
+            string researchDesign = GetResearchDesignTerm(record.ResearchDesign ?? "", out string researchDesignOtherSpecify);
+            ispsBlock.Fields.Add(new("ispsResearchDesign", new List<string> { researchDesign }, multiple: true, typeClass: "controlledVocabulary"));
+            ispsBlock.Fields.Add(new("ispsOtherResearchDesign", new List<string>() { researchDesignOtherSpecify }, multiple: true));
+
+            ispsBlock.Fields.Add(new("ispsReviewType", record.ReviewType, typeClass: "controlledVocabulary"));
+            ispsBlock.Fields.Add(new("ispsTreatment", record.Treatment));
+
+            string treatmentAdministration = GetTreatmentAdministrationTerm(record.TreatmentAdministration ?? "", out string treatmentAdministrationOtherSpecify);
+            ispsBlock.Fields.Add(new("ispsTreatmentAdministration", treatmentAdministration));
+            ispsBlock.Fields.Add(new("ispsOtherTreatmentAdministration", treatmentAdministrationOtherSpecify));
+
+            string unitOfObservation = GetUnitOfTerm(record.UnitOfObservation ?? "", out string unitOfObservationOtherSpecify);
+            ispsBlock.Fields.Add(new("ispsUnitOfObservation", unitOfObservation));
+            ispsBlock.Fields.Add(new("ispsOtherUnitOfObservation", unitOfObservationOtherSpecify));
+
+            string unitOfRandomization = GetUnitOfTerm(record.UnitOfRandomization ?? "", out string _);
+            ispsBlock.Fields.Add(new("ispsUnitOfRandomization", unitOfRandomization));
+
+            ispsBlock.Fields.Add(new("ispsVersion", record.Version));
+
+            // ---- Social Science fields ----
+            SocialScienceDto socialScienceBlock = new();
+            metadataBlocks.SocialScience = socialScienceBlock;
+            socialScienceBlock.DisplayName = "Social Science Metadata";
+            socialScienceBlock.Fields = [];
+
+            socialScienceBlock.Fields.Add(new("samplingProcedure", record.InclusionExclusionCriteria));
+
+            if (int.TryParse(record.SampleSize, out int sampleSize))
+            {
+                socialScienceBlock.Fields.Add(new("targetSampleSize", sampleSize));
+            }
+
+
+            // ---- Citation fields ----
+            CitationDto citationBlock = new();
+            metadataBlocks.Citation = citationBlock;
+            citationBlock.DisplayName = "Citation Metadata";
+            citationBlock.Fields = [];
 
             // Title
-            FieldDto titleField = new();
-            titleField.TypeName = "title";
-            titleField.Multiple = false;
-            titleField.TypeClass = "primitive";
-            titleField.Value = record.Title;
-            citation.Fields.Add(titleField);
+            citationBlock.Fields.Add(new("title", record.Title));
+            citationBlock.Fields.Add(new("otherIdValue", record.Number));
+
+            if (record.CreatedDate != null)
+            {
+                citationBlock.Fields.Add(new("dateOfDeposit", record.CreatedDate.Value.ToString("yyyy-MM-dd"), typeClass: "date"));
+            }
 
             // Authors
             if (record.Authors != null && record.Authors.Any())
@@ -44,18 +109,12 @@ namespace Colectica.Curation.Dataverse
                 authorsField.TypeClass = "compound";
                 authorsField.Value = record.Authors.Select(author => new AuthorDto
                 {
-                    AuthorName = new AuthorNameDto
-                    {
-                        Value = author.FullName,
-                        TypeClass = "primitive",
-                        Multiple = false,
-                        TypeName = "authorName"
-                    },
+                    AuthorName = new FieldDto("authorName", author.FullName)
                     //AuthorAffiliation = author.Affiliation,
                     //AuthorIdentifierScheme = "ORCID",
                     //AuthorIdentifier = author.Orcid
                 }).ToList();
-                citation.Fields.Add(authorsField);
+                citationBlock.Fields.Add(authorsField);
             }
 
             // Contact
@@ -85,7 +144,7 @@ namespace Colectica.Curation.Dataverse
                         }
                     }
                 };
-                citation.Fields.Add(contactField);
+                citationBlock.Fields.Add(contactField);
             }
 
             // Description
@@ -106,114 +165,239 @@ namespace Colectica.Curation.Dataverse
                     },
                 }
             };
-            citation.Fields.Add(descriptionField);
+            citationBlock.Fields.Add(descriptionField);
 
             // Subject
             FieldDto subjectField = new();
             subjectField.TypeName = "subject";
             subjectField.Multiple = true;
             subjectField.TypeClass = "controlledVocabulary";
-            citation.Fields.Add(subjectField);
+            citationBlock.Fields.Add(subjectField);
             subjectField.Value = new List<string> { "Social Sciences" };
-            //subjectField.Value = record.Keywords.Split(",");
+            
+            // Keywords
+            FieldDto keywordField = new();
+            keywordField.TypeName = "keyword";
+            keywordField.Multiple = true;
+            keywordField.TypeClass = "controlledVocabulary";
+            citationBlock.Fields.Add(keywordField);
+            keywordField.Value = record.Keywords.Split(",");
 
+            citationBlock.Fields.Add(new("relatedDatasets", record.RelatedDatabase));
+            citationBlock.Fields.Add(new("relatedMaterial", record.RelatedProjects, multiple: true));
+            citationBlock.Fields.Add(new("relatedMaterial", record.RelatedPublications, multiple: true));
 
             return datasetDto;
         }
+
+        private static string GetResearchDesignTerm(string input, out string otherSpecify)
+        {
+            otherSpecify = string.Empty;
+
+            input = input.Trim().ToLowerInvariant();
+            string harmonizedTerm = input switch
+            {
+                "" => "",
+                "multiple" => string.Empty,
+                "field experiment" => "Field Experiment",
+                "lab experiment" => "Lab Experiment",
+                "matching" => "Matching",
+                "metaanalysis" => "Meta-analysis",
+                "natural experiment" => "Natural Experiment",
+                "observational" => "Observational",
+                "regression discontinuity" => "Regression Discontinuity Design",
+                "regression discontinuity design" => "Regression Discontinuity Design",
+                "survey experiment" => "Survey Experiment",
+                "other" => "Other",
+                _ => "Other"
+            };
+
+            if (harmonizedTerm == "Other")
+            {
+                otherSpecify = input;
+            }
+
+            return harmonizedTerm;
+        }
+
+        private static string GetTreatmentAdministrationTerm(string input, out string otherSpecify)
+        {
+            otherSpecify = string.Empty;
+
+            input = input.Trim().ToLowerInvariant();
+            string harmonizedTerm = input switch
+            {
+                "not applicable" => "",
+                "n/a" => "",
+                "not selected" => "",
+                "door to Door" => "Door to Door",
+                "email" => "Email",
+                "government-administered program" => "Government Program",
+                "mail" => "Mail",
+                "multiple" => "",
+                "ngo-adminstered program" => "NGO Program",
+                "ngo-administered program" => "NGO Program",
+                "phone" => "Phone",
+                "radio" => "Radio",
+                "school-administered program" => "School Program",
+                "television" => "Television",
+                "mobile technology / Text messages" => "Text Messages",
+                "web delivered" => "Web",
+                "other" => "Other",
+                _ => "Other"
+            };
+
+            if (harmonizedTerm == "Other")
+            {
+                otherSpecify = input;
+            }
+
+            return harmonizedTerm;
+        }
+
+        private static string GetUnitOfTerm(string input, out string otherSpecify)
+        {
+            otherSpecify = string.Empty;
+
+            input = input.Trim().ToLowerInvariant();
+            string harmonizedTerm = input switch
+            {
+                "event/process" => "Event or Process",
+                "family" => "Family",
+                "geo: census track" => "Geo - Census Track",
+                "geo: country" => "Geo - Country",
+                "geo: district" => "Geo - District",
+                "geo: dma" => "Geo - DMA",
+                "geo: other" => "Geo - Other",
+                "geo: region" => "Geo - Region",
+                "geo: school" => "Geo - School",
+                "geo: village" => "Geo - Village",
+                "household: family" => "Household - Family",
+                "household: unit" => "Household - Unit",
+                "housing unit" => "Housing Unit",
+                "individual" => "Individual",
+                "individuals" => "Individual",
+                "multiple" => "",
+                "organization" => "Organization",
+                "other" => "Other",
+                _ => "Other"
+            };
+
+            if (harmonizedTerm == "Other")
+            {
+                otherSpecify = input;
+            }
+
+            return harmonizedTerm;       
+        }
+
     }
 
     public class DescriptionValueDto
     {
-        public FieldDto DsDescriptionValue { get; set; }
+        public FieldDto? DsDescriptionValue { get; set; }
     }
 
     public class DatasetContactValueDto
     {
-        public FieldDto DatasetContactEmail { get; set; }
-        public FieldDto DatasetContactName { get; set; }
+        public FieldDto? DatasetContactEmail { get; set; }
+        public FieldDto? DatasetContactName { get; set; }
     }
 
 
     public class DatasetVersionDto
     {
-        public LicenseDto License { get; set; }
-        public MetadataBlocksDto MetadataBlocks { get; set; }
+        public LicenseDto? License { get; set; }
+        public MetadataBlocksDto? MetadataBlocks { get; set; }
     }
 
     public class LicenseDto
     {
-        public string Name { get; set; }
-        public string Uri { get; set; }
+        public string? Name { get; set; }
+        public string? Uri { get; set; }
     }
 
     public class MetadataBlocksDto
     {
-        public CitationDto Citation { get; set; }
-        public GeospatialDto Geospatial { get; set; }
-        public SocialScienceDto SocialScience { get; set; }
-        public AstrophysicsDto Astrophysics { get; set; }
-        public BiomedicalDto Biomedical { get; set; }
-        public JournalDto Journal { get; set; }
+        public GenericBlockDto? Terms { get; set; }
+        public GenericBlockDto? Isps { get; set; }
+        public CitationDto? Citation { get; set; }
+        public GeospatialDto? Geospatial { get; set; }
+        public SocialScienceDto? SocialScience { get; set; }
+        public AstrophysicsDto? Astrophysics { get; set; }
+        public BiomedicalDto? Biomedical { get; set; }
+        public JournalDto? Journal { get; set; }
+    }
+
+    public class GenericBlockDto
+    {
+        public string? DisplayName { get; set; }
+        public List<FieldDto> Fields { get; set; } = [];
     }
 
     public class CitationDto
     {
-        public string DisplayName { get; set; }
-        public List<FieldDto> Fields { get; set; }
+        public string? DisplayName { get; set; }
+        public List<FieldDto> Fields { get; set; } = [];
     }
 
     public class FieldDto
     {
-        public string TypeName { get; set; }
-        public bool Multiple { get; set; }
-        public string TypeClass { get; set; }
-        public object Value { get; set; }
+        public string? TypeName { get; set; }
+        public bool Multiple { get; set; } = false;
+        public string? TypeClass { get; set; }
+        public object? Value { get; set; }
+
+        public FieldDto()
+        {
+
+        }
+
+        public FieldDto(string typeName, object value, bool multiple = false, string typeClass = "primitive")
+        {
+            TypeName = typeName;
+            Multiple = multiple;
+            TypeClass = typeClass;
+            Value = value;
+        }
     }
 
     public class AuthorDto
     {
-        public AuthorNameDto AuthorName { get; set; }
-        public string AuthorAffiliation { get; set; }
-        public string AuthorIdentifierScheme { get; set; }
-        public string AuthorIdentifier { get; set; }
-    }
-
-    public class AuthorNameDto
-    {
-        public string Value { get; set; }
-        public string TypeClass { get; set; }
-        public bool Multiple { get; set; }
-        public string TypeName { get; set; }
+        public FieldDto? AuthorName { get; set; }
+        public string? AuthorAffiliation { get; set; }
+        public string? AuthorIdentifierScheme { get; set; }
+        public string? AuthorIdentifier { get; set; }
     }
 
     public class GeospatialDto
     {
-        public string DisplayName { get; set; }
-        public List<FieldDto> Fields { get; set; }
+        public string? DisplayName { get; set; }
+        public List<FieldDto> Fields { get; set; } = [];
     }
 
     public class SocialScienceDto
     {
-        public string DisplayName { get; set; }
-        public List<FieldDto> Fields { get; set; }
+        public string? DisplayName { get; set; }
+        public List<FieldDto> Fields { get; set; } = [];
     }
 
     public class AstrophysicsDto
     {
-        public string DisplayName { get; set; }
-        public List<FieldDto> Fields { get; set; }
+        public string? DisplayName { get; set; }
+        public List<FieldDto> Fields { get; set; } = [];
     }
 
     public class BiomedicalDto
     {
-        public string DisplayName { get; set; }
-        public List<FieldDto> Fields { get; set; }
+        public string? DisplayName { get; set; }
+        public List<FieldDto> Fields { get; set; } = [];
     }
 
     public class JournalDto
     {
-        public string DisplayName { get; set; }
-        public List<FieldDto> Fields { get; set; }
+        public string? DisplayName { get; set; }
+        public List<FieldDto> Fields { get; set; } = [];
     }
 
 }
