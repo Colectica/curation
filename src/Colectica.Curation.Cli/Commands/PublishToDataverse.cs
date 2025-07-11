@@ -47,7 +47,7 @@ namespace Colectica.Curation.Cli.Commands
                 return;
             }
 
-            foreach (var record in publishedRecords.Take(1))
+            foreach (var record in publishedRecords)
             {
                 await PublishRecord(record);
             }
@@ -102,7 +102,6 @@ namespace Colectica.Curation.Cli.Commands
             catch (Exception ex)
             {
                 Log.Error(ex, "Failed to create dataset. Response: {response}", datasetResponse);
-                File.WriteAllText("/home/jeremy/tmp/test.json", datasetJson);
                 return;
             }
 
@@ -113,6 +112,13 @@ namespace Colectica.Curation.Cli.Commands
             {
                 if (!file.IsPublicAccess)
                 {
+                    continue;
+                }
+
+                // For now, skip this file if it is over 5 MB.
+                if (file.Size > 1 * 1024 * 1024)
+                {
+                    Log.Debug("Skipping file {file} because it is larger than 1 MB", file.Name);
                     continue;
                 }
 
@@ -151,6 +157,7 @@ namespace Colectica.Curation.Cli.Commands
         public async Task<string> PostToApiAsync(string url, string apiToken, HttpContent content)
         {
             using var client = new HttpClient();
+            client.Timeout = TimeSpan.FromMinutes(5);
             client.DefaultRequestHeaders.Add("X-Dataverse-key", apiToken);
             client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 

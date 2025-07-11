@@ -40,36 +40,39 @@ namespace Colectica.Curation.Dataverse
 
             if (record.ArchiveDate != null)
             {
-                ispsBlock.Fields.Add(new("ispsArchiveDate", record.ArchiveDate.Value.ToString("yyyy-MM-dd"), typeClass: "primitive"));
+                ispsBlock.Fields.Add(new("ispsArchiveDate", record.ArchiveDate.Value.ToString("yyyy-MM-dd")));
             }
 
             if (record.CertifiedDate != null)
             {
-                ispsBlock.Fields.Add(new("ispsCertifiedDate", record.CertifiedDate.Value.ToString("yyyy-MM-dd"), typeClass: "primitive"));
+                ispsBlock.Fields.Add(new("ispsCertifiedDate", record.CertifiedDate.Value.ToString("yyyy-MM-dd")));
             }
 
             ispsBlock.Fields.Add(new("ispsOutcomeMeasures", new List<string>() { record.OutcomeMeasures }, multiple:true));
             ispsBlock.Fields.Add(new("randomizationProcedure", record.RandomizationProcedure));
 
             string researchDesign = GetResearchDesignTerm(record.ResearchDesign ?? "", out string researchDesignOtherSpecify);
-            ispsBlock.Fields.Add(new("ispsResearchDesign", new List<string> { researchDesign }, multiple: true, typeClass: "controlledVocabulary"));
+            AddMultipleControlledVocabularyField(ispsBlock, "ispsResearchDesign", researchDesign);
             ispsBlock.Fields.Add(new("ispsOtherResearchDesign", new List<string>() { researchDesignOtherSpecify }, multiple: true));
 
             ispsBlock.Fields.Add(new("ispsReviewType", record.ReviewType, typeClass: "controlledVocabulary"));
-            ispsBlock.Fields.Add(new("ispsTreatment", record.Treatment));
+            ispsBlock.Fields.Add(new("ispsTreatment", new List<string>() { record.Treatment }, multiple: true));
 
             string treatmentAdministration = GetTreatmentAdministrationTerm(record.TreatmentAdministration ?? "", out string treatmentAdministrationOtherSpecify);
-            ispsBlock.Fields.Add(new("ispsTreatmentAdministration", treatmentAdministration));
-            ispsBlock.Fields.Add(new("ispsOtherTreatmentAdministration", treatmentAdministrationOtherSpecify));
+
+            AddMultipleControlledVocabularyField(ispsBlock, "ispsTreatmentAdministration", treatmentAdministration);
+
+            ispsBlock.Fields.Add(new("ispsOtherTreatmentAdministration", new List<string>() { treatmentAdministrationOtherSpecify }, multiple: true));
 
             string unitOfObservation = GetUnitOfTerm(record.UnitOfObservation ?? "", out string unitOfObservationOtherSpecify);
-            ispsBlock.Fields.Add(new("ispsUnitOfObservation", unitOfObservation));
-            ispsBlock.Fields.Add(new("ispsOtherUnitOfObservation", unitOfObservationOtherSpecify));
+
+            AddMultipleControlledVocabularyField(ispsBlock, "ispsUnitOfObservation", unitOfObservation);
+            ispsBlock.Fields.Add(new("ispsOtherUnitOfObservation", new List<string>() { unitOfObservationOtherSpecify }, multiple: true));
 
             string unitOfRandomization = GetUnitOfTerm(record.UnitOfRandomization ?? "", out string _);
-            ispsBlock.Fields.Add(new("ispsUnitOfRandomization", unitOfRandomization));
+            AddMultipleControlledVocabularyField(ispsBlock, "ispsUnitOfRandomization", unitOfRandomization);
 
-            ispsBlock.Fields.Add(new("ispsVersion", record.Version));
+            ispsBlock.Fields.Add(new("ispsVersion", record.Version.ToString()));
 
             // ---- Social Science fields ----
             SocialScienceDto socialScienceBlock = new();
@@ -81,7 +84,9 @@ namespace Colectica.Curation.Dataverse
 
             if (int.TryParse(record.SampleSize, out int sampleSize))
             {
-                socialScienceBlock.Fields.Add(new("targetSampleSize", sampleSize));
+                FieldDto actualSampleSizeField = new("targetSampleActualSize", sampleSize.ToString());
+                FieldDto targetSampleSizeField = new("targetSampleSize", new { TargetActualSampleSize = actualSampleSizeField }, typeClass: "compound");
+                socialScienceBlock.Fields.Add(targetSampleSizeField);
             }
 
 
@@ -97,7 +102,7 @@ namespace Colectica.Curation.Dataverse
 
             if (record.CreatedDate != null)
             {
-                citationBlock.Fields.Add(new("dateOfDeposit", record.CreatedDate.Value.ToString("yyyy-MM-dd"), typeClass: "date"));
+                citationBlock.Fields.Add(new("dateOfDeposit", record.CreatedDate.Value.ToString("yyyy-MM-dd")));
             }
 
             // Authors
@@ -179,15 +184,25 @@ namespace Colectica.Curation.Dataverse
             FieldDto keywordField = new();
             keywordField.TypeName = "keyword";
             keywordField.Multiple = true;
-            keywordField.TypeClass = "controlledVocabulary";
+            keywordField.TypeClass = "compound";
+            keywordField.Value = record.Keywords.Split(",")
+                .Select(str => new { KeywordValue = new FieldDto("keywordValue", str.Trim()) } )
+                .ToArray();
             citationBlock.Fields.Add(keywordField);
-            keywordField.Value = record.Keywords.Split(",");
 
-            citationBlock.Fields.Add(new("relatedDatasets", record.RelatedDatabase));
-            citationBlock.Fields.Add(new("relatedMaterial", record.RelatedProjects, multiple: true));
-            citationBlock.Fields.Add(new("relatedMaterial", record.RelatedPublications, multiple: true));
+            citationBlock.Fields.Add(new("relatedDatasets", new List<string>() { record.RelatedDatabase }, multiple: true));
+            citationBlock.Fields.Add(new("relatedMaterial", new List<string>() { record.RelatedProjects }, multiple: true));
+            citationBlock.Fields.Add(new("relatedMaterial", new List<string>() {record.RelatedPublications }, multiple: true));
 
             return datasetDto;
+        }
+
+        private static void AddMultipleControlledVocabularyField(GenericBlockDto block, string fieldName, string value)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                block.Fields.Add(new FieldDto(fieldName, new List<string> { value }, multiple: true, typeClass: "controlledVocabulary"));
+            }
         }
 
         private static string GetResearchDesignTerm(string input, out string otherSpecify)
