@@ -106,6 +106,21 @@ namespace Colectica.Curation.Cli.Commands
             }
 
             string? datasetDoi = datasetApiResponse.Data?.PersistentId;
+
+            // Use the ispsArchiveDate field as the date in the citation.
+            try
+            {
+                string setCitationDateUrl = $"{dataverseUrl}/api/datasets/:persistentId/citationdate?persistentId={datasetDoi}";
+                var citationDateResponse = await PutToApiAsync(setCitationDateUrl, apiToken, "ispsArchiveDate", datasetDoi);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to set citation date for dataset {datasetDoi}", datasetDoi);
+                return;
+            }
+
+
+            // Add all files.
             string addFileUrl = $"{dataverseUrl}/api/datasets/:persistentId/add?persistentId={datasetDoi}";
 
             foreach (var file in record.Files)
@@ -116,9 +131,9 @@ namespace Colectica.Curation.Cli.Commands
                 }
 
                 // For now, skip this file if it is over 5 MB.
-                if (file.Size > 1 * 1024 * 1024)
+                if (file.Size > 1 * 1024 * 256)
                 {
-                    Log.Debug("Skipping file {file} because it is larger than 1 MB", file.Name);
+                    Log.Debug("Skipping file {file} because it is larger than the set limit", file.Name);
                     continue;
                 }
 
@@ -152,6 +167,21 @@ namespace Colectica.Curation.Cli.Commands
                     Log.Error(ex, "Failed to upload file: {file}", file.Name);
                 }
             }
+        }
+
+        private async Task<string> PutToApiAsync(string url, string apiToken, string value, string? doi)
+        {
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("X-Dataverse-key", apiToken);
+
+            StringContent content = new StringContent(value, Encoding.UTF8, "application/x-www-form-urlencoded");
+
+            HttpResponseMessage response = await client.PutAsync(url, content);
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            response.EnsureSuccessStatusCode();
+
+            return responseBody;           
         }
 
         public async Task<string> PostToApiAsync(string url, string apiToken, HttpContent content)
