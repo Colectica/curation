@@ -34,7 +34,7 @@ public class FileDto
     public string Source { get; set; } = string.Empty;
     public bool Restricted { get; set; }
 
-    public string TabIngest => "false";
+    public string TabIngest => "true";
 
     public DataFileDto DataFile { get; set; } = new();
 }
