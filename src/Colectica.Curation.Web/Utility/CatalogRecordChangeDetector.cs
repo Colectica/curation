@@ -49,7 +49,7 @@ namespace Colectica.Curation.Web.Utility
             ManagedFileChangeDetector.CheckProperty("Sample Size", record.SampleSize, model.SampleSize, builder);
             ManagedFileChangeDetector.CheckProperty("Inclusion / Exclusion Criteria", record.InclusionExclusionCriteria, model.InclusionExclusionCriteria, builder);
             ManagedFileChangeDetector.CheckProperty("Randomization Procedure", record.RandomizationProcedure, model.RandomizationProcedure, builder);
-            ManagedFileChangeDetector.CheckProperty("Unit of Randomization", record.UnitOfObservation, model.UnitOfObservation, builder);
+            ManagedFileChangeDetector.CheckProperty("Unit of Randomization", record.UnitOfRandomization, model.UnitOfRandomization, builder);
             ManagedFileChangeDetector.CheckProperty("Treatment", record.Treatment, model.Treatment, builder);
             ManagedFileChangeDetector.CheckProperty("Treatment Administration", record.TreatmentAdministration, model.TreatmentAdministration, builder);
             ManagedFileChangeDetector.CheckProperty("Outcome Measures", record.OutcomeMeasures, model.OutcomeMeasures, builder);
