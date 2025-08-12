@@ -57,11 +57,13 @@ namespace Colectica.Curation.Cli.Commands
         {
             Log.Debug("Processing record {recordId} {recordTitle}", record.Id, record.Title);
 
-            // TODO Check to see if the record is already in Dataverse.
+            // Check to see if the record is already in Dataverse.
+            string checkUrl = $"{dataverseUrl}/api/search?q={record.Number}&type=dataset&metadata_fields=otherIdValue";
+            string checkResultJson = await GetFromApiAsync(checkUrl, apiToken);
 
+            string? existingPersistentId = GetIdFromSearchResult(checkResultJson);
 
-            // Add the record to Dataverse.
-            string createDatasetUrl = $"{dataverseUrl}/api/dataverses/{dataverseName}/datasets?doNotValidate=true";
+            // Add or update the new record in Dataverse.
             DatasetDto datasetDto = DatasetDto.FromCatalogRecord(record);
             
             // Configure JsonSerializer to ignore null values and use camelCase
@@ -72,19 +74,34 @@ namespace Colectica.Curation.Cli.Commands
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
             
-            string datasetJson = JsonSerializer.Serialize(datasetDto, options);
-            StringContent datasetContent = new StringContent(datasetJson, Encoding.UTF8, "application/json");
-
-            if (debugDir != null)
-            {
-                File.WriteAllText(Path.Combine(debugDir, record.Id.ToString() + ".json"), datasetJson);
-            }
 
             string datasetResponse = "";
             ApiResponseDto? datasetApiResponse = null;
             try
             {
-                datasetResponse = await PostToApiAsync(createDatasetUrl, apiToken, datasetContent);
+                if (existingPersistentId != null)
+                {
+                    // Update the existing dataset.
+                    string datasetJson = JsonSerializer.Serialize(datasetDto.DatasetVersion, options);
+                    StringContent datasetContent = new StringContent(datasetJson, Encoding.UTF8, "application/json");
+                    string updateDatasetUrl = $"{dataverseUrl}/api/datasets/:persistentId/versions/:draft?persistentId={existingPersistentId}";
+                    datasetResponse = await PutJsonToApiAsync(updateDatasetUrl, apiToken, datasetContent);
+                }
+                else
+                {
+                    // Create a new dataset.
+                    string datasetJson = JsonSerializer.Serialize(datasetDto, options);
+                    StringContent datasetContent = new StringContent(datasetJson, Encoding.UTF8, "application/json");
+
+                    if (debugDir != null)
+                    {
+                        File.WriteAllText(Path.Combine(debugDir, record.Id.ToString() + ".json"), datasetJson);
+                    }
+
+                    string createDatasetUrl = $"{dataverseUrl}/api/dataverses/{dataverseName}/datasets?doNotValidate=true";
+                    datasetResponse = await PostToApiAsync(createDatasetUrl, apiToken, datasetContent);
+                }
+
                 datasetApiResponse = JsonSerializer.Deserialize<ApiResponseDto>(datasetResponse, options);
 
                 if (datasetApiResponse == null)
@@ -106,6 +123,7 @@ namespace Colectica.Curation.Cli.Commands
             }
 
             string? datasetDoi = datasetApiResponse.Data?.PersistentId;
+            datasetDoi ??= datasetApiResponse.Data?.DatasetPersistentId;
 
             // Use the ispsArchiveDate field as the date in the citation.
             try
@@ -121,7 +139,7 @@ namespace Colectica.Curation.Cli.Commands
 
 
             // Add all files.
-            string addFileUrl = $"{dataverseUrl}/api/datasets/:persistentId/add?persistentId={datasetDoi}";
+            string addFileUrl = $"{dataverseUrl}/api/files/:persistentId/add?persistentId={datasetDoi}";
 
             foreach (var file in record.Files)
             {
@@ -139,34 +157,133 @@ namespace Colectica.Curation.Cli.Commands
 
                 Log.Debug("Processing file {file}", file.Name);
 
-                string publishedDataDirectory = config["Curation:PublishedDataDirectory"] ?? "";
-                string filePath = Path.Combine(
-                    publishedDataDirectory,
-                    record.Id.ToString(),
-                    file.Name);
-                if (!System.IO.File.Exists(filePath))
-                {
-                    Log.Error("File not found: {filePath}", filePath);
-                    continue;
-                }
+                // Check for an existing file.
+                string fileCheckUrl = $"{dataverseUrl}/api/search?q={file.Number}&type=file";
+                string fileCheckResultJson = await GetFromApiAsync(fileCheckUrl, apiToken);
+                string? existingFileId = GetFileIdFromSearchResult(fileCheckResultJson, file.Name);
 
                 FileDto fileDto = FileDto.FromManagedFile(file);
-                string fileJson = JsonSerializer.Serialize(fileDto, options);
 
-                using var multipartContent = new MultipartFormDataContent();
-                multipartContent.Add(new StringContent(fileJson, Encoding.UTF8, "application/json"), "jsonData");
-                multipartContent.Add(new StreamContent(System.IO.File.OpenRead(filePath)), "file", file.Name);
-
-                try
+                if (existingFileId != null)
                 {
-                    string fileResponse = await PostToApiAsync(addFileUrl, apiToken, multipartContent);
-                    Log.Information("File uploaded successfully: {file}", file.Name);
+                    // Update metadata for the existing file.
+
+                    try
+                    {
+                        string updateFileUrl = $"{dataverseUrl}/api/files/{existingFileId}/metadata";
+
+                        fileDto.DataFileId = existingFileId;
+                        string fileJson = JsonSerializer.Serialize(fileDto, options);
+                        StringContent fileMetadataContent = new StringContent(fileJson, Encoding.UTF8, "application/json");
+
+                        string fileResponse = await PostToApiAsync(updateFileUrl, apiToken, fileMetadataContent);
+                        Log.Information("File metadata updated successfully: {file}", file.Name);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Failed to update file metadata: {file}", file.Name);
+                    }
+
                 }
-                catch (Exception ex)
+                else
                 {
-                    Log.Error(ex, "Failed to upload file: {file}", file.Name);
+                    // Create a new file, and upload it.
+                    string publishedDataDirectory = config["Curation:PublishedDataDirectory"] ?? "";
+                    string filePath = Path.Combine(
+                        publishedDataDirectory,
+                        record.Id.ToString(),
+                        file.Name);
+                    if (!System.IO.File.Exists(filePath))
+                    {
+                        Log.Error("File not found: {filePath}", filePath);
+                        continue;
+                    }
+
+                    string fileJson = JsonSerializer.Serialize(fileDto, options);
+                    StringContent fileMetadataContent = new StringContent(fileJson, Encoding.UTF8, "application/json");
+
+                    using var multipartContent = new MultipartFormDataContent();
+                    multipartContent.Add(fileMetadataContent, "jsonData");
+                    multipartContent.Add(new StreamContent(System.IO.File.OpenRead(filePath)), "file", file.Name);
+
+                    try
+                    {
+                        string fileResponse = await PostToApiAsync(addFileUrl, apiToken, multipartContent);
+                        Log.Information("File uploaded successfully: {file}", file.Name);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Failed to upload file: {file}", file.Name);
+                    }
+                }
+
+            }
+
+        }
+
+        private string? GetFileIdFromSearchResult(string json, string fileLabel)
+        {
+            try
+            {
+                using JsonDocument checkDoc = JsonDocument.Parse(json);
+                if (checkDoc.RootElement.TryGetProperty("data", out JsonElement dataElement) &&
+                    dataElement.TryGetProperty("items", out JsonElement itemsElement) &&
+                    itemsElement.GetArrayLength() > 0)
+                {
+                    JsonElement firstItem = itemsElement[0];
+                    if (firstItem.TryGetProperty("file_id", out JsonElement idElement))
+                    {
+                        string? id = idElement.ToString();
+                        Log.Debug("Found existing dataset with ID: {id}", id);
+                        return id;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Failed to parse search result JSON: {json}", json);
+            }
+
+            return null;           
+        }
+
+        private string? GetIdFromSearchResult(string searchResultJson)
+        {
+            try
+            {
+                using JsonDocument checkDoc = JsonDocument.Parse(searchResultJson);
+                if (checkDoc.RootElement.TryGetProperty("data", out JsonElement dataElement) &&
+                    dataElement.TryGetProperty("items", out JsonElement itemsElement) &&
+                    itemsElement.GetArrayLength() > 0)
+                {
+                    JsonElement firstItem = itemsElement[0];
+                    if (firstItem.TryGetProperty("global_id", out JsonElement idElement))
+                    {
+                        string? id = idElement.ToString();
+                        Log.Debug("Found existing dataset with ID: {id}", id);
+                        return id;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Failed to parse search result JSON: {json}", searchResultJson);
+            }
+
+            return null;
+        }
+
+        private async Task<string> GetFromApiAsync(string url, string apiToken)
+        {
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("X-Dataverse-key", apiToken);
+
+            HttpResponseMessage response = await client.GetAsync(url);
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            response.EnsureSuccessStatusCode();
+
+            return responseBody;
         }
 
         private async Task<string> PutToApiAsync(string url, string apiToken, string value, string? doi)
@@ -181,7 +298,22 @@ namespace Colectica.Curation.Cli.Commands
 
             response.EnsureSuccessStatusCode();
 
-            return responseBody;           
+            return responseBody;
+        }
+
+        public async Task<string> PutJsonToApiAsync(string url, string apiToken, HttpContent content)
+        {
+            using var client = new HttpClient();
+            client.Timeout = TimeSpan.FromMinutes(5);
+            client.DefaultRequestHeaders.Add("X-Dataverse-key", apiToken);
+            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+            HttpResponseMessage response = await client.PutAsync(url, content);
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            response.EnsureSuccessStatusCode();
+
+            return responseBody;
         }
 
         public async Task<string> PostToApiAsync(string url, string apiToken, HttpContent content)

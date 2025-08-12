@@ -18,5 +18,8 @@ namespace Colectica.Curation.Dataverse
 
         [JsonPropertyName("persistentId")]
         public string? PersistentId { get; set; }
+
+        [JsonPropertyName("datasetPersistentId")]
+        public string? DatasetPersistentId { get; set; }
     }
 }
