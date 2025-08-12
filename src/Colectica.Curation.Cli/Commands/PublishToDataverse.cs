@@ -21,6 +21,7 @@ namespace Colectica.Curation.Cli.Commands
         private readonly string apiToken;
         private readonly string dataverseName;
         private readonly string? debugDir;
+        private readonly JsonSerializerOptions jsonOptions;
 
         public PublishToDataverse(string dataverseUrl, IConfiguration config)
         {
@@ -31,6 +32,14 @@ namespace Colectica.Curation.Cli.Commands
             apiToken = config["Dataverse:ApiToken"] ?? "";
             dataverseName = config["Dataverse:DataverseName"] ?? "";
             debugDir = config["Data:DebugDirectory"] ?? "";
+
+            // Configure JsonSerializer to ignore null values and use camelCase
+            jsonOptions = new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                WriteIndented = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
 
         }
 
@@ -47,13 +56,31 @@ namespace Colectica.Curation.Cli.Commands
                 return;
             }
 
+            Dictionary<CatalogRecord, string> datasetDoiMap = [];
             foreach (var record in publishedRecords)
             {
-                await PublishRecord(record);
+                string? doi = await PublishRecord(record);
+                if (!string.IsNullOrWhiteSpace(doi))
+                {
+                    datasetDoiMap.Add(record, doi);
+                }
+            }
+
+            foreach (var record in publishedRecords)
+            {
+                datasetDoiMap.TryGetValue(record, out string? doi);
+                if (string.IsNullOrWhiteSpace(doi))
+                {
+                    Log.Error("Record with no known DOI {number}", record.Number);
+                    continue;
+                }
+
+                // await PublishFilesForRecord(record, doi);
             }
         }
 
-        private async Task PublishRecord(CatalogRecord record)
+
+        private async Task<string?> PublishRecord(CatalogRecord record)
         {
             Log.Debug("Processing record {recordId} {recordTitle}", record.Id, record.Title);
 
@@ -65,15 +92,6 @@ namespace Colectica.Curation.Cli.Commands
 
             // Add or update the new record in Dataverse.
             DatasetDto datasetDto = DatasetDto.FromCatalogRecord(record);
-            
-            // Configure JsonSerializer to ignore null values and use camelCase
-            var options = new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                WriteIndented = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-            
 
             string datasetResponse = "";
             ApiResponseDto? datasetApiResponse = null;
@@ -82,7 +100,7 @@ namespace Colectica.Curation.Cli.Commands
                 if (existingPersistentId != null)
                 {
                     // Update the existing dataset.
-                    string datasetJson = JsonSerializer.Serialize(datasetDto.DatasetVersion, options);
+                    string datasetJson = JsonSerializer.Serialize(datasetDto.DatasetVersion, jsonOptions);
                     StringContent datasetContent = new StringContent(datasetJson, Encoding.UTF8, "application/json");
                     string updateDatasetUrl = $"{dataverseUrl}/api/datasets/:persistentId/versions/:draft?persistentId={existingPersistentId}";
                     datasetResponse = await PutJsonToApiAsync(updateDatasetUrl, apiToken, datasetContent);
@@ -90,7 +108,7 @@ namespace Colectica.Curation.Cli.Commands
                 else
                 {
                     // Create a new dataset.
-                    string datasetJson = JsonSerializer.Serialize(datasetDto, options);
+                    string datasetJson = JsonSerializer.Serialize(datasetDto, jsonOptions);
                     StringContent datasetContent = new StringContent(datasetJson, Encoding.UTF8, "application/json");
 
                     if (debugDir != null)
@@ -102,24 +120,24 @@ namespace Colectica.Curation.Cli.Commands
                     datasetResponse = await PostToApiAsync(createDatasetUrl, apiToken, datasetContent);
                 }
 
-                datasetApiResponse = JsonSerializer.Deserialize<ApiResponseDto>(datasetResponse, options);
+                datasetApiResponse = JsonSerializer.Deserialize<ApiResponseDto>(datasetResponse, jsonOptions);
 
                 if (datasetApiResponse == null)
                 {
                     Log.Error("Failed to deserialize API response. Response: {response}", datasetResponse);
-                    return;
+                    return null;
                 }
 
                 if (datasetApiResponse.Status != "OK")
                 {
                     Log.Error("Failed to create dataset. Response: {response}", datasetResponse);
-                    return;
+                    return null;
                 }
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Failed to create dataset. Response: {response}", datasetResponse);
-                return;
+                return null;
             }
 
             string? datasetDoi = datasetApiResponse.Data?.PersistentId;
@@ -134,10 +152,14 @@ namespace Colectica.Curation.Cli.Commands
             catch (Exception ex)
             {
                 Log.Error(ex, "Failed to set citation date for dataset {datasetDoi}", datasetDoi);
-                return;
+                return datasetDoi;
             }
 
+            return datasetDoi;
+        }
 
+        private async Task PublishFilesForRecord(CatalogRecord record, string datasetDoi)
+        {
             // Add all files.
             string addFileUrl = $"{dataverseUrl}/api/files/:persistentId/add?persistentId={datasetDoi}";
 
@@ -173,7 +195,7 @@ namespace Colectica.Curation.Cli.Commands
                         string updateFileUrl = $"{dataverseUrl}/api/files/{existingFileId}/metadata";
 
                         fileDto.DataFileId = existingFileId;
-                        string fileJson = JsonSerializer.Serialize(fileDto, options);
+                        string fileJson = JsonSerializer.Serialize(fileDto, jsonOptions);
                         StringContent fileMetadataContent = new StringContent(fileJson, Encoding.UTF8, "application/json");
 
                         string fileResponse = await PostToApiAsync(updateFileUrl, apiToken, fileMetadataContent);
@@ -199,7 +221,7 @@ namespace Colectica.Curation.Cli.Commands
                         continue;
                     }
 
-                    string fileJson = JsonSerializer.Serialize(fileDto, options);
+                    string fileJson = JsonSerializer.Serialize(fileDto, jsonOptions);
                     StringContent fileMetadataContent = new StringContent(fileJson, Encoding.UTF8, "application/json");
 
                     using var multipartContent = new MultipartFormDataContent();
@@ -218,7 +240,6 @@ namespace Colectica.Curation.Cli.Commands
                 }
 
             }
-
         }
 
         private string? GetFileIdFromSearchResult(string json, string fileLabel)
