@@ -38,26 +38,29 @@ namespace Colectica.Curation.Dataverse
             producerField.TypeName = "producer";
             producerField.Multiple = true;
             producerField.TypeClass = "compound";
-            producerField.Value = new List<object>
+
+            if (!string.IsNullOrWhiteSpace(record.CreatedBy.Affiliation))
             {
-                new
+                producerField.Value = new List<object>
                 {
-                    ProducerName = new FieldDto
+                    new
                     {
-                        TypeName = "producerName",
-                        Multiple = false,
-                        TypeClass = "primitive",
-                        Value = record.CreatedBy.FullName
-                    },
-                    ProducerAffiliation = new FieldDto
-                    {
-                        TypeName = "producerAffiliation",
-                        Multiple = false,
-                        TypeClass = "primitive",
-                        Value = record.CreatedBy.Affiliation
+                        ProducerName = new FieldDto("producerName", record.CreatedBy.FullName),
+                        ProducerAffiliation = new FieldDto("producerAffiliation", record.CreatedBy.Affiliation)
                     }
-                }
-            };
+                };
+            }
+            else
+            {
+                producerField.Value = new List<object>
+                {
+                    new
+                    {
+                        ProducerName = new FieldDto("producerName", record.CreatedBy.FullName),
+                    }
+                };
+            }
+
             termsBlock.Fields.Add(producerField);
         
 
@@ -80,8 +83,13 @@ namespace Colectica.Curation.Dataverse
             ispsBlock.Fields.Add(new("ispsOutcomeMeasures", new List<string>() { record.OutcomeMeasures }, multiple:true));
             ispsBlock.Fields.Add(new("randomizationProcedure", record.RandomizationProcedure));
 
-            string modeOfDataCollection = MapModeOfDataCollection(record.ModeOfDataCollection);
-            AddMultipleControlledVocabularyField(ispsBlock, "ispsModeOfDataCollection", modeOfDataCollection);
+            string[] modes = record.ModeOfDataCollection.Split(",");
+            List<string> modesToAdd = [];
+            foreach (string mode in modes)
+            {
+                modesToAdd.Add(MapModeOfDataCollection(mode));
+            }
+            ispsBlock.Fields.Add(new FieldDto("ispsModeOfDataCollection", modesToAdd, multiple: true, typeClass: "controlledVocabulary"));
 
             string researchDesign = GetResearchDesignTerm(record.ResearchDesign ?? "", out string researchDesignOtherSpecify);
             AddMultipleControlledVocabularyField(ispsBlock, "ispsResearchDesign", researchDesign);
@@ -435,6 +443,15 @@ namespace Colectica.Curation.Dataverse
         private static string MapModeOfDataCollection(string originalMode) => originalMode switch
         {
             "Survey: Web based" => "Survey - Web",
+            "Content coding" => "Content Coding",
+            "Observation" => "Observation - Field",
+            "Self administered questionnaire" => "Self-Administered Questionnaire",
+            "Interview: web based" => "Interview - Web",
+            "Focus group" => "Focus Group",
+            "Interview: email" => "Interview - Email",
+            "Interview" => "Interview - Face to Face",
+            "Self-administered writing or diaries" => "Self-Administered Writing or Diaries",
+
             _ => originalMode
         };
 
