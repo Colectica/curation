@@ -16,6 +16,7 @@ namespace Colectica.Curation.Cli
             // Set up logging.
             var log = new LoggerConfiguration()
                 .WriteTo.Console()
+                .WriteTo.File("logs/curation-cli-.txt", rollingInterval: RollingInterval.Day)
                 .MinimumLevel.Verbose()
                 .CreateLogger();
             Log.Logger = log;
