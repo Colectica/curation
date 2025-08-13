@@ -202,9 +202,21 @@ namespace Colectica.Curation.Cli.Commands
 
                 FileDto fileDto = FileDto.FromManagedFile(file);
 
+                // Create a new file, and upload it.
+                string publishedDataDirectory = config["Curation:PublishedDataDirectory"] ?? "";
+                string filePath = Path.Combine(
+                    publishedDataDirectory,
+                    record.Id.ToString(),
+                    file.Name);
+                if (!System.IO.File.Exists(filePath))
+                {
+                    Log.Error("File not found: {filePath}", filePath);
+                    continue;
+                }
+
                 if (existingFileId != null)
                 {
-                    // Replace the existing file.
+                    // Update the existing file.
                     try
                     {
                         string updateFileUrl = $"{dataverseUrl}/api/files/{existingFileId}/metadata";
@@ -213,8 +225,21 @@ namespace Colectica.Curation.Cli.Commands
                         string fileJson = JsonSerializer.Serialize(fileDto, jsonOptions);
                         StringContent fileMetadataContent = new StringContent(fileJson, Encoding.UTF8, "application/json");
 
-                        string fileResponse = await PostToApiAsync(updateFileUrl, apiToken, fileMetadataContent);
-                        Log.Information("File metadata updated successfully: {file}", file.Name);
+                        using var multipartContent = new MultipartFormDataContent
+                        {
+                            { fileMetadataContent, "jsonData" }
+                        };
+
+                        string fileResponseStr = await PostToApiAsync(updateFileUrl, apiToken, multipartContent);
+                        if (fileResponseStr.StartsWith("File Metadata update has been completed:"))
+                        {
+                            Log.Information("File metadata updated successfully: {file}", file.Name);
+                        }
+                        else
+                        {
+                            Log.Error("Failed to update file metadata. Response: {response}", fileResponseStr);
+                            return;
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -224,18 +249,6 @@ namespace Colectica.Curation.Cli.Commands
                 }
                 else
                 {
-                    // Create a new file, and upload it.
-                    string publishedDataDirectory = config["Curation:PublishedDataDirectory"] ?? "";
-                    string filePath = Path.Combine(
-                        publishedDataDirectory,
-                        record.Id.ToString(),
-                        file.Name);
-                    if (!System.IO.File.Exists(filePath))
-                    {
-                        Log.Error("File not found: {filePath}", filePath);
-                        continue;
-                    }
-
                     string fileJson = JsonSerializer.Serialize(fileDto, jsonOptions);
                     StringContent fileMetadataContent = new StringContent(fileJson, Encoding.UTF8, "application/json");
 
