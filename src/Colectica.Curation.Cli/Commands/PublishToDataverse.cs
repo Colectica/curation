@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -49,7 +50,10 @@ namespace Colectica.Curation.Cli.Commands
 
             using var db = new ApplicationDbContext(connectionString);
 
-            var publishedRecords = db.CatalogRecords.Where(x => x.Status == CatalogRecordStatus.Published).ToList();
+            var publishedRecords = db.CatalogRecords
+                .Include(x => x.Owner)
+                .Where(x => x.Status == CatalogRecordStatus.Published)
+                .ToList();
             if (!publishedRecords.Any())
             {
                 Log.Logger.Information("No published records found. Exiting.");
@@ -57,7 +61,8 @@ namespace Colectica.Curation.Cli.Commands
             }
 
             Dictionary<CatalogRecord, string> datasetDoiMap = [];
-            foreach (var record in publishedRecords)
+            var recordsToPublish = publishedRecords.Take(5).ToList();
+            foreach (var record in recordsToPublish)
             {
                 string? doi = await PublishRecord(record);
                 if (!string.IsNullOrWhiteSpace(doi))
@@ -66,7 +71,7 @@ namespace Colectica.Curation.Cli.Commands
                 }
             }
 
-            foreach (var record in publishedRecords)
+            foreach (var record in recordsToPublish)
             {
                 datasetDoiMap.TryGetValue(record, out string? doi);
                 if (string.IsNullOrWhiteSpace(doi))
@@ -75,7 +80,7 @@ namespace Colectica.Curation.Cli.Commands
                     continue;
                 }
 
-                // await PublishFilesForRecord(record, doi);
+                await PublishFilesForRecord(record, doi);
             }
         }
 
@@ -99,14 +104,23 @@ namespace Colectica.Curation.Cli.Commands
             {
                 if (existingPersistentId != null)
                 {
+                    Log.Information("Updating existing dataset");
                     // Update the existing dataset.
                     string datasetJson = JsonSerializer.Serialize(datasetDto.DatasetVersion, jsonOptions);
                     StringContent datasetContent = new StringContent(datasetJson, Encoding.UTF8, "application/json");
+
+                    if (debugDir != null)
+                    {
+                        File.WriteAllText(Path.Combine(debugDir, record.Id.ToString() + ".json"), datasetJson);
+                    }
+
                     string updateDatasetUrl = $"{dataverseUrl}/api/datasets/:persistentId/versions/:draft?persistentId={existingPersistentId}";
                     datasetResponse = await PutJsonToApiAsync(updateDatasetUrl, apiToken, datasetContent);
                 }
                 else
                 {
+                    Log.Information("Creating new dataset");
+
                     // Create a new dataset.
                     string datasetJson = JsonSerializer.Serialize(datasetDto, jsonOptions);
                     StringContent datasetContent = new StringContent(datasetJson, Encoding.UTF8, "application/json");
@@ -130,13 +144,15 @@ namespace Colectica.Curation.Cli.Commands
 
                 if (datasetApiResponse.Status != "OK")
                 {
-                    Log.Error("Failed to create dataset. Response: {response}", datasetResponse);
+                    Log.Error("Failed to create dataset {id}. Message: {message}. Response: {response}", existingPersistentId, datasetApiResponse.Message, datasetResponse);
                     return null;
                 }
+
+                Log.Debug("Success");
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to create dataset. Response: {response}", datasetResponse);
+                Log.Error(ex, "Failed to create dataset {id}. Response: {response}", existingPersistentId, datasetResponse);
                 return null;
             }
 
@@ -161,7 +177,7 @@ namespace Colectica.Curation.Cli.Commands
         private async Task PublishFilesForRecord(CatalogRecord record, string datasetDoi)
         {
             // Add all files.
-            string addFileUrl = $"{dataverseUrl}/api/files/:persistentId/add?persistentId={datasetDoi}";
+            string addFileUrl = $"{dataverseUrl}/api/datasets/:persistentId/add?persistentId={datasetDoi}";
 
             foreach (var file in record.Files)
             {
@@ -188,8 +204,7 @@ namespace Colectica.Curation.Cli.Commands
 
                 if (existingFileId != null)
                 {
-                    // Update metadata for the existing file.
-
+                    // Replace the existing file.
                     try
                     {
                         string updateFileUrl = $"{dataverseUrl}/api/files/{existingFileId}/metadata";
@@ -230,7 +245,20 @@ namespace Colectica.Curation.Cli.Commands
 
                     try
                     {
-                        string fileResponse = await PostToApiAsync(addFileUrl, apiToken, multipartContent);
+                        string fileResponseStr = await PostToApiAsync(addFileUrl, apiToken, multipartContent);
+                        var fileResponseObj = JsonSerializer.Deserialize<ApiResponseDto>(fileResponseStr, jsonOptions);
+
+                        if (fileResponseObj == null)
+                        {
+                            Log.Error("Failed to deserialize API response. Response: {response}", fileResponseStr);
+                            return;
+                        }
+
+                        if (fileResponseObj.Status != "OK")
+                        {
+                            Log.Error("Failed to create file. Message: {message}. Response: {response}", fileResponseObj.Message, fileResponseStr);
+                            return;
+                        }
                         Log.Information("File uploaded successfully: {file}", file.Name);
                     }
                     catch (Exception ex)
@@ -255,7 +283,7 @@ namespace Colectica.Curation.Cli.Commands
                     if (firstItem.TryGetProperty("file_id", out JsonElement idElement))
                     {
                         string? id = idElement.ToString();
-                        Log.Debug("Found existing dataset with ID: {id}", id);
+                        Log.Debug("Found existing file with ID: {id}", id);
                         return id;
                     }
                 }
@@ -265,7 +293,7 @@ namespace Colectica.Curation.Cli.Commands
                 Log.Warning(ex, "Failed to parse search result JSON: {json}", json);
             }
 
-            return null;           
+            return null;
         }
 
         private string? GetIdFromSearchResult(string searchResultJson)
@@ -301,9 +329,6 @@ namespace Colectica.Curation.Cli.Commands
 
             HttpResponseMessage response = await client.GetAsync(url);
             string responseBody = await response.Content.ReadAsStringAsync();
-
-            response.EnsureSuccessStatusCode();
-
             return responseBody;
         }
 
@@ -316,9 +341,6 @@ namespace Colectica.Curation.Cli.Commands
 
             HttpResponseMessage response = await client.PutAsync(url, content);
             string responseBody = await response.Content.ReadAsStringAsync();
-
-            response.EnsureSuccessStatusCode();
-
             return responseBody;
         }
 
@@ -331,9 +353,6 @@ namespace Colectica.Curation.Cli.Commands
 
             HttpResponseMessage response = await client.PutAsync(url, content);
             string responseBody = await response.Content.ReadAsStringAsync();
-
-            response.EnsureSuccessStatusCode();
-
             return responseBody;
         }
 
@@ -346,11 +365,9 @@ namespace Colectica.Curation.Cli.Commands
 
             HttpResponseMessage response = await client.PostAsync(url, content);
             string responseBody = await response.Content.ReadAsStringAsync();
-
-            response.EnsureSuccessStatusCode();
-
             return responseBody;
         }
 
     }
+
 }

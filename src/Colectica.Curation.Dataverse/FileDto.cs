@@ -20,6 +20,16 @@ public class FileDto
         fileDto.Source = managedFile.Source;
         fileDto.Restricted = !managedFile.IsPublicAccess;
 
+        if (!string.IsNullOrWhiteSpace(managedFile.KindOfData))
+        {
+            fileDto.Categories.Add(managedFile.KindOfData);
+        }
+
+        if (!string.IsNullOrWhiteSpace(managedFile.Type))
+        {
+            fileDto.Categories.Add(managedFile.Type);
+        }
+
         if (managedFile.CertifiedDate.HasValue)
         {
             fileDto.DataFile.PublicationDate = new DateOnly(managedFile.CertifiedDate.Value.Year, managedFile.CertifiedDate.Value.Month, managedFile.CertifiedDate.Value.Day);
@@ -34,6 +44,7 @@ public class FileDto
     public string Title { get; set; } = string.Empty;
     public string Source { get; set; } = string.Empty;
     public bool Restricted { get; set; }
+    public List<string> Categories { get; set; } = [];
 
     public string TabIngest => "true";
 
@@ -42,5 +53,5 @@ public class FileDto
 
 public class DataFileDto
 {
-    public DateOnly PublicationDate { get; set; }
+    public DateOnly? PublicationDate { get; set; }
 }

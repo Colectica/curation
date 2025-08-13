@@ -7,6 +7,9 @@ namespace Colectica.Curation.Dataverse
         [JsonPropertyName("status")]
         public string? Status { get; set; }
 
+        [JsonPropertyName("message")]
+        public string? Message { get; set; }
+
         [JsonPropertyName("data")]
         public ApiResponseDataDto? Data { get; set; }
     }
