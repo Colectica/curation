@@ -76,7 +76,7 @@ namespace Colectica.Curation.Cli.Commands
             }
 
             Dictionary<CatalogRecord, string> datasetDoiMap = [];
-            var recordsToPublish = publishedRecords.Take(5).ToList();
+            var recordsToPublish = publishedRecords;
             foreach (var record in recordsToPublish)
             {
                 string? doi = await PublishRecord(record);
@@ -159,7 +159,7 @@ namespace Colectica.Curation.Cli.Commands
 
                 if (datasetApiResponse.Status != "OK")
                 {
-                    Log.Error("Failed to create dataset {id}. Message: {message}. Response: {response}", existingPersistentId, datasetApiResponse.Message, datasetResponse);
+                    Log.Error("Failed to create or update dataset {id}. Message: {message}. Response: {response}", existingPersistentId, datasetApiResponse.Message, datasetResponse);
                     return null;
                 }
 
@@ -202,11 +202,11 @@ namespace Colectica.Curation.Cli.Commands
                 }
 
                 // For now, skip this file if it is over 5 MB.
-                if (file.Size > 1 * 1024 * 256)
-                {
-                    Log.Debug("Skipping file {file} because it is larger than the set limit", file.Name);
-                    continue;
-                }
+                // if (file.Size > 1 * 1024 * 256)
+                // {
+                //     Log.Debug("Skipping file {file} because it is larger than the set limit", file.Name);
+                //     continue;
+                // }
 
                 Log.Debug("Processing file {file}", file.Name);
 
@@ -445,7 +445,7 @@ namespace Colectica.Curation.Cli.Commands
         public async Task<string> PostToApiAsync(string url, string apiToken, HttpContent content)
         {
             using var client = new HttpClient();
-            client.Timeout = TimeSpan.FromMinutes(5);
+            client.Timeout = TimeSpan.FromMinutes(30);
             client.DefaultRequestHeaders.Add("X-Dataverse-key", apiToken);
             client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
