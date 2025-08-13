@@ -1,4 +1,8 @@
-﻿using Colectica.Curation.Data;
+﻿using Algenta.Colectica.Model.Ddi;
+using Algenta.Colectica.Model.Repository;
+using Algenta.Colectica.Model.Serialization;
+using Algenta.Colectica.Repository.Client;
+using Colectica.Curation.Data;
 using Colectica.Curation.Dataverse;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -11,6 +15,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Colectica.Curation.Cli.Commands
 {
@@ -23,6 +28,7 @@ namespace Colectica.Curation.Cli.Commands
         private readonly string dataverseName;
         private readonly string? debugDir;
         private readonly JsonSerializerOptions jsonOptions;
+        private readonly RestRepositoryClient repositoryClient;
 
         public PublishToDataverse(string dataverseUrl, IConfiguration config)
         {
@@ -42,6 +48,15 @@ namespace Colectica.Curation.Cli.Commands
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
+            RepositoryConnectionInfo connectionInfo = new()
+            {
+                TransportMethod = RepositoryTransportMethod.REST,
+                AuthenticationMethod = RepositoryAuthenticationMethod.UserName,
+                Url = config["Repository:Url"],
+                UserName = config["Repository:UserName"],
+                Password = config["Repository:Password"]
+            };
+            repositoryClient = new RestRepositoryClient(connectionInfo);
         }
 
         public async Task Publish()
@@ -280,6 +295,64 @@ namespace Colectica.Curation.Cli.Commands
                     }
                 }
 
+                // If this is a data file and we have a PhysicalInstance, make some DDI 2 XML and send that to Dataverse.
+                // if (file.Name.EndsWith(".dta") ||
+                //     file.Name.EndsWith(".sav") ||
+                //     file.Name.EndsWith(".csv") ||
+                //     file.Name.EndsWith(".rda") ||
+                //     file.Name.EndsWith(".rdata"))
+                // {
+                //     try
+                //     {
+                //         // Try to get the PhysicalInstance.
+                //         if (repositoryClient.GetLatestItem(file.Id, "us.yale.isps") is PhysicalInstance physicalInstance)
+                //         {
+                //             SetPopulator populator = new(repositoryClient);
+                //             physicalInstance.Accept(populator);
+
+                //             DdiInstance ddiInstance = new();
+                //             StudyUnit studyUnit = new();
+                //             studyUnit.PhysicalInstances.Add(physicalInstance);
+                //             ddiInstance.StudyUnits.Add(studyUnit);
+
+                //             // Serialize as DDI Codebook
+                //             Ddi2Serializer serializer = new();
+                //             XDocument doc = serializer.GetDdi2(ddiInstance);
+
+                //             // Write the full XML document to debug directory
+                //             if (debugDir != null)
+                //             {
+                //                 string xmlFileName = $"{file.Id}_{file.Name}_ddi.xml";
+                //                 string xmlFilePath = Path.Combine(debugDir, xmlFileName);
+                //                 File.WriteAllText(xmlFilePath, doc.ToString());
+                //             }
+                            
+                //             XNamespace ddiNamespace = "ddi:codebook:2_5";
+                //             XElement? dataDscr = doc.Descendants(ddiNamespace + "dataDscr")?.FirstOrDefault();
+                //             if (dataDscr != null)
+                //             {
+                //                 // Send the dataDscr section as the root.
+                //                 // string xml = dataDscr?.ToString() ?? "";
+                //                 string xml = File.ReadAllText("/home/jeremy/Downloads/dct.xml");
+                //                 if (!string.IsNullOrWhiteSpace(xml))
+                //                 {
+                //                     string ddiUrl = $"{dataverseUrl}/api/edit/{existingFileId}";
+                //                     StringContent ddiContent = new StringContent(xml, Encoding.UTF8, "application/xml");
+                //                     string ddiResponseStr = await PutJsonToApiAsync(ddiUrl, apiToken, ddiContent);
+
+                //                 }
+                //             }
+                //         }
+                //         else
+                //         {
+                //             Log.Error("No PhysicalInstance exists for {id} {file}", file.Id, file.Name);
+                //         }
+                //     }
+                //     catch (Exception ex)
+                //     {
+                //         Log.Error(ex, "Error while sending DDI to Dataverse");
+                //     }
+                // }
             }
         }
 
