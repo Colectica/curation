@@ -25,13 +25,8 @@ namespace Colectica.Curation.Cli
             IConfigurationBuilder builder = new ConfigurationBuilder()
                .SetBasePath(basePath)
                .AddJsonFile("appsettings.json")
+               .AddJsonFile("appsettings.Development.json", optional:true)
                .AddEnvironmentVariables();
-
-            string devPath = Path.Combine(basePath, "appsettings.Development.json");
-            if (File.Exists(devPath))
-            {
-                builder.AddJsonFile(devPath);
-            }
 
             builder.AddEnvironmentVariables();
             config = builder.Build();
