@@ -214,6 +214,18 @@ namespace Colectica.Curation.Dataverse
             // Distributor
             if (!string.IsNullOrWhiteSpace(record.Organization?.Name))
             {
+                string distName = record.Organization.Name;
+
+                if (distName == "ISPS")
+                {
+                    distName = "Institution for Social and Policy Studies";
+                }
+
+                string distAffiliation = distName == "Institution for Social and Policy Studies" ? "Yale University" : "";
+                string distAbbreviation = distName == "Institution for Social and Policy Studies" ? "ISPS" : "";
+                string distUrl = distName == "Institution for Social and Policy Studies" ? "https://isps.yale.edu" : "";
+
+
                 FieldDto distributorField = new();
                 distributorField.TypeName = "distributor";
                 distributorField.Multiple = true;
@@ -222,13 +234,10 @@ namespace Colectica.Curation.Dataverse
                 {
                     new
                     {
-                        DistributorAffiliation = new FieldDto
-                        {
-                            TypeName = "distributorAffiliation",
-                            Multiple = false,
-                            TypeClass = "primitive",
-                            Value = record.Organization.Name
-                        }
+                        DistributorName = new FieldDto("distributorName", distName),
+                        DistributorAffiliation = new FieldDto("distributorAffiliation", distAffiliation),
+                        DistributorAbbreviation = new FieldDto("distributorAbbreviation", distAbbreviation),
+                        DistributorUrl = new FieldDto("distributorURL", distUrl)
                     }
                 };
                 citationBlock.Fields.Add(distributorField);
