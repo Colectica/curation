@@ -1,4 +1,5 @@
 dist/
+logs/
 **/bin/
 **/obj/
 docs/_build
