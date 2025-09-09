@@ -39,28 +39,6 @@ namespace Colectica.Curation.Dataverse
             producerField.Multiple = true;
             producerField.TypeClass = "compound";
 
-            if (!string.IsNullOrWhiteSpace(record.CreatedBy.Affiliation))
-            {
-                producerField.Value = new List<object>
-                {
-                    new
-                    {
-                        ProducerName = new FieldDto("producerName", record.CreatedBy.FullName),
-                        ProducerAffiliation = new FieldDto("producerAffiliation", record.CreatedBy.Affiliation)
-                    }
-                };
-            }
-            else
-            {
-                producerField.Value = new List<object>
-                {
-                    new
-                    {
-                        ProducerName = new FieldDto("producerName", record.CreatedBy.FullName),
-                    }
-                };
-            }
-
             termsBlock.Fields.Add(producerField);
         
 
