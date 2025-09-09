@@ -92,13 +92,15 @@ namespace Colectica.Curation.Dataverse
             geoBlock.DisplayName = "Geospatial Metadata";
             geoBlock.Fields = [];
 
+            string locationTrimmed = record.Location?.Trim().Trim(',') ?? "";
+
             if (record.Location == "United States")
             {
-                geoBlock.Fields.Add(new FieldDto("country", record.Location, false, "controlledVocabulary"));
+                geoBlock.Fields.Add(new FieldDto("country", locationTrimmed, false, "controlledVocabulary"));
             }
             else
             {
-                geoBlock.Fields.Add(new FieldDto("otherGeographicCoverage", record.Location));
+                geoBlock.Fields.Add(new FieldDto("otherGeographicCoverage", locationTrimmed));
             }
             geoBlock.Fields.Add(new FieldDto("geographicUnit", new List<string>() { record.LocationDetails }, true));
 
