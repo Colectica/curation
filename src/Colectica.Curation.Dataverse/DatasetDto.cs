@@ -34,14 +34,6 @@ namespace Colectica.Curation.Dataverse
             termsBlock.Fields.Add(new("depositorrequirements", record.DepositAgreement));
             termsBlock.Fields.Add(new("availabilitystatus", record.EmbargoStatement));
 
-            FieldDto producerField = new();
-            producerField.TypeName = "producer";
-            producerField.Multiple = true;
-            producerField.TypeClass = "compound";
-
-            termsBlock.Fields.Add(producerField);
-        
-
             // ---- Custom ISPS block ----
             GenericBlockDto ispsBlock = new();
             metadataBlocks.Isps = ispsBlock;
@@ -58,7 +50,9 @@ namespace Colectica.Curation.Dataverse
                 ispsBlock.Fields.Add(new("ispsCertifiedDate", record.CertifiedDate.Value.ToString("yyyy-MM-dd")));
             }
 
-            ispsBlock.Fields.Add(new("ispsOutcomeMeasures", new List<string>() { record.OutcomeMeasures }, multiple:true));
+            string[] measures = record.OutcomeMeasures.Split(",", StringSplitOptions.RemoveEmptyEntries);
+            ispsBlock.Fields.Add(new("ispsOutcomeMeasures", measures, multiple:true));
+
             ispsBlock.Fields.Add(new("randomizationProcedure", record.RandomizationProcedure));
 
             string[] modes = record.ModeOfDataCollection.Split(",");
