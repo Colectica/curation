@@ -52,6 +52,11 @@ namespace Colectica.Curation.Cli
             publishAllToDataverseCommand.Handler = CommandHandler.Create<string>(PublishAllToDataverse);
             root.Add(publishAllToDataverseCommand);
 
+            // inpsect-records
+            var inspectRecordsCommand = new Command("inspect-records", "Inspect records for potential issues before publishing");
+            inspectRecordsCommand.Handler = CommandHandler.Create<string>(InspectRecords);
+            root.Add(inspectRecordsCommand);
+
             // Run the command
             try
             {
@@ -63,6 +68,16 @@ namespace Colectica.Curation.Cli
             }
         }
 
+        private static void InspectRecords(string obj)
+        {
+            if (config == null)
+            {
+                return;
+            }
+
+            var inspector = new InspectRecords();
+            inspector.Inspect(config);
+        }
 
         private static void CopyPublishedFiles(string destination)
         {
