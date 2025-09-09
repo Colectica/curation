@@ -20,9 +20,12 @@ public class FileDto
         fileDto.Source = managedFile.Source;
         fileDto.Restricted = !managedFile.IsPublicAccess;
 
-        if (!string.IsNullOrWhiteSpace(managedFile.KindOfData))
+        if (managedFile.Type == "Data")
         {
-            fileDto.Categories.Add(managedFile.KindOfData);
+            if (!string.IsNullOrWhiteSpace(managedFile.KindOfData) && string.Compare(managedFile.KindOfData, "Not Selected", StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                fileDto.Categories.Add(managedFile.KindOfData);
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(managedFile.Type))
