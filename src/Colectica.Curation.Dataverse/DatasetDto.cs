@@ -110,7 +110,7 @@ namespace Colectica.Curation.Dataverse
 
             socialScienceBlock.Fields.Add(new("samplingProcedure", record.InclusionExclusionCriteria));
 
-            if (int.TryParse(record.SampleSize, out int sampleSize))
+            if (int.TryParse(record.SampleSize.Replace(",", ""), out int sampleSize))
             {
                 FieldDto actualSampleSizeField = new("targetSampleActualSize", sampleSize.ToString());
                 FieldDto targetSampleSizeField = new("targetSampleSize", new { TargetActualSampleSize = actualSampleSizeField }, typeClass: "compound");
