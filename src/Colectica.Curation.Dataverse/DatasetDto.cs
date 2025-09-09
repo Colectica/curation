@@ -343,6 +343,7 @@ namespace Colectica.Curation.Dataverse
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
+                value = value.Replace(": ", " - ");
                 block.Fields.Add(new FieldDto(fieldName, new List<string> { value }, multiple: true, typeClass: "controlledVocabulary"));
             }
         }
@@ -412,20 +413,26 @@ namespace Colectica.Curation.Dataverse
             return harmonizedTerm;
         }
 
-        private static string MapModeOfDataCollection(string originalMode) => originalMode switch
+        private static string MapModeOfDataCollection(string originalMode)
         {
-            "Survey: Web based" => "Survey - Web",
-            "Content coding" => "Content Coding",
-            "Observation" => "Observation - Field",
-            "Self administered questionnaire" => "Self-Administered Questionnaire",
-            "Interview: web based" => "Interview - Web",
-            "Focus group" => "Focus Group",
-            "Interview: email" => "Interview - Email",
-            "Interview" => "Interview - Face to Face",
-            "Self-administered writing or diaries" => "Self-Administered Writing or Diaries",
+            string result = originalMode switch
+            {
+                "Survey: Web based" => "Survey - Web",
+                "Content coding" => "Content Coding",
+                "Observation" => "Observation - Field",
+                "Self administered questionnaire" => "Self-Administered Questionnaire",
+                "Interview: web based" => "Interview - Web",
+                "Focus group" => "Focus Group",
+                "Interview: email" => "Interview - Email",
+                "Interview" => "Interview - Face to Face",
+                "Self-administered writing or diaries" => "Self-Administered Writing or Diaries",
 
-            _ => originalMode
-        };
+                _ => originalMode
+            };
+
+            result = result.Replace(": ", " - ");
+            return result;
+        }
 
         private static string GetUnitOfTerm(string input, out string otherSpecify)
         {
