@@ -259,14 +259,21 @@ namespace Colectica.Curation.Dataverse
                             TypeName = "datasetContactEmail",
                             Multiple = false,
                             TypeClass = "primitive",
-                            Value = record.Organization.ReplyToAddress
+                            Value = "isps@yale.edu"
                         },
                         DatasetContactName = new FieldDto
                         {
                             TypeName = "datasetContactName",
                             Multiple = false,
                             TypeClass = "primitive",
-                            Value = record.Organization.ContactInformation
+                            Value = record.Organization.Name
+                        },
+                        DatasetContactAffiliation = new FieldDto
+                        {
+                            TypeName = "datasetContactAffiliation",
+                            Multiple = false,
+                            TypeClass = "primitive",
+                            Value = "Yale University"
                         }
                     }
                 };
@@ -490,6 +497,7 @@ namespace Colectica.Curation.Dataverse
     {
         public FieldDto? DatasetContactEmail { get; set; }
         public FieldDto? DatasetContactName { get; set; }
+        public FieldDto? DatasetContactAffiliation { get; set; }
     }
 
 
