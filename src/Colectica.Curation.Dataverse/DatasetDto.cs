@@ -188,7 +188,24 @@ namespace Colectica.Curation.Dataverse
 
             // Title
             citationBlock.Fields.Add(new("title", record.Title));
-            citationBlock.Fields.Add(new("otherIdValue", record.Number));
+
+            FieldDto otherIdValueField = new()
+            {
+                TypeName = "otherId",
+                Multiple = true,
+                TypeClass = "compound",
+                Value = new List<object>()
+                {
+                    new
+                    {
+                        OtherIdAgency = new FieldDto("otherIdAgency", "ISPS"),
+                        OtherIdValue = new FieldDto("otherIdValue", record.Number)
+                    }
+                }
+            };
+            citationBlock.Fields.Add(otherIdValueField);
+
+            // citationBlock.Fields.Add(new("otherIdValue", record.Number));
 
             // Deposit Date
             if (record.CreatedDate != null)
@@ -293,6 +310,12 @@ namespace Colectica.Curation.Dataverse
             // Contact
             if (record.Organization?.ContactInformation != null)
             {
+                string orgName = record.Organization.Name;
+                if (orgName == "ISPS")
+                {
+                    orgName = "Institution for Social and Policy Studies";
+                }
+
                 FieldDto contactField = new();
                 contactField.TypeName = "datasetContact";
                 contactField.Multiple = true;
@@ -313,7 +336,7 @@ namespace Colectica.Curation.Dataverse
                             TypeName = "datasetContactName",
                             Multiple = false,
                             TypeClass = "primitive",
-                            Value = record.Organization.Name
+                            Value = orgName
                         },
                         DatasetContactAffiliation = new FieldDto
                         {
