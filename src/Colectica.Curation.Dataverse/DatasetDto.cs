@@ -49,7 +49,7 @@ namespace Colectica.Curation.Dataverse
             }
 
             string[] measures = record.OutcomeMeasures.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            ispsBlock.Fields.Add(new("ispsOutcomeMeasures", measures, multiple:true));
+            ispsBlock.Fields.Add(new("ispsOutcomeMeasures", measures, multiple: true));
 
             ispsBlock.Fields.Add(new("randomizationProcedure", record.RandomizationProcedure));
 
@@ -85,22 +85,41 @@ namespace Colectica.Curation.Dataverse
             ispsBlock.Fields.Add(new("ispsVersion", record.Version.ToString()));
 
             // ---- Geospatial fields -----
+            List<object> geoCoverageSubFields = [];
+            FieldDto geoCoverageField = new();
+            geoCoverageField.TypeName = "geographicCoverage";
+            geoCoverageField.Multiple = true;
+            geoCoverageField.TypeClass = "compound";
+            geoCoverageField.Value = geoCoverageSubFields;
+
             GeospatialDto geoBlock = new();
             metadataBlocks.Geospatial = geoBlock;
             geoBlock.DisplayName = "Geospatial Metadata";
-            geoBlock.Fields = [];
+            geoBlock.Fields = [geoCoverageField];
 
             string locationTrimmed = record.Location?.Trim().Trim(',') ?? "";
 
             if (record.Location == "United States")
             {
-                geoBlock.Fields.Add(new FieldDto("country", locationTrimmed, false, "controlledVocabulary"));
+                geoCoverageSubFields.Add(
+                    new
+                    {
+                        Country = new FieldDto("country", locationTrimmed, false, "controlledVocabulary")
+                    });
             }
             else
             {
-                geoBlock.Fields.Add(new FieldDto("otherGeographicCoverage", locationTrimmed));
+                geoCoverageSubFields.Add(
+                    new
+                    {
+                        OtherGeographicCoverage = new FieldDto("otherGeographicCoverage", locationTrimmed)
+                    });
             }
-            geoBlock.Fields.Add(new FieldDto("geographicUnit", new List<string>() { record.LocationDetails }, true));
+
+            if (!string.IsNullOrWhiteSpace(record.LocationDetails))
+            {
+                geoBlock.Fields.Add(new FieldDto("geographicUnit", new List<string>() { record.LocationDetails }, true));
+            }
 
             // ---- Social Science fields ----
             SocialScienceDto socialScienceBlock = new();
@@ -561,6 +580,7 @@ namespace Colectica.Curation.Dataverse
     public class GeospatialDto
     {
         public string? DisplayName { get; set; }
+        public string Name => "geospatial";
         public List<FieldDto> Fields { get; set; } = [];
     }
 
