@@ -271,13 +271,31 @@ namespace Colectica.Curation.Dataverse
                 authorsField.TypeName = "author";
                 authorsField.Multiple = true;
                 authorsField.TypeClass = "compound";
-                authorsField.Value = record.Authors.Select(author => new 
+
+                List<object> authorObjs = [];
+                foreach (var author in record.Authors)
                 {
-                    AuthorName = new FieldDto("authorName", author.FullName),
-                    // AuthorAffiliation = new FieldDto("authorAffiliation", author.Affiliation),
-                    // AuthorIdentifierScheme = new FieldDto("authorIdentifierScheme", "ORCID", typeClass: "controlledVocabulary"),
-                    // AuthorIdentifier = new FieldDto("authorIdentifier", author.Orcid)
-                }).ToList();
+                    if (!string.IsNullOrWhiteSpace(author.Orcid))
+                    {
+                        authorObjs.Add(new
+                        {
+                            AuthorName = new FieldDto("authorName", author.FullName),
+                            AuthorAffiliation = new FieldDto("authorAffiliation", author.Affiliation),
+                            AuthorIdentifierScheme = new FieldDto("authorIdentifierScheme", "ORCID", typeClass: "controlledVocabulary"),
+                            AuthorIdentifier = new FieldDto("authorIdentifier", author.Orcid)
+                        });
+                    }
+                    else
+                    {
+                        authorObjs.Add(new
+                        {
+                            AuthorName = new FieldDto("authorName", author.FullName),
+                            AuthorAffiliation = new FieldDto("authorAffiliation", author.Affiliation),
+                        });
+                    }
+                }
+
+                authorsField.Value = authorObjs;
                 citationBlock.Fields.Add(authorsField);
             }
 
