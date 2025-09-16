@@ -327,36 +327,6 @@ namespace Colectica.Curation.Dataverse
                 citationBlock.Fields.Add(contactField);
             }
 
-            // Owner
-            if (!string.IsNullOrWhiteSpace(record.OwnerText))
-            {
-                FieldDto contactField = new();
-                contactField.TypeName = "contributor";
-                contactField.Multiple = true;
-                contactField.TypeClass = "compound";
-                contactField.Value = new List<object>
-                {
-                    new
-                    {
-                        ContributorType = new FieldDto
-                        {
-                            TypeName = "contributorType",
-                            Multiple = false,
-                            TypeClass = "controlledVocabulary",
-                            Value = "Rights Holder"
-                        },
-                        ContributorName = new FieldDto
-                        {
-                            TypeName = "contributorName",
-                            Multiple = false,
-                            TypeClass = "primitive",
-                            Value = record.OwnerText
-                        }
-                    }
-                };
-                citationBlock.Fields.Add(contactField);
-            }
-
             // Description
             FieldDto descriptionField = new();
             descriptionField.TypeName = "dsDescription";
