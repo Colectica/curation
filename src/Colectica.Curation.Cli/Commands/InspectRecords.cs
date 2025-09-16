@@ -33,7 +33,7 @@ public class InspectRecords
                 Log.Information("    OutcomeMeasures with comma: {OutcomeMeasures}", record.OutcomeMeasures);
             }
 
-            Log.Information("    Owner: " + record.OwnerText);
+            Log.Information("    Funding: " + record.Funding);
         }
 
     }
