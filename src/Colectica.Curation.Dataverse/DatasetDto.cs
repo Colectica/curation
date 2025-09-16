@@ -190,9 +190,37 @@ namespace Colectica.Curation.Dataverse
             citationBlock.Fields.Add(new("title", record.Title));
             citationBlock.Fields.Add(new("otherIdValue", record.Number));
 
+            // Deposit Date
             if (record.CreatedDate != null)
             {
                 citationBlock.Fields.Add(new("dateOfDeposit", record.CreatedDate.Value.ToString("yyyy-MM-dd")));
+            }
+
+            // Time period covered
+            if (!string.IsNullOrWhiteSpace(record.StudyTimePeriod))
+            {
+                DateJsonModel? dateModel = JsonSerializer.Deserialize<DateJsonModel>(record.StudyTimePeriod);
+                if (dateModel != null)
+                {
+                    object timePeriodObj = null;
+                    if (!dateModel.isRange)
+                    {
+                        timePeriodObj = new
+                        {
+                            TimePeriodCoveredStart = new FieldDto("timePeriodCoveredStart", dateModel.date)
+                        };
+                    }
+                    else
+                    {
+                        timePeriodObj = new
+                        {
+                            TimePeriodCoveredStart = new FieldDto("timePeriodCoveredEnd", dateModel.date)
+                        };
+                    }
+
+                    FieldDto timePeriodCoveredField = new("timePeriodCovered", new List<object>() { timePeriodObj }, true, "compound");;
+                    citationBlock.Fields.Add(timePeriodCoveredField);
+                }
             }
 
 
