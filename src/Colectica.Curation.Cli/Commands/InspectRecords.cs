@@ -26,12 +26,14 @@ public class InspectRecords
 
         foreach (var record in publishedRecords)
         {
-            Log.Information("Inspecting record {RecordId} - {Title}", record.Id, record.Title);
+            Log.Information("Inspecting record {RecordNumber} - {Title}", record.Number, record.Title);
 
             if (record.OutcomeMeasures.Contains(','))
             {
                 Log.Information("    OutcomeMeasures with comma: {OutcomeMeasures}", record.OutcomeMeasures);
             }
+
+            Log.Information("    Owner: " + record.OwnerText);
         }
 
     }
