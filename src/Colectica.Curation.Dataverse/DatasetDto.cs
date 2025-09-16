@@ -247,13 +247,19 @@ namespace Colectica.Curation.Dataverse
                 contactField.TypeName = "grantNumber";
                 contactField.Multiple = true;
                 contactField.TypeClass = "compound";
-                contactField.Value = new List<object>
+
+                List<object> agencyEntries = [];
+                string[] fundingAgencies = record.Funding.Split(new[] { ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (string agency in fundingAgencies)
                 {
-                    new
+                    agencyEntries.Add(new
                     {
-                        Value = new FieldDto("grantNumberAgency", record.Funding)
-                    }
-                };
+                        GrantNumberAgency = new FieldDto("grantNumberAgency", agency.Trim())
+                    });
+                }
+
+                contactField.Value = agencyEntries;
                 citationBlock.Fields.Add(contactField);
             }
             
