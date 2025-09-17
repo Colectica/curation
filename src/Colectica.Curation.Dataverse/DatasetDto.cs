@@ -34,8 +34,9 @@ namespace Colectica.Curation.Dataverse
 
             // ---- Custom ISPS block ----
             GenericBlockDto ispsBlock = new();
-            metadataBlocks.Isps = ispsBlock;
+            metadataBlocks.CustomISPS = ispsBlock;
             ispsBlock.DisplayName = "ISPS Custom Metadata";
+            ispsBlock.Name = "customISPS";
             ispsBlock.Fields = [];
 
             if (record.ArchiveDate != null)
@@ -51,7 +52,7 @@ namespace Colectica.Curation.Dataverse
             string[] measures = record.OutcomeMeasures.Split(",", StringSplitOptions.RemoveEmptyEntries);
             ispsBlock.Fields.Add(new("ispsOutcomeMeasures", measures, multiple: true));
 
-            ispsBlock.Fields.Add(new("randomizationProcedure", record.RandomizationProcedure));
+            ispsBlock.Fields.Add(new("ispsRandomizationProcedure", new List<string>() { record.RandomizationProcedure }, multiple:true));
 
             string[] modes = record.ModeOfDataCollection.Split(",");
             List<string> modesToAdd = [];
@@ -580,7 +581,7 @@ namespace Colectica.Curation.Dataverse
     public class MetadataBlocksDto
     {
         public GenericBlockDto? Terms { get; set; }
-        public GenericBlockDto? Isps { get; set; }
+        public GenericBlockDto? CustomISPS { get; set; }
         public CitationDto? Citation { get; set; }
         public GeospatialDto? Geospatial { get; set; }
         public SocialScienceDto? SocialScience { get; set; }
@@ -592,6 +593,7 @@ namespace Colectica.Curation.Dataverse
     public class GenericBlockDto
     {
         public string? DisplayName { get; set; }
+        public string? Name { get; set; }
         public List<FieldDto> Fields { get; set; } = [];
     }
 
