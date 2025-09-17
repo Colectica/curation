@@ -282,7 +282,7 @@ namespace Colectica.Curation.Dataverse
                         authorObjs.Add(new
                         {
                             AuthorName = new FieldDto("authorName", author.FullName),
-                            AuthorAffiliation = new FieldDto("authorAffiliation", author.Affiliation),
+                            AuthorAffiliation = author.Affiliation == null ? null : new FieldDto("authorAffiliation", author.Affiliation),
                             AuthorIdentifierScheme = new FieldDto("authorIdentifierScheme", "ORCID", typeClass: "controlledVocabulary"),
                             AuthorIdentifier = new FieldDto("authorIdentifier", author.Orcid)
                         });
@@ -292,7 +292,7 @@ namespace Colectica.Curation.Dataverse
                         authorObjs.Add(new
                         {
                             AuthorName = new FieldDto("authorName", author.FullName),
-                            AuthorAffiliation = new FieldDto("authorAffiliation", author.Affiliation),
+                            AuthorAffiliation = author.Affiliation == null ? null : new FieldDto("authorAffiliation", author.Affiliation),
                         });
                     }
                 }
