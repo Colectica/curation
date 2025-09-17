@@ -154,7 +154,7 @@ namespace Colectica.Curation.Dataverse
                     dataCollectionField.Multiple = true;
                     dataCollectionField.TypeClass = "compound";
 
-                    if (!string.IsNullOrWhiteSpace(dateModel.endDate))
+                    if (!string.IsNullOrWhiteSpace(dateModel.endDate) && !dateModel.endDate.Contains("-mm"))
                     {
                         dataCollectionField.Value = new List<object>()
                         {
@@ -221,7 +221,7 @@ namespace Colectica.Curation.Dataverse
                 if (dateModel != null)
                 {
                     object timePeriodObj = null;
-                    if (!string.IsNullOrWhiteSpace(dateModel.endDate))
+                    if (!string.IsNullOrWhiteSpace(dateModel.endDate) && !dateModel.endDate.Contains("-mm"))
                     {
                         timePeriodObj = new
                         {
