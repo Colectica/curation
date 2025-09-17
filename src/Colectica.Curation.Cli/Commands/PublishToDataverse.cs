@@ -102,7 +102,7 @@ namespace Colectica.Curation.Cli.Commands
 
         private async Task<string?> PublishRecord(CatalogRecord record)
         {
-            Log.Debug("Processing record {recordId} {recordTitle}", record.Id, record.Title);
+            Log.Debug("Processing record {recordNumber} {recordId} {recordTitle}", record.Number, record.Id, record.Title);
 
             // Check to see if the record is already in Dataverse.
             string checkUrl = $"{dataverseUrl}/api/search?q={record.Number}&type=dataset&metadata_fields=otherIdValue";
@@ -159,7 +159,7 @@ namespace Colectica.Curation.Cli.Commands
 
                 if (datasetApiResponse.Status != "OK")
                 {
-                    Log.Error("Failed to create or update dataset {id}. Message: {message}. Response: {response}", existingPersistentId, datasetApiResponse.Message, datasetResponse);
+                    Log.Error("Failed to create or update dataset {id}. Message: {message}. Response: {response}", existingPersistentId, datasetApiResponse.MessageText, datasetResponse);
                     return null;
                 }
 
@@ -194,6 +194,8 @@ namespace Colectica.Curation.Cli.Commands
             // Add all files.
             string addFileUrl = $"{dataverseUrl}/api/datasets/:persistentId/add?persistentId={datasetDoi}";
 
+            int totalFileCount = record.Files.Count(f => f.IsPublicAccess);
+            int fileCount = 0;
             foreach (var file in record.Files)
             {
                 if (!file.IsPublicAccess)
@@ -201,14 +203,9 @@ namespace Colectica.Curation.Cli.Commands
                     continue;
                 }
 
-                // For now, skip this file if it is over 5 MB.
-                // if (file.Size > 1 * 1024 * 256)
-                // {
-                //     Log.Debug("Skipping file {file} because it is larger than the set limit", file.Name);
-                //     continue;
-                // }
+                fileCount++;
 
-                Log.Debug("Processing file {file}", file.Name);
+                Log.Debug("Processing file {count} of {total} - {file}", fileCount, totalFileCount, file.Name);
 
                 // Check for an existing file.
                 string fileCheckUrl = $"{dataverseUrl}/api/search?q={file.Number}&type=file";
@@ -253,7 +250,7 @@ namespace Colectica.Curation.Cli.Commands
                         else
                         {
                             Log.Error("Failed to update file metadata. Response: {response}", fileResponseStr);
-                            return;
+                            continue;
                         }
                     }
                     catch (Exception ex)
@@ -269,11 +266,13 @@ namespace Colectica.Curation.Cli.Commands
 
                     using var multipartContent = new MultipartFormDataContent();
                     multipartContent.Add(fileMetadataContent, "jsonData");
+
                     multipartContent.Add(new StreamContent(System.IO.File.OpenRead(filePath)), "file", file.Name);
 
                     try
                     {
                         string fileResponseStr = await PostToApiAsync(addFileUrl, apiToken, multipartContent);
+                        Log.Debug("File upload response: {response}", fileResponseStr);
                         var fileResponseObj = JsonSerializer.Deserialize<ApiResponseDto>(fileResponseStr, jsonOptions);
 
                         if (fileResponseObj == null)
@@ -284,7 +283,7 @@ namespace Colectica.Curation.Cli.Commands
 
                         if (fileResponseObj.Status != "OK")
                         {
-                            Log.Error("Failed to create file. Message: {message}. Response: {response}", fileResponseObj.Message, fileResponseStr);
+                            Log.Error("Failed to create file. Message: {message}. Response: {response}", fileResponseObj.MessageText, fileResponseStr);
                             return;
                         }
                         Log.Information("File uploaded successfully: {file}", file.Name);
@@ -292,6 +291,7 @@ namespace Colectica.Curation.Cli.Commands
                     catch (Exception ex)
                     {
                         Log.Error(ex, "Failed to upload file: {file}", file.Name);
+                        continue;
                     }
                 }
 
@@ -365,6 +365,11 @@ namespace Colectica.Curation.Cli.Commands
                     dataElement.TryGetProperty("items", out JsonElement itemsElement) &&
                     itemsElement.GetArrayLength() > 0)
                 {
+                    if (itemsElement.GetArrayLength() > 1)
+                    {
+                        Log.Error("Multiple files found with label {label}. Using the first one.", fileLabel);
+                    }
+
                     JsonElement firstItem = itemsElement[0];
                     if (firstItem.TryGetProperty("file_id", out JsonElement idElement))
                     {
@@ -376,7 +381,7 @@ namespace Colectica.Curation.Cli.Commands
             }
             catch (Exception ex)
             {
-                Log.Warning(ex, "Failed to parse search result JSON: {json}", json);
+                Log.Error(ex, "Failed to parse search result JSON: {json}", json);
             }
 
             return null;

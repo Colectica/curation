@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Colectica.Curation.Dataverse
@@ -8,10 +9,27 @@ namespace Colectica.Curation.Dataverse
         public string? Status { get; set; }
 
         [JsonPropertyName("message")]
-        public string? Message { get; set; }
+        public JsonElement Message { get; set; }
 
         [JsonPropertyName("data")]
         public ApiResponseDataDto? Data { get; set; }
+
+        public string MessageText
+        {
+            get
+            {
+                if (Message.ValueKind == JsonValueKind.String)
+                {
+                    return Message.GetString() ?? "";
+                }
+                else if (Message.ValueKind == JsonValueKind.Object &&
+                        Message.TryGetProperty("message", out JsonElement messageProperty))
+                {
+                    return messageProperty.GetString() ?? "";
+                }
+                return "";
+            }
+        }
     }
 
     public class ApiResponseDataDto
