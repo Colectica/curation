@@ -154,7 +154,7 @@ namespace Colectica.Curation.Dataverse
                     dataCollectionField.Multiple = true;
                     dataCollectionField.TypeClass = "compound";
 
-                    if (dateModel.isRange)
+                    if (!string.IsNullOrWhiteSpace(dateModel.endDate))
                     {
                         dataCollectionField.Value = new List<object>()
                         {
@@ -221,18 +221,19 @@ namespace Colectica.Curation.Dataverse
                 if (dateModel != null)
                 {
                     object timePeriodObj = null;
-                    if (!dateModel.isRange)
+                    if (!string.IsNullOrWhiteSpace(dateModel.endDate))
                     {
                         timePeriodObj = new
                         {
-                            TimePeriodCoveredStart = new FieldDto("timePeriodCoveredStart", dateModel.date)
+                            TimePeriodCoveredStart = new FieldDto("timePeriodCoveredStart", dateModel.date),
+                            TimePeriodCoveredEnd = new FieldDto("timePeriodCoveredEnd", dateModel.endDate)
                         };
                     }
                     else
                     {
                         timePeriodObj = new
                         {
-                            TimePeriodCoveredStart = new FieldDto("timePeriodCoveredEnd", dateModel.date)
+                            TimePeriodCoveredStart = new FieldDto("timePeriodCoveredStart", dateModel.date)
                         };
                     }
 
