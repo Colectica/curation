@@ -17,6 +17,7 @@ namespace Colectica.Curation.Cli
             var log = new LoggerConfiguration()
                 .WriteTo.Console()
                 .WriteTo.File("logs/curation-cli-.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.File(new Serilog.Formatting.Json.JsonFormatter(), "logs/curation-cli-.json", Serilog.Events.LogEventLevel.Warning, rollingInterval: RollingInterval.Day)
                 .MinimumLevel.Verbose()
                 .CreateLogger();
             Log.Logger = log;

@@ -16,6 +16,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Polly;
+using Polly.Extensions.Http;
 
 namespace Colectica.Curation.Cli.Commands
 {
@@ -29,6 +31,9 @@ namespace Colectica.Curation.Cli.Commands
         private readonly string? debugDir;
         private readonly JsonSerializerOptions jsonOptions;
         private readonly RestRepositoryClient repositoryClient;
+        private readonly HttpClient httpClient;
+        private readonly IAsyncPolicy<HttpResponseMessage> retryPolicy;
+        private Dictionary<CatalogRecord, string> datasetIdMap = [];
 
         public PublishToDataverse(string dataverseUrl, IConfiguration config)
         {
@@ -57,6 +62,29 @@ namespace Colectica.Curation.Cli.Commands
                 Password = config["Repository:Password"]
             };
             repositoryClient = new RestRepositoryClient(connectionInfo);
+
+            // Configure retry policy
+            retryPolicy = Policy
+                .HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
+                .Or<HttpRequestException>()
+                .Or<TaskCanceledException>()
+                .WaitAndRetryAsync(
+                    retryCount: 1,
+                    sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), // Exponential backoff
+                    onRetry: (outcome, duration, retryCount, context) =>
+                    {
+                        Log.Warning("Retry {retryCount} for {url} in {duration}ms. Reason: {reason}",
+                            retryCount,
+                            context.GetValueOrDefault("url", "unknown"),
+                            duration.TotalMilliseconds,
+                            outcome.Exception?.Message ?? outcome.Result?.ReasonPhrase ?? "Unknown");
+                    });
+
+            // Create HttpClient with timeout
+            httpClient = new HttpClient();
+            httpClient.Timeout = TimeSpan.FromMinutes(30);
+            httpClient.DefaultRequestHeaders.Add("X-Dataverse-key", apiToken);
+            httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         public async Task Publish()
@@ -76,7 +104,7 @@ namespace Colectica.Curation.Cli.Commands
             }
 
             Dictionary<CatalogRecord, string> datasetDoiMap = [];
-            var recordsToPublish = publishedRecords;
+            var recordsToPublish = publishedRecords.OrderBy(x => x.Number).ToList();
             foreach (var record in recordsToPublish)
             {
                 string? doi = await PublishRecord(record);
@@ -86,8 +114,14 @@ namespace Colectica.Curation.Cli.Commands
                 }
             }
 
+            int expectedFileCount = recordsToPublish.Sum(r => r.Files.Count(f => f.IsPublicAccess));
+            Log.Information("Publishing files for {recordCount} records. Expected file count: {fileCount}", recordsToPublish.Count, expectedFileCount);
+
+            int currentRecordNumber = 0;
             foreach (var record in recordsToPublish)
             {
+                currentRecordNumber++;
+
                 datasetDoiMap.TryGetValue(record, out string? doi);
                 if (string.IsNullOrWhiteSpace(doi))
                 {
@@ -95,7 +129,7 @@ namespace Colectica.Curation.Cli.Commands
                     continue;
                 }
 
-                await PublishFilesForRecord(record, doi);
+                await PublishFilesForRecord(record, doi, currentRecordNumber, recordsToPublish.Count);
             }
         }
 
@@ -174,6 +208,19 @@ namespace Colectica.Curation.Cli.Commands
             string? datasetDoi = datasetApiResponse.Data?.PersistentId;
             datasetDoi ??= datasetApiResponse.Data?.DatasetPersistentId;
 
+            if (datasetApiResponse.Data?.Id != null && datasetApiResponse.Data?.DatasetId == null)
+            {
+                datasetIdMap.Add(record, datasetApiResponse.Data?.Id.ToString() ?? "");
+            }
+            else if (datasetApiResponse.Data?.DatasetId != null)
+            {
+                datasetIdMap.Add(record, datasetApiResponse.Data?.DatasetId?.ToString() ?? "");
+            }
+            else
+            {
+                Log.Warning("No dataset ID returned in response for record {recordNumber}. Response: {response}", record.Number, datasetResponse);
+            }
+
             // Use the ispsArchiveDate field as the date in the citation.
             try
             {
@@ -189,10 +236,22 @@ namespace Colectica.Curation.Cli.Commands
             return datasetDoi;
         }
 
-        private async Task PublishFilesForRecord(CatalogRecord record, string datasetDoi)
+        private async Task PublishFilesForRecord(CatalogRecord record, string datasetDoi, int currentNumber, int totalNumber)
         {
+            Log.Information("Publishing files for record {recordNumber} ({currentNumber}/{totalNumber}) to dataset {datasetDoi}", record.Number, currentNumber, totalNumber, datasetDoi);
+
             // Add all files.
             string addFileUrl = $"{dataverseUrl}/api/datasets/:persistentId/add?persistentId={datasetDoi}";
+
+            if (!datasetIdMap.TryGetValue(record, out string? datasetId) || string.IsNullOrWhiteSpace(datasetId))
+            {
+                Log.Error("No dataset ID found for record {recordNumber}. Cannot publish files.", record.Number);
+                return;
+            }
+
+            string getFilesUrl = $"{dataverseUrl}/api/datasets/{datasetId}/versions/:latest/files";
+            string getFilesJson = await GetFromApiAsync(getFilesUrl, apiToken);
+            ExistingFilesDto? existingFiles = JsonSerializer.Deserialize<ExistingFilesDto>(getFilesJson, jsonOptions);
 
             int totalFileCount = record.Files.Count(f => f.IsPublicAccess);
             int fileCount = 0;
@@ -208,10 +267,13 @@ namespace Colectica.Curation.Cli.Commands
                 Log.Debug("Processing file {count} of {total} - {file}", fileCount, totalFileCount, file.Name);
 
                 // Check for an existing file.
-                string fileCheckUrl = $"{dataverseUrl}/api/search?q={file.Number}&type=file";
-                string fileCheckResultJson = await GetFromApiAsync(fileCheckUrl, apiToken);
-                string? existingFileId = GetFileIdFromSearchResult(fileCheckResultJson, file.Name);
+                var existingFileList = existingFiles?.Data?.Where(f => f.Label == (file.PublicName ?? file.Name));
+                if (existingFileList?.Count() > 1)
+                {
+                    Log.Error("Multiple existing files found with label {label} in record {recordNumber}. Using the first one.", file.PublicName ?? file.Name, record.Number);
+                }
 
+                string? existingFileId = existingFileList?.FirstOrDefault()?.DataFile.Id.ToString();
                 FileDto fileDto = FileDto.FromManagedFile(file);
 
                 // Create a new file, and upload it.
@@ -222,8 +284,8 @@ namespace Colectica.Curation.Cli.Commands
                     file.Name);
                 if (!System.IO.File.Exists(filePath))
                 {
-                    Log.Error("File not found: {filePath}", filePath);
-                    continue;
+                    Log.Error("File not found for record {recordNumber}: {filePath}", record.Number, filePath);
+                    continue; 
                 }
 
                 if (existingFileId != null)
@@ -237,6 +299,11 @@ namespace Colectica.Curation.Cli.Commands
                         string fileJson = JsonSerializer.Serialize(fileDto, jsonOptions);
                         StringContent fileMetadataContent = new StringContent(fileJson, Encoding.UTF8, "application/json");
 
+                        if (debugDir != null)
+                        {
+                            File.WriteAllText(Path.Combine(debugDir, record.Number.ToString() + "_" + file.Number?.ToString() + "_" + ".json"), fileJson);
+                        }
+
                         using var multipartContent = new MultipartFormDataContent
                         {
                             { fileMetadataContent, "jsonData" }
@@ -245,17 +312,17 @@ namespace Colectica.Curation.Cli.Commands
                         string fileResponseStr = await PostToApiAsync(updateFileUrl, apiToken, multipartContent);
                         if (fileResponseStr.StartsWith("File Metadata update has been completed:"))
                         {
-                            Log.Information("File metadata updated successfully: {file}", file.Name);
+                            Log.Debug("File metadata updated successfully: {file}", file.Name);
                         }
                         else
                         {
-                            Log.Error("Failed to update file metadata. Response: {response}", fileResponseStr);
+                            Log.Error("Failed to update file metadata in record {recordNumber}. Response: {response}", record.Number, fileResponseStr);
                             continue;
                         }
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Failed to update file metadata: {file}", file.Name);
+                        Log.Error(ex, "Exception while updating file metadata in record {recordNumber}. {file}", record.Number, file.Name);
                     }
 
                 }
@@ -272,7 +339,6 @@ namespace Colectica.Curation.Cli.Commands
                     try
                     {
                         string fileResponseStr = await PostToApiAsync(addFileUrl, apiToken, multipartContent);
-                        Log.Debug("File upload response: {response}", fileResponseStr);
                         var fileResponseObj = JsonSerializer.Deserialize<ApiResponseDto>(fileResponseStr, jsonOptions);
 
                         if (fileResponseObj == null)
@@ -356,7 +422,7 @@ namespace Colectica.Curation.Cli.Commands
             }
         }
 
-        private string? GetFileIdFromSearchResult(string json, string fileLabel)
+        private string? GetFileIdFromSearchResult(string json, string fileNumber, CatalogRecord record)
         {
             try
             {
@@ -367,7 +433,7 @@ namespace Colectica.Curation.Cli.Commands
                 {
                     if (itemsElement.GetArrayLength() > 1)
                     {
-                        Log.Error("Multiple files found with label {label}. Using the first one.", fileLabel);
+                        Log.Error("Record {recordNumber} has multiple files found with file number {fileNumber}. Using the first one.", record.Number, fileNumber);
                     }
 
                     JsonElement firstItem = itemsElement[0];
@@ -415,50 +481,60 @@ namespace Colectica.Curation.Cli.Commands
 
         private async Task<string> GetFromApiAsync(string url, string apiToken)
         {
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("X-Dataverse-key", apiToken);
+            var context = new Context(url) { ["url"] = url };
+            
+            HttpResponseMessage response = await retryPolicy.ExecuteAsync(async (ctx) =>
+            {
+                return await httpClient.GetAsync(url);
+            }, context);
 
-            HttpResponseMessage response = await client.GetAsync(url);
             string responseBody = await response.Content.ReadAsStringAsync();
             return responseBody;
         }
 
         private async Task<string> PutToApiAsync(string url, string apiToken, string value, string? doi)
         {
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("X-Dataverse-key", apiToken);
-
+            var context = new Context(url) { ["url"] = url };
             StringContent content = new StringContent(value, Encoding.UTF8, "application/x-www-form-urlencoded");
 
-            HttpResponseMessage response = await client.PutAsync(url, content);
+            HttpResponseMessage response = await retryPolicy.ExecuteAsync(async (ctx) =>
+            {
+                return await httpClient.PutAsync(url, content);
+            }, context);
+
             string responseBody = await response.Content.ReadAsStringAsync();
             return responseBody;
         }
 
         public async Task<string> PutJsonToApiAsync(string url, string apiToken, HttpContent content)
         {
-            using var client = new HttpClient();
-            client.Timeout = TimeSpan.FromMinutes(5);
-            client.DefaultRequestHeaders.Add("X-Dataverse-key", apiToken);
-            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            var context = new Context(url) { ["url"] = url };
 
-            HttpResponseMessage response = await client.PutAsync(url, content);
+            HttpResponseMessage response = await retryPolicy.ExecuteAsync(async (ctx) =>
+            {
+                return await httpClient.PutAsync(url, content);
+            }, context);
+
             string responseBody = await response.Content.ReadAsStringAsync();
             return responseBody;
         }
 
         public async Task<string> PostToApiAsync(string url, string apiToken, HttpContent content)
         {
-            using var client = new HttpClient();
-            client.Timeout = TimeSpan.FromMinutes(30);
-            client.DefaultRequestHeaders.Add("X-Dataverse-key", apiToken);
-            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            var context = new Context(url) { ["url"] = url };
 
-            HttpResponseMessage response = await client.PostAsync(url, content);
+            HttpResponseMessage response = await retryPolicy.ExecuteAsync(async (ctx) =>
+            {
+                return await httpClient.PostAsync(url, content);
+            }, context);
+
             string responseBody = await response.Content.ReadAsStringAsync();
             return responseBody;
         }
 
+        public void Dispose()
+        {
+            httpClient?.Dispose();
+        }
     }
-
 }

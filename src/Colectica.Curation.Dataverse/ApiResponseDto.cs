@@ -37,6 +37,9 @@ namespace Colectica.Curation.Dataverse
         [JsonPropertyName("id")]
         public int Id { get; set; }
 
+        [JsonPropertyName("datasetId")]
+        public int? DatasetId { get; set; }
+
         [JsonPropertyName("persistentId")]
         public string? PersistentId { get; set; }
 
