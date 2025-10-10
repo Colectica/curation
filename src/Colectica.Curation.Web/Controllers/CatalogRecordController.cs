@@ -517,7 +517,11 @@ namespace Colectica.Curation.Web.Controllers
                 // Moving from Processing to PublicationRequested requires some additional information.
                 if (record.Status == CatalogRecordStatus.Processing)
                 {
-                    RequireContent(record.RelatedDatabase, new RequiredInformationModel(generalUrl, "Related Databases"), model);
+                    if (record.TermsOfUse == "Custom Dataset Terms")
+                    {
+                        RequireContent(record.RelatedDatabase, new RequiredInformationModel(generalUrl, "Related Databases"), model);
+                    }
+
                     RequireContent(record.RelatedPublications, new RequiredInformationModel(generalUrl, "Related Publications"), model);
                     RequireContent(record.RelatedProjects, new RequiredInformationModel(generalUrl, "Related Projects"), model);
 

@@ -89,6 +89,7 @@ namespace Colectica.Curation.Data
 
         #region Other
 
+        public string TermsOfUse { get; set; }
         public string RelatedDatabase { get; set; }
 
         public string RelatedPublications { get; set; }

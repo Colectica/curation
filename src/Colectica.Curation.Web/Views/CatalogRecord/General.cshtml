@@ -196,7 +196,7 @@
 
             @FormHelpers.ReadOnlyField("Owner Contact", Model.OwnerContact, FieldDefinitions.OwnerContact)
 
-            @FormHelpers.ReadOnlyField("Suggested Citation", Model.TermsOfUse, FieldDefinitions.TermsOfUse)
+            @FormHelpers.ReadOnlyField("Suggested Citation", Model.SuggestedCitation, FieldDefinitions.TermsOfUse)
 
             <div class="form-group">
                 @FormHelpers.ControlLabel("Persistent ID", FieldDefinitions.PersistentID)
@@ -247,8 +247,12 @@
 
         <h3>Other</h3>
 
+        @FormHelpers.SelectField(url, Model.CatalogRecord.Id, "TermsOfUse", "Terms of Use",
+            Model.TermsOfUse, FieldDefinitions.TermsOfUse, true, Model.IsReadOnly,
+            "CC0 1.0", "CC BY 4.0", "Custom Dataset Terms")
+
         @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "RelatedDatabase", "textarea", "Related Databases", Model.RelatedDatabase, FieldDefinitions.RelatedDatabase,
-            isRequired: true, isReadOnly: Model.IsReadOnly)
+            isRequired: Model.TermsOfUse == "Custom Dataset Terms", isReadOnly: Model.IsReadOnly)
 
         @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "RelatedPublications", "textarea", "Related Publications", Model.RelatedPublications, FieldDefinitions.RelatedPublications,
             isRequired: true, isReadOnly: Model.IsReadOnly)

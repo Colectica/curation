@@ -166,7 +166,7 @@ namespace Colectica.Curation.Common.ViewModels
         public string OwnerContact { get; set; }
 
         [Display(Name = "Suggested Citation")]
-        public string TermsOfUse { get; set; }
+        public string SuggestedCitation { get; set; }
         public string PersistentId { get; set; }
 
         [Display(Name = "Funder / Sponsor")]
@@ -182,6 +182,7 @@ namespace Colectica.Curation.Common.ViewModels
         public string EmbargoStatement { get; set; }
         public string OtherRestrictionStatement { get; set; }
 
+        public string TermsOfUse { get; set; }
         public string RelatedDatabase { get; set; }
         public string RelatedPublications { get; set; }
         public string RelatedProjects { get; set; }
@@ -232,13 +233,14 @@ namespace Colectica.Curation.Common.ViewModels
             EmbargoStatement = CatalogRecord.EmbargoStatement;
             OtherRestrictionStatement = CatalogRecord.OtherRestrictionStatement;
 
+            TermsOfUse = CatalogRecord.TermsOfUse;
             RelatedDatabase = CatalogRecord.RelatedDatabase;
             RelatedPublications = CatalogRecord.RelatedPublications;
             RelatedProjects = CatalogRecord.RelatedProjects;
 
             ReviewType = catalogRecord.ReviewType;
             OwnerContact = catalogRecord.Organization.ContactInformation;
-            TermsOfUse = catalogRecord.Organization.OrganizationPolicy;
+            SuggestedCitation = catalogRecord.Organization.OrganizationPolicy;
         }
 
     }

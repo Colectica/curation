@@ -27,6 +27,7 @@ namespace Colectica.Curation.Web.Utility
             ManagedFileChangeDetector.CheckProperty("Confidential", record.IsRestrictedConfidential.ToString(), model.IsRestrictedConfidential.ToString(), builder);
             ManagedFileChangeDetector.CheckProperty("Embargo", record.IsRestrictedEmbargo.ToString(), model.IsRestrictedEmbargo.ToString(), builder);
             ManagedFileChangeDetector.CheckProperty("Other Restriction", record.IsRestrictedOther.ToString(), model.IsRestrictedOther.ToString(), builder);
+            ManagedFileChangeDetector.CheckProperty("Terms of Use", record.TermsOfUse, model.TermsOfUse, builder);
             ManagedFileChangeDetector.CheckProperty("Related Database", record.RelatedDatabase, model.RelatedDatabase, builder);
             ManagedFileChangeDetector.CheckProperty("Related Publications", record.RelatedPublications, model.RelatedPublications, builder);
             ManagedFileChangeDetector.CheckProperty("Related Projects", record.RelatedProjects, model.RelatedProjects, builder);
