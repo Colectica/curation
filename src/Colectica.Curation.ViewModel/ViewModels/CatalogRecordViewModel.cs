@@ -301,39 +301,9 @@ namespace Colectica.Curation.Common.ViewModels
         public CatalogRecordMethodsViewModel(CatalogRecord catalogRecord)
             : base(catalogRecord)
         {
-            // For ResearchDesign, TreatmentAdministration, and UnitOfObservation,
-            // we have two properties: one if the value is from the dropdown choices,
-            // and an other-specify if the value is not in the dropdown choices.
-            if (ResearchDesignChoices.Contains(CatalogRecord.ResearchDesign))
-            {
-                ResearchDesign = CatalogRecord.ResearchDesign;
-            }
-            else
-            {
-                ResearchDesign = "Other";
-                ResearchDesignOtherSpecify = CatalogRecord.ResearchDesign;
-            }
-
-            if (TreatmentAdministrationChoices.Contains(CatalogRecord.TreatmentAdministration))
-            {
-                TreatmentAdministration = CatalogRecord.TreatmentAdministration;
-            }
-            else
-            {
-                TreatmentAdministration = "Other";
-                TreatmentAdministrationOtherSpecify = CatalogRecord.TreatmentAdministration;
-            }
-
-            if (UnitOfObservationChoices.Contains(CatalogRecord.UnitOfObservation))
-            {
-                UnitOfObservation = CatalogRecord.UnitOfObservation;
-            }
-            else
-            {
-                UnitOfObservation = "Other";
-                UnitOfObservationOtherSpecify = CatalogRecord.UnitOfObservation;
-            }
-
+            ResearchDesign = CatalogRecord.ResearchDesign;
+            TreatmentAdministration = CatalogRecord.TreatmentAdministration;
+            UnitOfObservation = CatalogRecord.UnitOfObservation;
             ModeOfDataCollection = CatalogRecord.ModeOfDataCollection;
 
             try

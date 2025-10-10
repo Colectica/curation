@@ -1249,7 +1249,11 @@ namespace Colectica.Curation.Web.Controllers
                 record.FieldDates = JsonConvert.SerializeObject(model.FieldDates);
                 record.StudyTimePeriod = JsonConvert.SerializeObject(model.StudyTimePeriod);
 
+                record.ResearchDesign = Request.Form["ResearchDesign"];
+                record.TreatmentAdministration = Request.Form["TreatmentAdministration"];
+                record.UnitOfObservation = Request.Form["UnitOfObservation"];
                 record.ModeOfDataCollection = Request.Form["ModeOfDataCollection"];
+                record.UnitOfRandomization = Request.Form["UnitOfRandomization"];
 
                 record.DataType = model.CatalogRecordDataType;
                 record.DataSource = model.CatalogRecordDataSource;
@@ -1257,22 +1261,6 @@ namespace Colectica.Curation.Web.Controllers
 
                 record.Version++;
                 record.LastUpdatedDate = DateTime.UtcNow;
-
-                if (model.ResearchDesign == "Other" &&
-                    !string.IsNullOrWhiteSpace(model.ResearchDesignOtherSpecify))
-                {
-                    record.ResearchDesign = model.ResearchDesignOtherSpecify;
-                }
-                if (model.TreatmentAdministration == "Other" &&
-                    !string.IsNullOrWhiteSpace(model.TreatmentAdministrationOtherSpecify))
-                {
-                    record.TreatmentAdministration = model.TreatmentAdministrationOtherSpecify;
-                }
-                if (model.UnitOfObservation == "Other" &&
-                    !string.IsNullOrWhiteSpace(model.UnitOfObservationOtherSpecify))
-                {
-                    record.UnitOfObservation = model.UnitOfObservationOtherSpecify;
-                }
 
                 logger.Debug("Done manually mapping");
 

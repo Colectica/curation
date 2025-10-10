@@ -39,11 +39,11 @@
         <h3>Methods</h3>
 
         <!-- Research design -->
-        @FormHelpers.SelectField(url, Model.CatalogRecord.Id, "ResearchDesign", "Research Design",
-            Model.ResearchDesign, FieldDefinitions.ResearchDesign, true, Model.IsReadOnly,
-            includeOtherTextBox:true, 
-            otherSpecifyContent: Model.ResearchDesignOtherSpecify,
+        @FormHelpers.MultipleSelectField(url, Model.CatalogRecord.Id,
+        "ResearchDesign", "Research Design", Model.ResearchDesign,
+            FieldDefinitions.ResearchDesign, true, Model.IsReadOnly,
             choices:Model.ResearchDesignChoices)
+
 
         <!-- Mode of Data Collection -->
         @FormHelpers.MultipleSelectField(url, Model.CatalogRecord.Id,
@@ -105,12 +105,12 @@
             isReadOnly: Model.IsReadOnly)
 
         <!-- Unit of observation -->
-        @FormHelpers.SelectField(url, Model.CatalogRecord.Id, "UnitOfObservation", "Unit of Observation", Model.UnitOfObservation, FieldDefinitions.UnitOfObservation,
+        @FormHelpers.MultipleSelectField(url, Model.CatalogRecord.Id,
+            "UnitOfObservation", "Unit of Observation", Model.UnitOfObservation,
+            FieldDefinitions.UnitOfObservation,
             Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
             Model.IsReadOnly,
-            includeOtherTextBox:true, 
-            otherSpecifyContent: Model.UnitOfObservationOtherSpecify,
-            choices: Model.UnitOfObservationChoices)
+            choices:Model.UnitOfObservationChoices)
 
         <!-- Sample size -->
         @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "SampleSize", "text", "Sample Size", Model.SampleSize, FieldDefinitions.SampleSize,
@@ -128,10 +128,13 @@
             isReadOnly: Model.IsReadOnly)
 
         <!-- Unit of randomization -->
-        @FormHelpers.SelectField(url, Model.CatalogRecord.Id, "UnitOfRandomization", "Unit of Randomization", Model.UnitOfRandomization, FieldDefinitions.UnitOfRandomization,
+        @FormHelpers.MultipleSelectField(url, Model.CatalogRecord.Id,
+            "UnitOfRandomization", "Unit of Randomization", Model.UnitOfRandomization,
+            FieldDefinitions.UnitOfRandomization,
             Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
             Model.IsReadOnly,
             "Not randomized", "Individual", "Organization", "Family", "Household: unit", "Household: family", "Housing unit", "Geo: village", "Geo: district", "Geo: school", "Geo: DMA", "Geo: region", "Geo: country", "Geo: Census track", "Event/process", "Other")
+
 
         <!-- Intervention -->
         @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "Treatment", "text", "Intervention", Model.Treatment, FieldDefinitions.Intervention,
@@ -139,12 +142,13 @@
             isReadOnly: Model.IsReadOnly)
 
         <!-- Intervention administration -->
-        @FormHelpers.SelectField(url, Model.CatalogRecord.Id, "TreatmentAdministration", "Intervention Administration", Model.TreatmentAdministration, FieldDefinitions.InterventionAdministration,
+        @FormHelpers.MultipleSelectField(url, Model.CatalogRecord.Id,
+            "TreatmentAdministration", "Intervention Administration", Model.TreatmentAdministration,
+            FieldDefinitions.InterventionAdministration,
             Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
             Model.IsReadOnly,
-            includeOtherTextBox:true, 
-            otherSpecifyContent: Model.TreatmentAdministrationOtherSpecify,
-            choices: Model.TreatmentAdministrationChoices)
+            choices:Model.TreatmentAdministrationChoices)
+
 
         <!-- Outcome measure(s) -->
         @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "OutcomeMeasures", "text", "Outcome Measures", Model.OutcomeMeasures, FieldDefinitions.OutcomeMeasures,
@@ -214,7 +218,12 @@
             'container': 'body'
         });
 
+        $("#ResearchDesign").select2();
         $("#ModeOfDataCollection").select2();
+        $("#UnitOfObservation").select2();
+        $("#TreatmentAdministration").select2();
+        $("#UnitOfRandomization").select2();
+
         $("#OutcomeMeasures").select2({
             tags: [ @foreach (string x in Model.AvailableOutcomeMeasures) { <text>"@x",</text> } ],
             tokenSeparators: [","]
