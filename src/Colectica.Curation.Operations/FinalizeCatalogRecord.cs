@@ -274,7 +274,11 @@ namespace Colectica.Curation.Operations
 
             ArchivePackageBuilder.CreateArchivePackage(record, ProcessingDirectory, true, ArchiveDirectory, "published");
 
-            record.ArchiveDate = DateTime.UtcNow;
+            // Only set ArchiveDate if it is not already set.
+            if (!record.ArchiveDate.HasValue)
+            {
+                record.ArchiveDate = DateTime.UtcNow;
+            }
 
             // Mark this step as done.
             var task = db.TaskStatuses.Where(x => x.CatalogRecord.Id == record.Id &&

@@ -180,8 +180,7 @@
 
             @FormHelpers.ReadOnlyField("Last Updated", Model.CatalogRecord.LastUpdatedDate, FieldDefinitions.LastUpdatedDate)
 
-            @*@FormHelpers.ReadOnlyField("Archive Date", Model.CatalogRecord.ArchiveDate, FieldDefinitions.ArchiveDate)*@
-            @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "ArchiveDate", "date", "Archive Date", Model.ArchiveDate, FieldDefinitions.ArchiveDate, isRequired: false, isReadOnly: Model.IsReadOnly)
+            @FormHelpers.ReadOnlyField("Archive Date", Model.CatalogRecord.ArchiveDate, FieldDefinitions.ArchiveDate)
 
             @FormHelpers.SelectField(url, Model.CatalogRecord.Id, "ReviewType", "Review Type", Model.ReviewType, FieldDefinitions.ReviewType,
                 Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
