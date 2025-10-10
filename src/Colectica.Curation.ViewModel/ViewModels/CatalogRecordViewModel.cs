@@ -95,56 +95,54 @@ namespace Colectica.Curation.Common.ViewModels
 
         public string[] ResearchDesignChoices = new string[]
         {
-            "Field experiment",
-            "Natural experiment",
-            "Lab experiment",
-            "Survey experiment",
-            "Regression discontinuity design",
+            "Field Experiment",
+            "Natural Experiment",
+            "Lab Experiment",
+            "Survey Experiment",
+            "Regression Discontinuity Design",
             "Matching",
             "Observational",
-            "Metaanalysis",
+            "Meta-analysis",
             "Other",
             "Multiple"
         };
 
         public string[] TreatmentAdministrationChoices = new string[]
         {
-            "Door to door",
+            "Door to Door",
             "Email",
-            "Government-administered program",
+            "Government Program",
             "Mail",
-            "Mobile technology / Text messages",
-            "NGO-adminstered program",
+            "NGO Program",
             "Phone",
-            "Radio",
-            "School-administered program",
+            "School Program",
             "Television",
-            "Web delivered",
-            "Multiple",
-            "Not applicable",
+            "Text Messages",
+            "Web",
             "Other",
+            "Multiple"
         };
 
 
         public string[] UnitOfObservationChoices = new string[]
         {
+            "Event or Process",
+            "Family",
+            "Geo - Census Track",
+            "Geo - Country",
+            "Geo - District",
+            "Geo - DMA",
+            "Geo - Other",
+            "Geo - Region",
+            "Geo - School",
+            "Geo - Village",
+            "Household - Family",
+            "Household - Unit",
+            "Housing Unit",
             "Individual",
             "Organization",
-            "Family",
-            "Household: unit",
-            "Household: family",
-            "Housing unit",
-            "Geo: village",
-            "Geo: district",
-            "Geo: school",
-            "Geo: DMA",
-            "Geo: region",
-            "Geo: country",
-            "Geo: Census track",
-            "Geo: other",
-            "Event/process",
+            "Other",
             "Multiple",
-            "Other"
         };
 
 

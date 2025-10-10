@@ -47,16 +47,10 @@
 
         <!-- Mode of Data Collection -->
         @FormHelpers.MultipleSelectField(url, Model.CatalogRecord.Id,
-        "ModeOfDataCollection", "Mode of Data Collection", Model.ModeOfDataCollection,
+            "ModeOfDataCollection", "Mode of Data Collection", Model.ModeOfDataCollection,
             FieldDefinitions.ModeOfDataCollection, true, Model.IsReadOnly,
-            "Interview: Face to Face", "Interview: Phone", "Interview: email",
-            "Interview: web based", "Survey: Face to Face", "Survey: Phone",
-            "Survey: Email", "Survey: Web based", "Self administered questionnaire",
-            "Focus group", "Self-administered writing or diaries",
-            "Observation - Field", "Observation - Lab", "Observation - Web",
-            "Experiment: Lab", "Experiment: Field", "Experiment: Web", "Recording",
-            "Content coding", "Transcription", "Compilation", "Summary", "Aggregation",
-            "Simulation", "Measurement and Tests", "Other")
+            "Aggregation", "Compilation", "Content Coding", "Experiment - Field", "Experiment - Lab", "Experiment - Web", "Focus Group", "Interview - Face to Face", "Interview - Phone", "Interview - Email", "Interview - Web", "Measurement and Tests", "Observation - Field", "Observation - Lab", "Observation - Web", "Recording", "Self-Administered Questionnaire", "Self-Administered Writing or Diaries", "Simulation", "Summary", "Survey - Email", "Survey - Face to Face", "Survey - Phone", "Survey - Web", "Transcription", "Other"
+            )
 
         <!-- Field date(s) -->
         <div class="form-group">
@@ -133,7 +127,7 @@
             FieldDefinitions.UnitOfRandomization,
             Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
             Model.IsReadOnly,
-            "Not randomized", "Individual", "Organization", "Family", "Household: unit", "Household: family", "Housing unit", "Geo: village", "Geo: district", "Geo: school", "Geo: DMA", "Geo: region", "Geo: country", "Geo: Census track", "Event/process", "Other")
+            Model.UnitOfObservationChoices)
 
 
         <!-- Intervention -->
