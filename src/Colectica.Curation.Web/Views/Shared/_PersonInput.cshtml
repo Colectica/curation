@@ -1,7 +1,10 @@
-﻿<div data-bind="foreach: people()">
-    <div class="input-group">
-        <input type="hidden"
-               data-bind="value: id, attr: { name: 'AuthorIds[' + $index() + ']' }" />
+﻿<div data-bind="sortable: { data: people, options: { handle: '.drag-handle' } }">
+    <div class="input-group" style="margin-bottom: 6px;">
+        <span class="input-group-btn drag-handle" style="cursor: move;">
+            <span class="btn btn-default" style="cursor: move;">
+                <span class="glyphicon glyphicon-menu-hamburger"></span>
+            </span>
+        </span>
 
         <span class="input-group-btn"
               data-bind="visible: id() == undefined">
@@ -13,13 +16,11 @@
         <input class="typeahead author-input form-control"
                type="text"
                data-bind="value: fullName, template: { afterRender: initialize }, disable: id() != undefined"
-               placeholder="Type to find or add an author"
-               style="margin-bottom: 6px;">
+               placeholder="Type to find or add an author">
 
         <span class="input-group-btn">
             <a class="btn btn-default"
-               data-bind="click: $parent.removePerson"
-               style="margin-top: -5px;">
+               data-bind="click: $parent.removePerson">
                 <span class="glyphicon glyphicon-remove"></span>
             </a>
         </span>

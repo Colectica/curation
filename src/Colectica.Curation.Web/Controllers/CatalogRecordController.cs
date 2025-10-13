@@ -223,13 +223,30 @@ namespace Colectica.Curation.Web.Controllers
 
                 var model = new CatalogRecordGeneralViewModel(record);
 
-                // Set authors
+                // Set authors in the order from AuthorsText
                 var authorModels = new List<UserSearchResultModel>();
-                foreach (var author in record.Authors)
+                
+                if (!string.IsNullOrWhiteSpace(record.AuthorsText))
                 {
-                    var authorModel = new UserSearchResultModel();
-                    Mapper.Map(author, authorModel);
-                    authorModels.Add(authorModel);
+                    // Parse AuthorsText to get the order of full names
+                    var authorFullNames = record.AuthorsText.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(x => x.Trim())
+                        .ToList();
+                    
+                    // Create a dictionary for quick lookup of authors by full name
+                    var authorsByFullName = record.Authors
+                        .ToDictionary(a => a.FullName.Trim(), a => a);
+                    
+                    // Add authors in the order they appear in AuthorsText
+                    foreach (var fullName in authorFullNames)
+                    {
+                        if (authorsByFullName.TryGetValue(fullName, out var author))
+                        {
+                            var authorModel = new UserSearchResultModel();
+                            Mapper.Map(author, authorModel);
+                            authorModels.Add(authorModel);
+                        }
+                    }
                 }
 
                 model.Authors = JsonConvert.SerializeObject(authorModels);
@@ -966,13 +983,19 @@ namespace Colectica.Curation.Web.Controllers
 
                     catalogRecord.DepositAgreement = org.DepositAgreement;
 
-                    // Assign authors.
-                    var authors = db.Users.Where(x => model.AuthorIds.Contains(x.Id));
-                    foreach (var author in authors)
+                    // Assign authors in the order specified
+                    var authorsList = db.Users.Where(x => model.AuthorIds.Contains(x.Id)).ToList();
+                    foreach (string authorId in model.AuthorIds)
                     {
-                        catalogRecord.Authors.Add(author);
+                        var author = authorsList.FirstOrDefault(x => x.Id == authorId);
+                        if (author != null)
+                        {
+                            catalogRecord.Authors.Add(author);
+                        }
                     }
-                    catalogRecord.AuthorsText = string.Join(", ", catalogRecord.Authors.Select(x => x.FullName));
+                    catalogRecord.AuthorsText = string.Join(", ", model.AuthorIds
+                        .Select(id => authorsList.FirstOrDefault(x => x.Id == id)?.FullName)
+                        .Where(name => !string.IsNullOrWhiteSpace(name)));
 
                     // Initialize the CatalogRecord. Perhaps the user (or something) should determine
                     // which initializer to use, instead of the first/only.
@@ -1161,12 +1184,24 @@ namespace Colectica.Curation.Web.Controllers
 
                 // Manually map authors based on the AuthorIDs property
                 record.Authors.Clear();
-                var authors = db.Users.Where(x => model.AuthorIds.Contains(x.Id));
-                foreach (var author in authors)
+                
+                // Retrieve all authors at once
+                var authorsList = db.Users.Where(x => model.AuthorIds.Contains(x.Id)).ToList();
+                
+                // Add them in the order specified in AuthorIds
+                foreach (string authorId in model.AuthorIds)
                 {
-                    record.Authors.Add(author);
+                    var author = authorsList.FirstOrDefault(x => x.Id == authorId);
+                    if (author != null)
+                    {
+                        record.Authors.Add(author);
+                    }
                 }
-                record.AuthorsText = string.Join(", ", record.Authors.Select(x => x.FullName));
+                
+                // Update AuthorsText with names in the correct order
+                record.AuthorsText = string.Join(", ", model.AuthorIds
+                    .Select(authorId => authorsList.FirstOrDefault(x => x.Id == authorId)?.FullName)
+                    .Where(name => !string.IsNullOrWhiteSpace(name)));
 
                 logger.Debug("Authors retrieved");
 
@@ -1565,7 +1600,7 @@ namespace Colectica.Curation.Web.Controllers
                     if (requiredAgreeCount == 0)
                     {
                         requiredAgreeCount = 1;
-                    }
+                      }
 
                     int agreedCount = this.Request.Form.AllKeys.Where(x => x.StartsWith("agree-")).Count();
                     if (agreedCount == requiredAgreeCount)

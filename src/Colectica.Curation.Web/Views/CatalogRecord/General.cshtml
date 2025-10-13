@@ -111,24 +111,6 @@
             @FormHelpers.ControlLabel("Authors", FieldDefinitions.Authors, isRequired: true)
 
             <div class="col-md-10">
-                <div data-bind="foreach: peopleInput().people" style="padding-top: 6px;">
-                    <div data-bind="visible: fullName() !== ''">
-                        <p>
-                            <strong><span data-bind="text: fullName"></span></strong>
-
-                            <span data-bind="visible: contactInformation() !== null && contactInformation() !== ''">
-                                <br />
-                                <span data-bind="text: contactInformation"></span>
-                            </span>
-
-                            <span data-bind="visible: orcid() !== null">
-                                <br />
-                                ORCID: <span data-bind="text: orcid"></span>
-                            </span>
-                        </p>
-                    </div>
-                </div>
-
                 @if (!Model.IsReadOnly)
                 {
                     <div>
@@ -138,11 +120,29 @@
                         </div>
                     </div>
                 }
+                else
+                {
+                    <div data-bind="foreach: peopleInput().people" style="padding-top: 6px;">
+                        <div data-bind="visible: fullName() !== ''">
+                            <p>
+                                <strong><span data-bind="text: fullName"></span></strong>
 
-                <div>
-                    <p>@Model.CatalogRecord.AuthorsText</p>
-                </div>
+                                <span data-bind="visible: contactInformation() !== null && contactInformation() !== ''">
+                                    <br />
+                                    <span data-bind="text: contactInformation"></span>
+                                </span>
+
+                                <span data-bind="visible: orcid() !== null">
+                                    <br />
+                                    ORCID: <span data-bind="text: orcid"></span>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                }
+
             </div>
+
 
         </div>
 
@@ -278,6 +278,8 @@
     <script src="~/Scripts/underscore-min.js"></script>
 
     @Scripts.Render("~/bundles/knockout")
+    <script src="~/Scripts/jquery-ui-1.10.2.min.js"></script>
+    <script src="~/Scripts/knockout-sortable.min.js"></script>
     <script src="/Scripts/typeahead.bundle.js"></script>
     <script src="/Scripts/typeahead.jquery.js"></script>
 
@@ -314,7 +316,44 @@
         </text>
         }
 
-        ko.applyBindings(new CatalogRecordEditorViewModel("@Model.CatalogRecord.Id", "@Model.Organization", '@Html.Raw(Model.Authors)', '', @hasAgreement));
+        var viewModel = new CatalogRecordEditorViewModel("@Model.CatalogRecord.Id", "@Model.Organization", '@Html.Raw(Model.Authors)', '', @hasAgreement);
+        ko.applyBindings(viewModel);
+
+        @if (!Model.IsReadOnly)
+        {
+            <text>
+        // Before form submission, serialize the authors in their current order
+        $(document).ready(function() {
+            $('form').on('submit', function(e) {
+                console.log('Form submitting - serializing authors');
+                
+                // Remove ALL existing AuthorIds inputs (including indexed ones like AuthorIds[0])
+                $('input[name^="AuthorIds"]').remove();
+                
+                // Get the current order from the Knockout observable
+                var people = viewModel.peopleInput().people();
+                console.log('Number of people:', people.length);
+                
+                // Add hidden inputs in the correct order
+                var form = $(this);
+                for (var i = 0; i < people.length; i++) {
+                    var person = people[i];
+                    if (person.id()) {
+                        console.log('Adding author at position ' + i + ':', person.id(), person.fullName());
+                        $('<input>')
+                            .attr('type', 'hidden')
+                            .attr('name', 'AuthorIds')
+                            .val(person.id())
+                            .appendTo(form);
+                    }
+                }
+                
+                console.log('Total AuthorIds inputs:', $('input[name="AuthorIds"]').length);
+                console.log('All inputs with AuthorIds in name:', $('input[name^="AuthorIds"]').length);
+            });
+        });
+            </text>
+        }
 
         $(".info-tip").tooltip({
             'placement': 'top',
