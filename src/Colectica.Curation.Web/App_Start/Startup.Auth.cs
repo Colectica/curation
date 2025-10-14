@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Affero General Public License along
 // with Colectica Curation Tools. If not, see <https://www.gnu.org/licenses/>.
 
-﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
@@ -49,7 +49,16 @@ namespace Colectica.Curation.Web
                 {
                     OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
                         validateInterval: TimeSpan.FromMinutes(30),
-                        regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
+                        regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager)),
+                    // This is the FIX: Add an OnApplyRedirect handler to prevent redirect loops
+                    OnApplyRedirect = ctx =>
+                    {
+                        // Check if we're already on the login page to prevent infinite loops
+                        if (!ctx.Request.Path.StartsWithSegments(new PathString("/Account/Login")))
+                        {
+                            ctx.Response.Redirect(ctx.RedirectUri);
+                        }
+                    }
                 }
             });
             
