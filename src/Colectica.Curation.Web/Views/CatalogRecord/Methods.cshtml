@@ -43,6 +43,9 @@
         "ResearchDesign", "Research Design", Model.ResearchDesign,
             FieldDefinitions.ResearchDesign, true, Model.IsReadOnly,
             choices:Model.ResearchDesignChoices)
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "ResearchDesignOther", "text", "Other Research Design", Model.ResearchDesignOther, FieldDefinitions.ResearchDesign,
+            isRequired: false,
+            isReadOnly: Model.IsReadOnly)
 
 
         <!-- Mode of Data Collection -->
@@ -105,6 +108,9 @@
             Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
             Model.IsReadOnly,
             choices:Model.UnitOfObservationChoices)
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "UnitOfObservationOther", "text", "Other Unit of Observation", Model.UnitOfObservationOther, FieldDefinitions.UnitOfObservation,
+            isRequired: false,
+            isReadOnly: Model.IsReadOnly)
 
         <!-- Sample size -->
         @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "SampleSize", "text", "Sample Size", Model.SampleSize, FieldDefinitions.SampleSize,
@@ -142,6 +148,9 @@
             Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
             Model.IsReadOnly,
             choices:Model.TreatmentAdministrationChoices)
+        @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "TreatmentAdministrationOther", "text", "Other Intervention Administration", Model.TreatmentAdministrationOther, FieldDefinitions.InterventionAdministration,
+            isRequired: false,
+            isReadOnly: Model.IsReadOnly)
 
 
         <!-- Outcome measure(s) -->

@@ -287,9 +287,9 @@ namespace Colectica.Curation.Common.ViewModels
         [AllowHtml] public string CatalogRecordDataSourceInformation { get; set; }
 
 
-        public string ResearchDesignOtherSpecify { get; set; }
-        public string TreatmentAdministrationOtherSpecify { get; set; }
-        public string UnitOfObservationOtherSpecify { get; set; }
+        public string ResearchDesignOther { get; set; }
+        public string TreatmentAdministrationOther { get; set; }
+        public string UnitOfObservationOther { get; set; }
 
         public List<string> AvailableOutcomeMeasures { get; } = new List<string>();
 
@@ -305,6 +305,10 @@ namespace Colectica.Curation.Common.ViewModels
             TreatmentAdministration = CatalogRecord.TreatmentAdministration;
             UnitOfObservation = CatalogRecord.UnitOfObservation;
             ModeOfDataCollection = CatalogRecord.ModeOfDataCollection;
+
+            ResearchDesignOther = CatalogRecord.ResearchDesignOther;
+            UnitOfObservationOther = CatalogRecord.UnitOfObservationOther;
+            TreatmentAdministrationOther = CatalogRecord.TreatmentAdministrationOther;
 
             try
             {

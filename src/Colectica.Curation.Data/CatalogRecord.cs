@@ -101,18 +101,21 @@ namespace Colectica.Curation.Data
         #region Methods
 
         public string ResearchDesign { get; set; }
+        public string ResearchDesignOther { get; set; }
         public string ModeOfDataCollection { get; set; }
         public string FieldDates { get; set; }
         public string StudyTimePeriod { get; set; }
         public string Location { get; set; }
         public string LocationDetails { get; set; }
         public string UnitOfObservation { get; set; }
+        public string UnitOfObservationOther { get; set; }
         public string SampleSize { get; set; }
         public string InclusionExclusionCriteria { get; set; }
         public string RandomizationProcedure { get; set; }
         public string UnitOfRandomization { get; set; }
         public string Treatment { get; set; }
         public string TreatmentAdministration { get; set; }
+        public string TreatmentAdministrationOther { get; set; }
         public string OutcomeMeasures { get; set; }
         public string DataType { get; set; }
         public string DataSource { get; set; }
