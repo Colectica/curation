@@ -30,7 +30,6 @@ namespace Colectica.Curation.Dataverse
             termsBlock.Fields = [];
 
             termsBlock.Fields.Add(new("restrictions", record.AccessStatement));
-            termsBlock.Fields.Add(new("depositorrequirements", record.DepositAgreement));
 
             // ---- Custom ISPS block ----
             GenericBlockDto ispsBlock = new();
