@@ -7,12 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201503271646107_M4.resx">
-      <LogicalName>Colectica.Curation.Data.Migrations.M4.resources</LogicalName>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="EntityFramework6.Npgsql" Version="6.4.3" />
     <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.3" />
