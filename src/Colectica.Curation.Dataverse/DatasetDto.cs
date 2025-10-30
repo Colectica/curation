@@ -23,13 +23,30 @@ namespace Colectica.Curation.Dataverse
             MetadataBlocksDto metadataBlocks = new();
             datasetVersion.MetadataBlocks = metadataBlocks;
 
-            // ---- Terms fields ----
-            GenericBlockDto termsBlock = new();
-            metadataBlocks.Terms = termsBlock;
-            termsBlock.DisplayName = "Terms of Use and Access";
-            termsBlock.Fields = [];
+            // ---- License fields ----
+            if (record.TermsOfUse == "CC0 1.0")
+            {
+                LicenseDto license = new();
+                datasetVersion.License = license;
+                license.Name = "CC0 1.0";
+                license.Uri = "http://creativecommons.org/publicdomain/zero/1.0";
+                license.RightsIdentifier = "CC0-1.0";
+            }
+            else if (record.TermsOfUse == "CC BY 4.0")
+            {
+                LicenseDto license = new();
+                datasetVersion.License = license;
+                license.Name = "CC BY 4.0";
+                license.Uri = "http://creativecommons.org/licenses/by/4.0";
+            }
+            else if (record.TermsOfUse == "Custom Dataset Terms")
+            {
+                datasetVersion.TermsOfUse = record.RelatedDatabase;
+            }
 
-            termsBlock.Fields.Add(new("restrictions", record.AccessStatement));
+            // ---- Terms fields ----
+            datasetVersion.TermsOfAccess = record.AccessStatement;
+            datasetVersion.Restrictionions = record.AccessStatement;
 
             // ---- Custom ISPS block ----
             GenericBlockDto ispsBlock = new();
@@ -61,26 +78,43 @@ namespace Colectica.Curation.Dataverse
             }
             ispsBlock.Fields.Add(new FieldDto("ispsModeOfDataCollection", modesToAdd, multiple: true, typeClass: "controlledVocabulary"));
 
-            string researchDesign = GetResearchDesignTerm(record.ResearchDesign ?? "", out string researchDesignOtherSpecify);
-            AddMultipleControlledVocabularyField(ispsBlock, "ispsResearchDesign", researchDesign);
-            ispsBlock.Fields.Add(new("ispsOtherResearchDesign", new List<string>() { researchDesignOtherSpecify }, multiple: true));
+            AddMultipleControlledVocabularyField(ispsBlock, "ispsResearchDesign", record.ResearchDesign, splitOnComma: true);
 
-            ispsBlock.Fields.Add(new("ispsReviewType", record.ReviewType, typeClass: "controlledVocabulary"));
+            if (!string.IsNullOrWhiteSpace(record.ResearchDesignOther))
+            {
+                ispsBlock.Fields.Add(new("ispsOtherResearchDesign", new List<string>() { record.ResearchDesignOther }, multiple: true));
+            }
+
+            string reviewType = "";
+            if (record.ReviewType == "Full")
+            {
+                reviewType = "Full - YARD data and code review";
+            }
+            else if (record.ReviewType == "Partial")
+            {
+                reviewType = "Partial - YARD data or code review";
+            }
+            else if (record.ReviewType == "None")
+            {
+                reviewType = "None";
+            }
+
+            ispsBlock.Fields.Add(new("ispsReviewType", reviewType, typeClass: "controlledVocabulary"));
             ispsBlock.Fields.Add(new("ispsTreatment", new List<string>() { record.Treatment }, multiple: true));
 
-            string treatmentAdministration = GetTreatmentAdministrationTerm(record.TreatmentAdministration ?? "", out string treatmentAdministrationOtherSpecify);
+            AddMultipleControlledVocabularyField(ispsBlock, "ispsTreatmentAdministration", record.TreatmentAdministration, splitOnComma: true);
+            if (!string.IsNullOrWhiteSpace(record.TreatmentAdministrationOther))
+            {
+                ispsBlock.Fields.Add(new("ispsOtherTreatmentAdministration", new List<string>() { record.TreatmentAdministrationOther }, multiple: true));
+            }
 
-            AddMultipleControlledVocabularyField(ispsBlock, "ispsTreatmentAdministration", treatmentAdministration);
+            AddMultipleControlledVocabularyField(ispsBlock, "ispsUnitOfObservation", record.UnitOfObservation, splitOnComma: true);
+            if (!string.IsNullOrWhiteSpace(record.UnitOfObservationOther))
+            {
+                ispsBlock.Fields.Add(new("ispsOtherUnitOfObservation", new List<string>() { record.UnitOfObservationOther }, multiple: true));
+            }
 
-            ispsBlock.Fields.Add(new("ispsOtherTreatmentAdministration", new List<string>() { treatmentAdministrationOtherSpecify }, multiple: true));
-
-            string unitOfObservation = GetUnitOfTerm(record.UnitOfObservation ?? "", out string unitOfObservationOtherSpecify);
-
-            AddMultipleControlledVocabularyField(ispsBlock, "ispsUnitOfObservation", unitOfObservation);
-            ispsBlock.Fields.Add(new("ispsOtherUnitOfObservation", new List<string>() { unitOfObservationOtherSpecify }, multiple: true));
-
-            string unitOfRandomization = GetUnitOfTerm(record.UnitOfRandomization ?? "", out string _);
-            AddMultipleControlledVocabularyField(ispsBlock, "ispsUnitOfRandomization", unitOfRandomization);
+            AddMultipleControlledVocabularyField(ispsBlock, "ispsUnitOfRandomization", record.UnitOfRandomization, splitOnComma: true);
 
             ispsBlock.Fields.Add(new("ispsVersion", record.Version.ToString()));
 
@@ -420,78 +454,20 @@ namespace Colectica.Curation.Dataverse
         }
 
 
-        private static void AddMultipleControlledVocabularyField(GenericBlockDto block, string fieldName, string value)
+        private static void AddMultipleControlledVocabularyField(GenericBlockDto block, string fieldName, string value, bool splitOnComma = false)
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                value = value.Replace(": ", " - ");
-                block.Fields.Add(new FieldDto(fieldName, new List<string> { value }, multiple: true, typeClass: "controlledVocabulary"));
+                if (splitOnComma)
+                {
+                    string[] strings = value.Split(",", StringSplitOptions.RemoveEmptyEntries);
+                    block.Fields.Add(new FieldDto(fieldName, strings.Select(s => s.Trim()).ToList(), multiple: true, typeClass: "controlledVocabulary"));
+                }
+                else
+                {
+                    block.Fields.Add(new FieldDto(fieldName, new List<string> { value }, multiple: true, typeClass: "controlledVocabulary"));
+                }
             }
-        }
-
-        private static string GetResearchDesignTerm(string input, out string otherSpecify)
-        {
-            otherSpecify = string.Empty;
-
-            input = input.Trim().ToLowerInvariant();
-            string harmonizedTerm = input switch
-            {
-                "" => "",
-                "multiple" => string.Empty,
-                "field experiment" => "Field Experiment",
-                "lab experiment" => "Lab Experiment",
-                "matching" => "Matching",
-                "metaanalysis" => "Meta-analysis",
-                "natural experiment" => "Natural Experiment",
-                "observational" => "Observational",
-                "regression discontinuity" => "Regression Discontinuity Design",
-                "regression discontinuity design" => "Regression Discontinuity Design",
-                "survey experiment" => "Survey Experiment",
-                "other" => "Other",
-                _ => "Other"
-            };
-
-            if (harmonizedTerm == "Other")
-            {
-                otherSpecify = input;
-            }
-
-            return harmonizedTerm;
-        }
-
-        private static string GetTreatmentAdministrationTerm(string input, out string otherSpecify)
-        {
-            otherSpecify = string.Empty;
-
-            input = input.Trim().ToLowerInvariant();
-            string harmonizedTerm = input switch
-            {
-                "not applicable" => "",
-                "n/a" => "",
-                "not selected" => "",
-                "door to Door" => "Door to Door",
-                "email" => "Email",
-                "government-administered program" => "Government Program",
-                "mail" => "Mail",
-                "multiple" => "",
-                "ngo-adminstered program" => "NGO Program",
-                "ngo-administered program" => "NGO Program",
-                "phone" => "Phone",
-                "radio" => "Radio",
-                "school-administered program" => "School Program",
-                "television" => "Television",
-                "mobile technology / Text messages" => "Text Messages",
-                "web delivered" => "Web",
-                "other" => "Other",
-                _ => "Other"
-            };
-
-            if (harmonizedTerm == "Other")
-            {
-                otherSpecify = input;
-            }
-
-            return harmonizedTerm;
         }
 
         private static string MapModeOfDataCollection(string originalMode)
@@ -515,42 +491,6 @@ namespace Colectica.Curation.Dataverse
             return result;
         }
 
-        private static string GetUnitOfTerm(string input, out string otherSpecify)
-        {
-            otherSpecify = string.Empty;
-
-            input = input.Trim().ToLowerInvariant();
-            string harmonizedTerm = input switch
-            {
-                "event/process" => "Event or Process",
-                "family" => "Family",
-                "geo: census track" => "Geo - Census Track",
-                "geo: country" => "Geo - Country",
-                "geo: district" => "Geo - District",
-                "geo: dma" => "Geo - DMA",
-                "geo: other" => "Geo - Other",
-                "geo: region" => "Geo - Region",
-                "geo: school" => "Geo - School",
-                "geo: village" => "Geo - Village",
-                "household: family" => "Household - Family",
-                "household: unit" => "Household - Unit",
-                "housing unit" => "Housing Unit",
-                "individual" => "Individual",
-                "individuals" => "Individual",
-                "multiple" => "",
-                "organization" => "Organization",
-                "other" => "Other",
-                _ => "Other"
-            };
-
-            if (harmonizedTerm == "Other")
-            {
-                otherSpecify = input;
-            }
-
-            return harmonizedTerm;       
-        }
-
     }
 
     public class DescriptionValueDto
@@ -570,12 +510,17 @@ namespace Colectica.Curation.Dataverse
     {
         public LicenseDto? License { get; set; }
         public MetadataBlocksDto? MetadataBlocks { get; set; }
+        public string? TermsOfUse { get; set; }
+        public string? TermsOfAccess { get; set; }
+        public string? Restrictionions { get; set; }
+        public string? DepositorRequirements { get; set; }
     }
 
     public class LicenseDto
     {
         public string? Name { get; set; }
         public string? Uri { get; set; }
+        public string? RightsIdentifier { get; set; }
     }
 
     public class MetadataBlocksDto
