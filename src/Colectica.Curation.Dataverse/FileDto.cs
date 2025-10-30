@@ -14,9 +14,21 @@ public class FileDto
     {
         FileDto fileDto = new();
 
+        string sourceInformationSegment = "";
+        if (managedFile.Source == "Curation System")
+        {
+            sourceInformationSegment = $"Source information: {managedFile.CatalogRecord.Organization.ContactInformation}; ";
+        }
+
+        string publishedSegment = "";
+        if (managedFile.CatalogRecord.ArchiveDate.HasValue)
+        {
+            publishedSegment = $"Published {managedFile.CatalogRecord.ArchiveDate.Value.ToShortDateString()}; ";
+        }
+
         fileDto.Title = managedFile.Title;
         fileDto.Label = managedFile.PublicName ?? managedFile.Name;
-        fileDto.Description = $"{managedFile.Title}; ISPS number {managedFile.Number}; Published {managedFile.CertifiedDate}; Source: {managedFile.Source}; Source information: {managedFile.SourceInformation}; Created with: {managedFile.Software} {managedFile.SoftwareVersion}";
+        fileDto.Description = $"{managedFile.Title}; ISPS number {managedFile.Number}; {publishedSegment}Source: {managedFile.Source}; {sourceInformationSegment}Created with: {managedFile.Software} {managedFile.SoftwareVersion}";
         fileDto.Source = managedFile.Source;
         fileDto.Restricted = !managedFile.IsPublicAccess;
 
