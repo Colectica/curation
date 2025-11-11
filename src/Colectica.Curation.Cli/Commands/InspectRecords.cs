@@ -11,6 +11,15 @@ public class InspectRecords
     internal void Inspect(IConfiguration config)
     {
         string connectionString = config["Data:DefaultConnection:ConnectionString"] ?? "";
+        
+        Log.Information("Connection string: {ConnectionString}", connectionString);
+        
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            Log.Error("Connection string is empty or null!");
+            return;
+        }
+        
         using var db = new ApplicationDbContext(connectionString);
 
 

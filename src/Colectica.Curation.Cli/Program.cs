@@ -4,6 +4,8 @@ using System.CommandLine;
 using Colectica.Curation.Cli.Commands;
 using Microsoft.Extensions.Configuration;
 using System.Runtime.CompilerServices;
+using System.Data.Entity;
+using Colectica.Curation.Data;
 
 namespace Colectica.Curation.Cli
 {
@@ -13,6 +15,19 @@ namespace Colectica.Curation.Cli
 
         static void Main(string[] args)
         {
+            try
+            {
+                // CRITICAL: Configure Entity Framework to use Npgsql BEFORE anything else
+                // This is required for .NET Core/.NET 5+ as App.config is not automatically loaded
+                DbConfiguration.SetConfiguration(new NpgsqlConfiguration());
+                Console.WriteLine("DbConfiguration set to NpgsqlConfiguration");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error setting DbConfiguration: {ex}");
+                return;
+            }
+
             // Set up logging.
             var log = new LoggerConfiguration()
                 .WriteTo.Console()
@@ -21,6 +36,11 @@ namespace Colectica.Curation.Cli
                 .MinimumLevel.Verbose()
                 .CreateLogger();
             Log.Logger = log;
+            
+            // Note: Database.SetInitializer is NOT called here because it would try to use
+            // the parameterless ApplicationDbContext constructor which looks for "DefaultConnection" 
+            // in app.config. Instead, migrations will run automatically when the context is first used,
+            // since AutomaticMigrationsEnabled = true in the Configuration class.
 
             // Load the configuration.
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
