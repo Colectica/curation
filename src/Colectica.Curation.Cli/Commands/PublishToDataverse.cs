@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -69,7 +70,7 @@ namespace Colectica.Curation.Cli.Commands
                 .Or<HttpRequestException>()
                 .Or<TaskCanceledException>()
                 .WaitAndRetryAsync(
-                    retryCount: 1,
+                    retryCount: 3,
                     sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), // Exponential backoff
                     onRetry: (outcome, duration, retryCount, context) =>
                     {
@@ -249,9 +250,18 @@ namespace Colectica.Curation.Cli.Commands
                 return;
             }
 
-            string getFilesUrl = $"{dataverseUrl}/api/datasets/{datasetId}/versions/:latest/files";
-            string getFilesJson = await GetFromApiAsync(getFilesUrl, apiToken);
-            ExistingFilesDto? existingFiles = JsonSerializer.Deserialize<ExistingFilesDto>(getFilesJson, jsonOptions);
+            ExistingFilesDto? existingFiles = null;
+            try
+            {
+                string getFilesUrl = $"{dataverseUrl}/api/datasets/{datasetId}/versions/:latest/files";
+                string getFilesJson = await GetFromApiAsync(getFilesUrl, apiToken);
+                existingFiles = JsonSerializer.Deserialize<ExistingFilesDto>(getFilesJson, jsonOptions);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to retrieve existing files for record {recordNumber}.", record.Number);
+                return;
+            }
 
             int totalFileCount = record.Files.Count(f => f.IsPublicAccess);
             int fileCount = 0;
@@ -266,16 +276,6 @@ namespace Colectica.Curation.Cli.Commands
 
                 Log.Debug("Processing file {count} of {total} - {file}", fileCount, totalFileCount, file.Name);
 
-                // Check for an existing file.
-                var existingFileList = existingFiles?.Data?.Where(f => f.Label == (file.PublicName ?? file.Name));
-                if (existingFileList?.Count() > 1)
-                {
-                    Log.Error("Multiple existing files found with label {label} in record {recordNumber}. Using the first one.", file.PublicName ?? file.Name, record.Number);
-                }
-
-                string? existingFileId = existingFileList?.FirstOrDefault()?.DataFile.Id.ToString();
-                FileDto fileDto = FileDto.FromManagedFile(file);
-
                 // Create a new file, and upload it.
                 string publishedDataDirectory = config["Curation:PublishedDataDirectory"] ?? "";
                 string filePath = Path.Combine(
@@ -285,8 +285,23 @@ namespace Colectica.Curation.Cli.Commands
                 if (!System.IO.File.Exists(filePath))
                 {
                     Log.Error("File not found for record {recordNumber}: {filePath}", record.Number, filePath);
-                    continue; 
+                    continue;
                 }
+
+                // Compute MD5 checksum of local file
+                string localMd5 = ComputeMd5Checksum(filePath);
+
+                // Check for an existing file by label or MD5 match.
+                var existingFileList = existingFiles?.Data?.Where(f =>
+                    f.Label == (file.PublicName ?? file.Name) ||
+                    (!string.IsNullOrWhiteSpace(f.DataFile.Md5) && f.DataFile.Md5.Equals(localMd5, StringComparison.OrdinalIgnoreCase)));
+                if (existingFileList?.Count() > 1)
+                {
+                    Log.Error("Multiple existing files found with label {label} in record {recordNumber}. Using the first one.", file.PublicName ?? file.Name, record.Number);
+                }
+
+                string? existingFileId = existingFileList?.FirstOrDefault()?.DataFile.Id.ToString();
+                FileDto fileDto = FileDto.FromManagedFile(file);
 
                 if (existingFileId != null)
                 {
@@ -344,13 +359,13 @@ namespace Colectica.Curation.Cli.Commands
                         if (fileResponseObj == null)
                         {
                             Log.Error("Failed to deserialize API response. Response: {response}", fileResponseStr);
-                            return;
+                            continue;
                         }
 
                         if (fileResponseObj.Status != "OK")
                         {
                             Log.Error("Failed to create file. Message: {message}. Response: {response}", fileResponseObj.MessageText, fileResponseStr);
-                            return;
+                            continue;
                         }
                         Log.Information("File uploaded successfully: {file}", file.Name);
                     }
@@ -392,7 +407,7 @@ namespace Colectica.Curation.Cli.Commands
                 //                 string xmlFilePath = Path.Combine(debugDir, xmlFileName);
                 //                 File.WriteAllText(xmlFilePath, doc.ToString());
                 //             }
-                            
+
                 //             XNamespace ddiNamespace = "ddi:codebook:2_5";
                 //             XElement? dataDscr = doc.Descendants(ddiNamespace + "dataDscr")?.FirstOrDefault();
                 //             if (dataDscr != null)
@@ -420,7 +435,7 @@ namespace Colectica.Curation.Cli.Commands
                 //     }
                 // }
             }
-        }
+            }
 
         private string? GetFileIdFromSearchResult(string json, string fileNumber, CatalogRecord record)
         {
@@ -530,6 +545,18 @@ namespace Colectica.Curation.Cli.Commands
 
             string responseBody = await response.Content.ReadAsStringAsync();
             return responseBody;
+        }
+
+        private string ComputeMd5Checksum(string filePath)
+        {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(filePath))
+                {
+                    byte[] hash = md5.ComputeHash(stream);
+                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                }
+            }
         }
 
         public void Dispose()
