@@ -447,7 +447,7 @@ namespace Colectica.Curation.Dataverse
                 .ToArray();
             citationBlock.Fields.Add(keywordField);
 
-            citationBlock.Fields.Add(new("relatedDatasets", new List<string>() { record.RelatedDatabase }, multiple: true));
+            citationBlock.Fields.Add(new("relatedDatasets", new List<string>() { record.RelatedDatabase ?? "" }, multiple: true));
             citationBlock.Fields.Add(new("relatedMaterial", new List<string>() {record.RelatedPublications }, multiple: true));
 
             return datasetDto;
