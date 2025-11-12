@@ -46,7 +46,7 @@ namespace Colectica.Curation.Dataverse
 
             // ---- Terms fields ----
             datasetVersion.TermsOfAccess = record.AccessStatement;
-            datasetVersion.Restrictionions = record.AccessStatement;
+            datasetVersion.Restrictions = record.AccessStatement;
 
             // ---- Custom ISPS block ----
             GenericBlockDto ispsBlock = new();
@@ -515,7 +515,7 @@ namespace Colectica.Curation.Dataverse
         public MetadataBlocksDto? MetadataBlocks { get; set; }
         public string? TermsOfUse { get; set; }
         public string? TermsOfAccess { get; set; }
-        public string? Restrictionions { get; set; }
+        public string? Restrictions { get; set; }
         public string? DepositorRequirements { get; set; }
     }
 
