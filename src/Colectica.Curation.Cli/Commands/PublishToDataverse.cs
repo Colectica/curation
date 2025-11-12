@@ -115,7 +115,7 @@ namespace Colectica.Curation.Cli.Commands
                 }
             }
 
-            int expectedFileCount = recordsToPublish.Sum(r => r.Files.Count(f => f.IsPublicAccess));
+            int expectedFileCount = recordsToPublish.Sum(r => r.Files.Count(f => IsFileToBePublished(r, f)));
             Log.Information("Publishing files for {recordCount} records. Expected file count: {fileCount}", recordsToPublish.Count, expectedFileCount);
 
             int currentRecordNumber = 0;
@@ -132,6 +132,24 @@ namespace Colectica.Curation.Cli.Commands
 
                 await PublishFilesForRecord(record, doi, currentRecordNumber, recordsToPublish.Count);
             }
+        }
+
+        private bool IsFileToBePublished(CatalogRecord record, ManagedFile file)
+        {
+            // Only publish files that are marked as public access.
+            if (!file.IsPublicAccess)
+            {
+                return false;
+            }
+
+            string nameOnly = Path.GetFileNameWithoutExtension(file.Name);
+            if (file.Name.EndsWith(".csv") && 
+                record.Files.Any(f => f.Name == nameOnly + ".dta"))
+            {
+                return false;
+            }
+
+            return true;
         }
 
 
@@ -267,8 +285,9 @@ namespace Colectica.Curation.Cli.Commands
             int fileCount = 0;
             foreach (var file in record.Files)
             {
-                if (!file.IsPublicAccess)
+                if (!IsFileToBePublished(record, file))
                 {
+                    Log.Information("Skipping file. {recordNumber}, {fileName}", record.Number, Path.GetFileName(file.Name));
                     continue;
                 }
 
