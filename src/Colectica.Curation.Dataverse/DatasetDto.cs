@@ -41,7 +41,8 @@ namespace Colectica.Curation.Dataverse
             }
             else if (record.TermsOfUse == "Custom Dataset Terms")
             {
-                datasetVersion.TermsOfUse = record.RelatedDatabase;
+                datasetVersion.TermsOfUse = "Custom Dataset Terms";
+                datasetVersion.OriginalArchive = "Under same license as original source: " + record.RelatedDatabase;
             }
 
             // ---- Terms fields ----
@@ -78,7 +79,10 @@ namespace Colectica.Curation.Dataverse
             }
             ispsBlock.Fields.Add(new FieldDto("ispsModeOfDataCollection", modesToAdd, multiple: true, typeClass: "controlledVocabulary"));
 
-            AddMultipleControlledVocabularyField(ispsBlock, "ispsResearchDesign", record.ResearchDesign, splitOnComma: true);
+            if (record.ResearchDesign != "Multiple")
+            {
+                AddMultipleControlledVocabularyField(ispsBlock, "ispsResearchDesign", record.ResearchDesign, splitOnComma: true);
+            }
 
             if (!string.IsNullOrWhiteSpace(record.ResearchDesignOther))
             {
@@ -517,6 +521,7 @@ namespace Colectica.Curation.Dataverse
         public string? TermsOfAccess { get; set; }
         public string? Restrictions { get; set; }
         public string? DepositorRequirements { get; set; }
+        public string? OriginalArchive { get; set; }
     }
 
     public class LicenseDto
