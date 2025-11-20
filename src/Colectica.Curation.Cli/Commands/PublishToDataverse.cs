@@ -26,6 +26,7 @@ namespace Colectica.Curation.Cli.Commands
     {
         private readonly string dataverseUrl;
         private readonly IConfiguration config;
+        private readonly string catalogRecordNumber;
         private readonly string? connectionString;
         private readonly string apiToken;
         private readonly string dataverseName;
@@ -36,11 +37,11 @@ namespace Colectica.Curation.Cli.Commands
         private readonly IAsyncPolicy<HttpResponseMessage> retryPolicy;
         private Dictionary<CatalogRecord, string> datasetIdMap = [];
 
-        public PublishToDataverse(string dataverseUrl, IConfiguration config)
+        public PublishToDataverse(string dataverseUrl, IConfiguration config, string catalogRecordNumber)
         {
             this.dataverseUrl = dataverseUrl;
             this.config = config;
-
+            this.catalogRecordNumber = catalogRecordNumber;
             connectionString = config["Data:DefaultConnection:ConnectionString"] ?? "";
             apiToken = config["Dataverse:ApiToken"] ?? "";
             dataverseName = config["Dataverse:DataverseName"] ?? "";
@@ -94,18 +95,24 @@ namespace Colectica.Curation.Cli.Commands
 
             using var db = new ApplicationDbContext(connectionString);
 
-            var publishedRecords = db.CatalogRecords
+            var recordsQuery = db.CatalogRecords
                 .Include(x => x.Owner)
-                .Where(x => x.Status == CatalogRecordStatus.Published)
-                .ToList();
-            if (!publishedRecords.Any())
+                .Where(x => x.Status == CatalogRecordStatus.Published && x.Organization.Id == new Guid("ad826be3-ba74-4719-b6eb-c626d061cf07"));
+
+            if (!string.IsNullOrWhiteSpace(catalogRecordNumber))
+            {
+                recordsQuery = recordsQuery
+                    .Where(x => x.Number == catalogRecordNumber);
+            }
+
+            var recordsToPublish = recordsQuery.OrderBy(x => x.Number).ToList();
+            if (!recordsToPublish.Any())
             {
                 Log.Logger.Information("No published records found. Exiting.");
                 return;
             }
 
             Dictionary<CatalogRecord, string> datasetDoiMap = [];
-            var recordsToPublish = publishedRecords.OrderBy(x => x.Number).ToList();
             foreach (var record in recordsToPublish)
             {
                 string? doi = await PublishRecord(record);
@@ -138,6 +145,16 @@ namespace Colectica.Curation.Cli.Commands
         {
             // Only publish files that are marked as public access.
             if (!file.IsPublicAccess)
+            {
+                return false;
+            }
+
+            if (file.Status != FileStatus.Accepted)
+            {
+                return false;
+            }
+
+            if (file.Name.ToLower().EndsWith(".zip"))
             {
                 return false;
             }
@@ -212,7 +229,7 @@ namespace Colectica.Curation.Cli.Commands
 
                 if (datasetApiResponse.Status != "OK")
                 {
-                    Log.Error("Failed to create or update dataset {id}. Message: {message}. Response: {response}", existingPersistentId, datasetApiResponse.MessageText, datasetResponse);
+                    Log.Error("Failed to create or update dataset {id}. Message: {message}. Response: {response}", record.Number, datasetApiResponse.MessageText, datasetResponse);
                     return null;
                 }
 
@@ -281,7 +298,7 @@ namespace Colectica.Curation.Cli.Commands
                 return;
             }
 
-            int totalFileCount = record.Files.Count(f => f.IsPublicAccess);
+            int totalFileCount = record.Files.Count(f => f.IsPublicAccess && f.Status == FileStatus.Accepted);
             int fileCount = 0;
             foreach (var file in record.Files)
             {
@@ -317,6 +334,12 @@ namespace Colectica.Curation.Cli.Commands
                 if (existingFileList?.Count() > 1)
                 {
                     Log.Error("Multiple existing files found with label {label} in record {recordNumber}. Using the first one.", file.PublicName ?? file.Name, record.Number);
+
+                    foreach (var existingFile in existingFileList)
+                    {
+                        Log.Error(" - Existing file ID: {id}, Label: {label}, MD5: {md5}", existingFile.DataFile.Id, existingFile.Label, existingFile.DataFile.Md5);
+                    }
+
                 }
 
                 string? existingFileId = existingFileList?.FirstOrDefault()?.DataFile.Id.ToString();
@@ -372,6 +395,37 @@ namespace Colectica.Curation.Cli.Commands
 
                     try
                     {
+                        // First, see if the dataset is locked. If so, wait a bit and try again.
+                        string lockUrl = $"{dataverseUrl}/api/datasets/{datasetId}/locks";
+
+                        bool isLockOkay = false;
+                        int lockCheckCount = 0;
+                        string lockResponse = "";
+                        while (!isLockOkay)
+                        {
+                            if (lockCheckCount % 20 == 0)
+                            {
+                                Log.Debug("Checking lock status for dataset {datasetId} for record {recordNumber}, attempt {attempt}", datasetId, record.Number, lockCheckCount + 1);
+                            }
+
+                            lockResponse = await GetFromApiAsync(lockUrl, apiToken);
+                            if (lockResponse == """{"status":"OK","data":[]}""")
+                            {
+                                isLockOkay = true;
+                                break;
+                            }
+
+                            Task.Delay(5000).Wait();
+                            lockCheckCount++;
+                        }
+
+                        if (!isLockOkay)
+                        {
+                            Log.Error("Dataset {number} is locked after multiple attempts. Skipping file upload for record. {response}", record.Number, lockResponse);
+                            continue;
+                        }
+
+
                         string fileResponseStr = await PostToApiAsync(addFileUrl, apiToken, multipartContent);
                         var fileResponseObj = JsonSerializer.Deserialize<ApiResponseDto>(fileResponseStr, jsonOptions);
 

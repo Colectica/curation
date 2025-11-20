@@ -68,9 +68,10 @@ namespace Colectica.Curation.Cli
             root.Add(copyPublishedFilesCommand);
 
             // publish-all-to-dataverse
-            var publishAllToDataverseCommand = new Command("publish-all-to-dataverse", "Publish all records to Dataverse");
+            var publishAllToDataverseCommand = new Command("publish-to-dataverse", "Publish records to Dataverse");
             publishAllToDataverseCommand.Add(new Option<string>("--dataverse-url", "The URL of the Dataverse instance"));
-            publishAllToDataverseCommand.Handler = CommandHandler.Create<string>(PublishAllToDataverse);
+            publishAllToDataverseCommand.Add(new Option<string>("--catalog-record-number", "The number of the catalog record to publish; if not specified, all records are published"));
+            publishAllToDataverseCommand.Handler = CommandHandler.Create<string, string>(PublishAllToDataverse);
             root.Add(publishAllToDataverseCommand);
 
             // inpsect-records
@@ -111,14 +112,14 @@ namespace Colectica.Curation.Cli
             copyPublishedFiles.Copy(destination, config);
         }
 
-        private static void PublishAllToDataverse(string dataverseUrl)
+        private static void PublishAllToDataverse(string dataverseUrl, string catalogRecordNumber)
         {
             if (config == null)
             {
                 return;
             }
 
-            var publisher = new PublishToDataverse(dataverseUrl, config);
+            var publisher = new PublishToDataverse(dataverseUrl, config, catalogRecordNumber);
             publisher.Publish().Wait();
         }
 
