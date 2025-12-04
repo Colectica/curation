@@ -125,15 +125,10 @@ namespace Colectica.Curation.Cli.Commands
             int expectedFileCount = recordsToPublish.Sum(r => r.Files.Count(f => IsFileToBePublished(r, f)));
             Log.Information("Publishing files for {recordCount} records. Expected file count: {fileCount}", recordsToPublish.Count, expectedFileCount);
 
-            // Parallelize with up to 10 concurrent operations
-            var semaphore = new SemaphoreSlim(10);
-            int currentRecordNumber = 0;
-            var tasks = new List<Task>();
-
+            int recordNumber = 0;
             foreach (var record in recordsToPublish)
             {
-                int recordNumber = Interlocked.Increment(ref currentRecordNumber);
-
+                recordNumber++;
                 datasetDoiMap.TryGetValue(record, out string? doi);
                 if (string.IsNullOrWhiteSpace(doi))
                 {
@@ -141,22 +136,8 @@ namespace Colectica.Curation.Cli.Commands
                     continue;
                 }
 
-                var task = Task.Run(async () =>
-                {
-                    await semaphore.WaitAsync();
-                    try
-                    {
-                        await PublishFilesForRecord(record, doi, recordNumber, recordsToPublish.Count);
-                    }
-                    finally
-                    {
-                        semaphore.Release();
-                    }
-                });
-                tasks.Add(task);
+                await PublishFilesForRecord(record, doi, recordNumber, recordsToPublish.Count);
             }
-
-            await Task.WhenAll(tasks);
         }
 
         private bool IsFileToBePublished(CatalogRecord record, ManagedFile file)
