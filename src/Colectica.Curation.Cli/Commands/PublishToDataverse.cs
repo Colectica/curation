@@ -328,12 +328,12 @@ namespace Colectica.Curation.Cli.Commands
                 string localMd5 = ComputeMd5Checksum(filePath);
 
                 // Check for an existing file by label or MD5 match.
-                var existingFileList = existingFiles?.Data?.Where(f =>
-                    f.Label == (file.PublicName ?? file.Name) ||
+                var existingFileList = existingFiles?.Data?.Where(f => 
+                    f.Label == file.Name ||
                     (!string.IsNullOrWhiteSpace(f.DataFile.Md5) && f.DataFile.Md5.Equals(localMd5, StringComparison.OrdinalIgnoreCase)));
                 if (existingFileList?.Count() > 1)
                 {
-                    Log.Error("Multiple existing files found with label {label} in record {recordNumber}. Using the first one.", file.PublicName ?? file.Name, record.Number);
+                    Log.Error("Multiple existing files found with label {label} in record {recordNumber}. Using the first one.", file.Name, record.Number);
 
                     foreach (var existingFile in existingFileList)
                     {

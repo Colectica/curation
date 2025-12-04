@@ -27,7 +27,7 @@ public class FileDto
         }
 
         fileDto.Title = managedFile.Title;
-        fileDto.Label = managedFile.PublicName ?? managedFile.Name;
+        fileDto.Label = managedFile.Name;
         fileDto.Description = $"{managedFile.Title}; ISPS number {managedFile.Number}; {publishedSegment}Source: {managedFile.Source}; {sourceInformationSegment}Created with: {managedFile.Software} {managedFile.SoftwareVersion}";
         fileDto.Source = managedFile.Source;
         fileDto.Restricted = !managedFile.IsPublicAccess;
