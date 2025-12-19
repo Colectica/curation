@@ -312,25 +312,41 @@ namespace Colectica.Curation.Dataverse
                 authorsField.TypeClass = "compound";
 
                 List<object> authorObjs = [];
-                foreach (var author in record.Authors)
+                if (!string.IsNullOrWhiteSpace(record.AuthorsText))
                 {
-                    if (!string.IsNullOrWhiteSpace(author.Orcid))
+                    // Parse AuthorsText to get the order of full names
+                    var authorFullNames = record.AuthorsText.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(x => x.Trim())
+                        .ToList();
+
+                    // Create a dictionary for quick lookup of authors by full name
+                    var authorsByFullName = record.Authors
+                        .ToDictionary(a => a.FullName.Trim(), a => a);
+
+                    // Add authors in the order they appear in AuthorsText
+                    foreach (var fullName in authorFullNames)
                     {
-                        authorObjs.Add(new
+                        if (authorsByFullName.TryGetValue(fullName, out var author))
                         {
-                            AuthorName = new FieldDto("authorName", author.FullName),
-                            AuthorAffiliation = author.Affiliation == null ? null : new FieldDto("authorAffiliation", author.Affiliation),
-                            AuthorIdentifierScheme = new FieldDto("authorIdentifierScheme", "ORCID", typeClass: "controlledVocabulary"),
-                            AuthorIdentifier = new FieldDto("authorIdentifier", author.Orcid)
-                        });
-                    }
-                    else
-                    {
-                        authorObjs.Add(new
-                        {
-                            AuthorName = new FieldDto("authorName", author.FullName),
-                            AuthorAffiliation = author.Affiliation == null ? null : new FieldDto("authorAffiliation", author.Affiliation),
-                        });
+                            if (!string.IsNullOrWhiteSpace(author.Orcid))
+                            {
+                                authorObjs.Add(new
+                                {
+                                    AuthorName = new FieldDto("authorName", author.FullName),
+                                    AuthorAffiliation = author.Affiliation == null ? null : new FieldDto("authorAffiliation", author.Affiliation),
+                                    AuthorIdentifierScheme = new FieldDto("authorIdentifierScheme", "ORCID", typeClass: "controlledVocabulary"),
+                                    AuthorIdentifier = new FieldDto("authorIdentifier", author.Orcid)
+                                });
+                            }
+                            else
+                            {
+                                authorObjs.Add(new
+                                {
+                                    AuthorName = new FieldDto("authorName", author.FullName),
+                                    AuthorAffiliation = author.Affiliation == null ? null : new FieldDto("authorAffiliation", author.Affiliation),
+                                });
+                            }
+                        }
                     }
                 }
 
