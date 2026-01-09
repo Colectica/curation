@@ -18,13 +18,20 @@ namespace Colectica.Curation.Cli.Commands
         private readonly HttpClient httpClient;
         private readonly IAsyncPolicy<HttpResponseMessage> retryPolicy;
 
-        public GenerateHandleMapping(string dataverseUrl, string file, IConfiguration config)
+        public GenerateHandleMapping(string file, IConfiguration config, string environment)
         {
-            this.dataverseUrl = dataverseUrl;
             this.filePath = file;
             this.config = config;
             connectionString = config["Data:DefaultConnection:ConnectionString"] ?? "";
-            apiToken = config["Dataverse:ApiToken"] ?? "";
+            
+            string envPrefix = $"Dataverse:Environments:{environment}";
+            dataverseUrl = config[$"{envPrefix}:Url"] ?? "";
+            apiToken = config[$"{envPrefix}:ApiToken"] ?? "";
+            
+            if (string.IsNullOrWhiteSpace(dataverseUrl))
+            {
+                throw new ArgumentException($"Dataverse environment '{environment}' is not configured or has no Url specified.");
+            }
 
             retryPolicy = Policy
                 .HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)

@@ -37,14 +37,22 @@ namespace Colectica.Curation.Cli.Commands
         private readonly IAsyncPolicy<HttpResponseMessage> retryPolicy;
         private Dictionary<CatalogRecord, string> datasetIdMap = [];
 
-        public PublishToDataverse(string dataverseUrl, IConfiguration config, string catalogRecordNumber)
+        public PublishToDataverse(IConfiguration config, string environment, string catalogRecordNumber)
         {
-            this.dataverseUrl = dataverseUrl;
             this.config = config;
             this.catalogRecordNumber = catalogRecordNumber;
             connectionString = config["Data:DefaultConnection:ConnectionString"] ?? "";
-            apiToken = config["Dataverse:ApiToken"] ?? "";
-            dataverseName = config["Dataverse:DataverseName"] ?? "";
+            
+            string envPrefix = $"Dataverse:Environments:{environment}";
+            dataverseUrl = config[$"{envPrefix}:Url"] ?? "";
+            apiToken = config[$"{envPrefix}:ApiToken"] ?? "";
+            dataverseName = config[$"{envPrefix}:DataverseName"] ?? "";
+            
+            if (string.IsNullOrWhiteSpace(dataverseUrl))
+            {
+                throw new ArgumentException($"Dataverse environment '{environment}' is not configured or has no Url specified.");
+            }
+            
             debugDir = config["Data:DebugDirectory"] ?? "";
 
             // Configure JsonSerializer to ignore null values and use camelCase

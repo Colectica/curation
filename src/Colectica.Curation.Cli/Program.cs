@@ -69,7 +69,7 @@ namespace Colectica.Curation.Cli
 
             // publish-all-to-dataverse
             var publishAllToDataverseCommand = new Command("publish-to-dataverse", "Publish records to Dataverse");
-            publishAllToDataverseCommand.Add(new Option<string>("--dataverse-url", "The URL of the Dataverse instance"));
+            publishAllToDataverseCommand.Add(new Option<string>("--environment", "The Dataverse environment to use (as defined in appsettings)") { IsRequired = true });
             publishAllToDataverseCommand.Add(new Option<string>("--catalog-record-number", "The number of the catalog record to publish; if not specified, all records are published"));
             publishAllToDataverseCommand.Handler = CommandHandler.Create<string, string>(PublishAllToDataverse);
             root.Add(publishAllToDataverseCommand);
@@ -81,7 +81,7 @@ namespace Colectica.Curation.Cli
 
             // generate-handle-mapping
             var generateHandleMappingCommand = new Command("generate-handle-mapping", "Generate a CSV file mapping Handles to Dataverse DOIs");
-            generateHandleMappingCommand.Add(new Option<string>("--dataverse-url", "The URL of the Dataverse instance"));
+            generateHandleMappingCommand.Add(new Option<string>("--environment", "The Dataverse environment to use (as defined in appsettings)") { IsRequired = true });
             generateHandleMappingCommand.Add(new Option<string>("--file", "The path to the output CSV file"));
             generateHandleMappingCommand.Handler = CommandHandler.Create<string, string>(GenerateHandleMapping);
             root.Add(generateHandleMappingCommand);
@@ -119,25 +119,25 @@ namespace Colectica.Curation.Cli
             copyPublishedFiles.Copy(destination, config);
         }
 
-        private static void PublishAllToDataverse(string dataverseUrl, string catalogRecordNumber)
+        private static void PublishAllToDataverse(string environment, string catalogRecordNumber)
         {
             if (config == null)
             {
                 return;
             }
 
-            var publisher = new PublishToDataverse(dataverseUrl, config, catalogRecordNumber);
+            var publisher = new PublishToDataverse(config, environment, catalogRecordNumber);
             publisher.Publish().Wait();
         }
 
-        private static void GenerateHandleMapping(string dataverseUrl, string file)
+        private static void GenerateHandleMapping(string environment, string file)
         {
             if (config == null)
             {
                 return;
             }
 
-            var generator = new Commands.GenerateHandleMapping(dataverseUrl, file, config);
+            var generator = new Commands.GenerateHandleMapping(file, config, environment);
             generator.Generate().Wait();
         }
 

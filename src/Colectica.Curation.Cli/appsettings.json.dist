@@ -13,7 +13,17 @@
     "PublishedDataDirectory":  "TODO"
   },
   "Dataverse": {
-    "ApiToken": "TODO",
-    "DataverseName": "TODO"
+    "Environments": {
+      "test": {
+        "Url": "",
+        "ApiToken": "",
+        "DataverseName": ""
+      },
+      "production": {
+        "Url": "",
+        "ApiToken": "",
+        "DataverseName": ""
+      }
+    }
   }
 }
