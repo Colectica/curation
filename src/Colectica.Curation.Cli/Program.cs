@@ -79,6 +79,13 @@ namespace Colectica.Curation.Cli
             inspectRecordsCommand.Handler = CommandHandler.Create<string>(InspectRecords);
             root.Add(inspectRecordsCommand);
 
+            // generate-handle-mapping
+            var generateHandleMappingCommand = new Command("generate-handle-mapping", "Generate a CSV file mapping Handles to Dataverse DOIs");
+            generateHandleMappingCommand.Add(new Option<string>("--dataverse-url", "The URL of the Dataverse instance"));
+            generateHandleMappingCommand.Add(new Option<string>("--file", "The path to the output CSV file"));
+            generateHandleMappingCommand.Handler = CommandHandler.Create<string, string>(GenerateHandleMapping);
+            root.Add(generateHandleMappingCommand);
+
             // Run the command
             try
             {
@@ -121,6 +128,17 @@ namespace Colectica.Curation.Cli
 
             var publisher = new PublishToDataverse(dataverseUrl, config, catalogRecordNumber);
             publisher.Publish().Wait();
+        }
+
+        private static void GenerateHandleMapping(string dataverseUrl, string file)
+        {
+            if (config == null)
+            {
+                return;
+            }
+
+            var generator = new Commands.GenerateHandleMapping(dataverseUrl, file, config);
+            generator.Generate().Wait();
         }
 
     }
