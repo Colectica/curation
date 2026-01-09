@@ -46,8 +46,8 @@ namespace Colectica.Curation.Dataverse
             }
 
             // ---- Terms fields ----
-            datasetVersion.TermsOfAccess = record.AccessStatement;
-            datasetVersion.Restrictions = record.AccessStatement;
+            //datasetVersion.TermsOfAccess = record.AccessStatement;
+            //datasetVersion.Restrictions = record.AccessStatement;
 
             // ---- Custom ISPS block ----
             GenericBlockDto ispsBlock = new();
