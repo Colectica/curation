@@ -1,4 +1,5 @@
 using Colectica.Curation.Data;
+using Colectica.Curation.Dataverse;
 using Microsoft.Extensions.Configuration;
 using Polly;
 using Serilog;
@@ -62,6 +63,7 @@ namespace Colectica.Curation.Cli.Commands
             using var db = new ApplicationDbContext(connectionString);
 
             var records = db.CatalogRecords
+                .Include(x => x.Files)
                 .Where(x => x.Status == CatalogRecordStatus.Published)
                 .OrderBy(x => x.Number)
                 .ToList();
@@ -74,7 +76,7 @@ namespace Colectica.Curation.Cli.Commands
 
             Log.Information("Found {count} published catalog records", records.Count);
 
-            var mappings = new List<(string Handle, string Target)>();
+            var mappings = new List<(string Number, string Title, string Handle, string Target)>();
 
             foreach (var record in records)
             {
@@ -91,20 +93,106 @@ namespace Colectica.Curation.Cli.Commands
                     continue;
                 }
 
-                mappings.Add((record.PersistentId, doi));
-                Log.Debug("Mapped {handle} -> {doi}", record.PersistentId, doi);
+                mappings.Add((record.Number, record.Title.Replace("\"", ""), record.PersistentId, doi));
+                Log.Debug("Mapped dataset {handle} -> {doi}", record.PersistentId, doi);
+
+                // Get file mappings for this record
+                var fileMappings = await GetFileMappings(record, doi);
+                mappings.AddRange(fileMappings);
             }
 
             // Write CSV file
             var csv = new StringBuilder();
-            csv.AppendLine("Handle,Target");
-            foreach (var (handle, target) in mappings)
+            csv.AppendLine("Number,Title,Handle,Target");
+            foreach (var (number, title, handle, target) in mappings)
             {
-                csv.AppendLine($"{handle},{target}");
+                csv.AppendLine($"{number},\"{title}\",{handle},{target}");
             }
 
             await File.WriteAllTextAsync(filePath, csv.ToString());
             Log.Information("Handle mapping written to {file}. Total mappings: {count}", filePath, mappings.Count);
+        }
+
+        private async Task<List<(string Number, string Title, string Handle, string Target)>> GetFileMappings(CatalogRecord record, string datasetDoi)
+        {
+            var fileMappings = new List<(string Number, string Title, string Handle, string Target)>();
+
+            try
+            {
+                // Get the dataset ID from the DOI
+                string? datasetId = await GetDatasetIdFromDoi(datasetDoi);
+                if (string.IsNullOrWhiteSpace(datasetId))
+                {
+                    Log.Warning("Could not get dataset ID for DOI {doi}. Skipping file mappings.", datasetDoi);
+                    return fileMappings;
+                }
+
+                // Get the list of files from Dataverse
+                string getFilesUrl = $"{dataverseUrl}/api/datasets/{datasetId}/versions/:latest/files";
+                string getFilesJson = await GetFromApiAsync(getFilesUrl);
+                
+                var existingFiles = JsonSerializer.Deserialize<ExistingFilesDto>(getFilesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                
+                if (existingFiles == null || existingFiles.Data == null || !existingFiles.Data.Any())
+                {
+                    Log.Debug("No files found in Dataverse for record {number}", record.Number);
+                    return fileMappings;
+                }
+
+                Log.Debug("Found {count} files in Dataverse for record {number}", existingFiles.Data.Count, record.Number);
+
+                // Match ManagedFiles to Dataverse files and create mappings
+                foreach (var managedFile in record.Files.Where(f => f.Status == FileStatus.Accepted && f.IsPublicAccess))
+                {
+                    if (string.IsNullOrWhiteSpace(managedFile.PersistentLink))
+                    {
+                        Log.Debug("File {fileName} in record {number} has no PersistentLink. Skipping.", managedFile.Name, record.Number);
+                        continue;
+                    }
+
+                    // Find the matching Dataverse file by filename (label)
+                    var dataverseFile = existingFiles.Data.FirstOrDefault(f => f.Label == managedFile.Name);
+                    
+                    if (dataverseFile == null)
+                    {
+                        Log.Warning("Could not find Dataverse file for {fileName} in record {number}. Skipping.", managedFile.Name, record.Number);
+                        continue;
+                    }
+
+                    string fileUrl = $"{dataverseUrl}/file.xhtml?fileId={dataverseFile.DataFile.Id}";
+                    string fileTitle = !string.IsNullOrWhiteSpace(managedFile.Title) ? managedFile.Title.Replace("\"", "") : managedFile.Name;
+                    fileMappings.Add((managedFile.Number, fileTitle, managedFile.PersistentLink, fileUrl));
+                    Log.Debug("Mapped file {handle} -> {fileUrl}", managedFile.PersistentLink, fileUrl);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error getting file mappings for record {number}", record.Number);
+            }
+
+            return fileMappings;
+        }
+
+        private async Task<string?> GetDatasetIdFromDoi(string doi)
+        {
+            try
+            {
+                string getDatasetUrl = $"{dataverseUrl}/api/datasets/:persistentId?persistentId={doi}";
+                string datasetJson = await GetFromApiAsync(getDatasetUrl);
+                
+                using JsonDocument doc = JsonDocument.Parse(datasetJson);
+                if (doc.RootElement.TryGetProperty("data", out JsonElement dataElement) &&
+                    dataElement.TryGetProperty("id", out JsonElement idElement))
+                {
+                    return idElement.GetInt32().ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Failed to get dataset ID for DOI {doi}", doi);
+            }
+
+            return null;
         }
 
         private async Task<string?> GetDataverseDoi(CatalogRecord record)
