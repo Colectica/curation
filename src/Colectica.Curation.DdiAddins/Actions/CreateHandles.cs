@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 
 namespace Colectica.Curation.DdiAddins.Actions
 {
-    [Export(typeof(ICreatePersistentIdentifiersAction))]
+    //[Export(typeof(ICreatePersistentIdentifiersAction))]
     public class CreateHandles : ICreatePersistentIdentifiersAction
     {
         ILog logger;
