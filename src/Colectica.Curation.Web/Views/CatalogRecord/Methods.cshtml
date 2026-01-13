@@ -98,7 +98,7 @@
 
         <!-- Location details -->
         @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "LocationDetails", "textarea", "Location Details", Model.LocationDetails, FieldDefinitions.LocationDetails,
-            isRequired: Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+            isRequired: false,
             isReadOnly: Model.IsReadOnly)
 
         <!-- Unit of observation -->

@@ -542,7 +542,6 @@ namespace Colectica.Curation.Web.Controllers
                     RequireContent(record.RelatedPublications, new RequiredInformationModel(generalUrl, "Related Publications"), model);
                     RequireContent(record.RelatedProjects, new RequiredInformationModel(generalUrl, "Related Projects"), model);
 
-                    RequireContent(record.LocationDetails, new RequiredInformationModel(methodsUrl, "Location Details"), model);
                     RequireContent(record.UnitOfObservation, new RequiredInformationModel(methodsUrl, "Unit of Observation"), model);
                     RequireContent(record.SampleSize, new RequiredInformationModel(methodsUrl, "Sample Size"), model);
                     RequireContent(record.InclusionExclusionCriteria, new RequiredInformationModel(methodsUrl, "Inclusion/Exclusion Criteria"), model);
