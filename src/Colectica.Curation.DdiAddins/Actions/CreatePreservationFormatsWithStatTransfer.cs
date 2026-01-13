@@ -32,7 +32,7 @@ using System.Threading.Tasks;
 
 namespace Colectica.Curation.DdiAddins.Actions
 {
-    [Export(typeof(ICreatePreservationFormatsAction))]
+    //[Export(typeof(ICreatePreservationFormatsAction))]
     public class CreatePreservationFormatsWithStatTransfer : ICreatePreservationFormatsAction
     {
         ILog logger;
