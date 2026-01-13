@@ -1268,12 +1268,11 @@ namespace Colectica.Curation.Web.Controllers
                 }
 
                 // Create a change summary.
-                string changeSummary = CatalogRecordChangeDetector.GetChangeSummary(record, model);
-
-                // Copy information from the POST to the CatalogRecord.
-                Mapper.Map(model, record);
-
-                logger.Debug("Mapped");
+                model.ResearchDesign = Request.Form["ResearchDesign"];
+                model.TreatmentAdministration = Request.Form["TreatmentAdministration"];
+                model.UnitOfObservation = Request.Form["UnitOfObservation"];
+                model.ModeOfDataCollection = Request.Form["ModeOfDataCollection"];
+                model.UnitOfRandomization = Request.Form["UnitOfRandomization"];
 
                 if (Request.Form["FieldDates.isRange"] != null)
                 {
@@ -1284,14 +1283,15 @@ namespace Colectica.Curation.Web.Controllers
                     model.StudyTimePeriod.isRange = true;
                 }
 
+                string changeSummary = CatalogRecordChangeDetector.GetChangeSummary(record, model);
+
+                // Copy information from the POST to the CatalogRecord.
+                Mapper.Map(model, record);
+
+                logger.Debug("Mapped");
+
                 record.FieldDates = JsonConvert.SerializeObject(model.FieldDates);
                 record.StudyTimePeriod = JsonConvert.SerializeObject(model.StudyTimePeriod);
-
-                record.ResearchDesign = Request.Form["ResearchDesign"];
-                record.TreatmentAdministration = Request.Form["TreatmentAdministration"];
-                record.UnitOfObservation = Request.Form["UnitOfObservation"];
-                record.ModeOfDataCollection = Request.Form["ModeOfDataCollection"];
-                record.UnitOfRandomization = Request.Form["UnitOfRandomization"];
 
                 record.DataType = model.CatalogRecordDataType;
                 record.DataSource = model.CatalogRecordDataSource;
