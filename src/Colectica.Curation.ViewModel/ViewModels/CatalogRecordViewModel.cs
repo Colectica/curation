@@ -103,8 +103,7 @@ namespace Colectica.Curation.Common.ViewModels
             "Matching",
             "Observational",
             "Meta-analysis",
-            "Other",
-            "Multiple"
+            "Other"
         };
 
         public string[] TreatmentAdministrationChoices = new string[]
@@ -119,8 +118,7 @@ namespace Colectica.Curation.Common.ViewModels
             "Television",
             "Text Messages",
             "Web",
-            "Other",
-            "Multiple"
+            "Other"
         };
 
 
@@ -141,8 +139,7 @@ namespace Colectica.Curation.Common.ViewModels
             "Housing Unit",
             "Individual",
             "Organization",
-            "Other",
-            "Multiple",
+            "Other"
         };
 
 
