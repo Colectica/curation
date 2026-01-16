@@ -62,8 +62,11 @@ namespace Colectica.Curation.Cli.Commands
 
             using var db = new ApplicationDbContext(connectionString);
 
+            var org = db.Organizations.FirstOrDefault(x => x.Hostname == "isps.yard.yale.edu");
+
             var records = db.CatalogRecords
                 .Include(x => x.Files)
+                .Where(x => x.Organization.Id == org.Id)
                 .Where(x => x.Status == CatalogRecordStatus.Published)
                 .OrderBy(x => x.Number)
                 .ToList();
@@ -76,7 +79,8 @@ namespace Colectica.Curation.Cli.Commands
 
             Log.Information("Found {count} published catalog records", records.Count);
 
-            var mappings = new List<(string Number, string Title, string Handle, string Target)>();
+            var datasetMappings = new List<(string Number, string Title, string Handle, string Target)>();
+            var fileMappings = new List<(string Number, string Title, string Handle, string Target)>();
 
             foreach (var record in records)
             {
@@ -93,24 +97,45 @@ namespace Colectica.Curation.Cli.Commands
                     continue;
                 }
 
-                mappings.Add((record.Number, record.Title.Replace("\"", ""), record.PersistentId, doi));
+                datasetMappings.Add((record.Number, record.Title.Replace("\"", ""), record.PersistentId, doi));
                 Log.Debug("Mapped dataset {handle} -> {doi}", record.PersistentId, doi);
 
                 // Get file mappings for this record
-                var fileMappings = await GetFileMappings(record, doi);
-                mappings.AddRange(fileMappings);
+                var recordFileMappings = await GetFileMappings(record, doi);
+                fileMappings.AddRange(recordFileMappings);
             }
 
-            // Write CSV file
-            var csv = new StringBuilder();
-            csv.AppendLine("Number,Title,Handle,Target");
-            foreach (var (number, title, handle, target) in mappings)
+            // Write dataset mappings CSV file
+            var datasetCsv = new StringBuilder();
+            datasetCsv.AppendLine("Number,Title,Handle,Target");
+            foreach (var (number, title, handle, target) in datasetMappings)
             {
-                csv.AppendLine($"{number},\"{title}\",{handle},{target}");
+                datasetCsv.AppendLine($"{number},\"{title}\",{handle},{target}");
             }
 
-            await File.WriteAllTextAsync(filePath, csv.ToString());
-            Log.Information("Handle mapping written to {file}. Total mappings: {count}", filePath, mappings.Count);
+            await File.WriteAllTextAsync(filePath, datasetCsv.ToString());
+            Log.Information("Dataset handle mapping written to {file}. Total mappings: {count}", filePath, datasetMappings.Count);
+
+            // Write file mappings CSV file
+            string filesMappingPath = GetFilesMappingPath(filePath);
+            var filesCsv = new StringBuilder();
+            filesCsv.AppendLine("Number,Title,Handle,Target");
+            foreach (var (number, title, handle, target) in fileMappings)
+            {
+                filesCsv.AppendLine($"{number},\"{title}\",{handle},{target}");
+            }
+
+            await File.WriteAllTextAsync(filesMappingPath, filesCsv.ToString());
+            Log.Information("File handle mapping written to {file}. Total mappings: {count}", filesMappingPath, fileMappings.Count);
+        }
+
+        private string GetFilesMappingPath(string originalPath)
+        {
+            string directory = Path.GetDirectoryName(originalPath) ?? "";
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(originalPath);
+            string extension = Path.GetExtension(originalPath);
+            
+            return Path.Combine(directory, $"{fileNameWithoutExtension}-files{extension}");
         }
 
         private async Task<List<(string Number, string Title, string Handle, string Target)>> GetFileMappings(CatalogRecord record, string datasetDoi)
@@ -142,25 +167,34 @@ namespace Colectica.Curation.Cli.Commands
                 Log.Debug("Found {count} files in Dataverse for record {number}", existingFiles.Data.Count, record.Number);
 
                 // Match ManagedFiles to Dataverse files and create mappings
-                foreach (var managedFile in record.Files.Where(f => f.Status == FileStatus.Accepted && f.IsPublicAccess))
+                foreach (var managedFile in record.Files)
                 {
+                    if (!PublishToDataverse.IsFileToBePublished(record, managedFile))
+                    {
+                        Log.Debug("File {fileName} in record {number} is not marked for publication. Skipping.", managedFile.Name, record.Number);
+                        continue;
+                    }
+
+                    string fileTitle = !string.IsNullOrWhiteSpace(managedFile.Name) ? managedFile.Name.Replace("\"", "") : managedFile.Name;
+
                     if (string.IsNullOrWhiteSpace(managedFile.PersistentLink))
                     {
                         Log.Debug("File {fileName} in record {number} has no PersistentLink. Skipping.", managedFile.Name, record.Number);
+                        fileMappings.Add((managedFile.Number, fileTitle, "NONE", ""));
                         continue;
                     }
 
                     // Find the matching Dataverse file by filename (label)
-                    var dataverseFile = existingFiles.Data.FirstOrDefault(f => f.Label == managedFile.Name);
+                    var dataverseFile = existingFiles.Data.FirstOrDefault(f => f.Label == managedFile.Name || (!string.IsNullOrWhiteSpace(managedFile.Number) && f.Description.Contains(managedFile.Number)));
                     
                     if (dataverseFile == null)
                     {
                         Log.Warning("Could not find Dataverse file for {fileName} in record {number}. Skipping.", managedFile.Name, record.Number);
+                        fileMappings.Add((managedFile.Number, fileTitle, managedFile.PersistentLink, "NONE"));
                         continue;
                     }
 
                     string fileUrl = $"{dataverseUrl}/file.xhtml?fileId={dataverseFile.DataFile.Id}";
-                    string fileTitle = !string.IsNullOrWhiteSpace(managedFile.Title) ? managedFile.Title.Replace("\"", "") : managedFile.Name;
                     fileMappings.Add((managedFile.Number, fileTitle, managedFile.PersistentLink, fileUrl));
                     Log.Debug("Mapped file {handle} -> {fileUrl}", managedFile.PersistentLink, fileUrl);
                 }

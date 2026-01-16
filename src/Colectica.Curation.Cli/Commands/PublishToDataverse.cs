@@ -148,7 +148,7 @@ namespace Colectica.Curation.Cli.Commands
             }
         }
 
-        private bool IsFileToBePublished(CatalogRecord record, ManagedFile file)
+        public static bool IsFileToBePublished(CatalogRecord record, ManagedFile file)
         {
             // Only publish files that are marked as public access.
             if (!file.IsPublicAccess)
