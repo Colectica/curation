@@ -551,6 +551,11 @@ namespace Colectica.Curation.Dataverse
                 return false;
             }
 
+            if (file.Name.EndsWith("ddi32.xml") || file.Name.EndsWith("ddi33.xml"))
+            {
+                return false;
+            }
+
             string nameOnly = Path.GetFileNameWithoutExtension(file.Name);
             if (file.Name.EndsWith(".csv") && 
                 record.Files.Any(f => f.Name == nameOnly + ".dta"))
