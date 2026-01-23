@@ -29,22 +29,17 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 
-REM Include the version number in the file names.
-REM set /p revisionNumber= <"..\src\Colectica.Curation.Data\RevisionNumber.txt"
-set revisionNumber=1.0.0.%BUILD_NUMBER%
-echo Revision number is %revisionNumber%
+mkdir ..\dist\ColecticaCurationPackage
+set serviceDir=..\dist\ColecticaCurationPackage\ColecticaCurationService
+set webDir=..\dist\ColecticaCurationWeb
 
-mkdir ..\dist\ColecticaCurationPackage-%revisionNumber%
-set serviceDir=..\dist\ColecticaCurationPackage-%revisionNumber%\ColecticaCurationService-%revisionNumber%
-set webDir=..\dist\ColecticaCurationWeb-%revisionNumber%
-
-ren ..\dist\ColecticaCurationWeb ColecticaCurationWeb-%revisionNumber%
+ren ..\dist\ColecticaCurationWeb ColecticaCurationWeb
 
 
 REM Build and copy CLI application
 PUSHD ..\src\Colectica.Curation.Cli
 %msbuild% /P:Configuration=Release /P:Platform=AnyCPU 
-xcopy /e /y bin\Release\net6.0 ..\..\dist\ColecticaCurationPackage-%revisionNumber%\ColecticaCurationCli\
+xcopy /e /y bin\Release\net6.0 ..\..\dist\ColecticaCurationPackage\ColecticaCurationCli\
 POPD
 if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -72,13 +67,13 @@ REM Copy the curation addins to the Web distribution directory
 xcopy %serviceDir%\CurationAddins %webDir%\CurationAddins /i /s /y
 
 REM Move the web deploy directory under the main package directory.
-xcopy %webDir% ..\dist\ColecticaCurationPackage-%revisionNumber%\ColecticaCurationWeb-%revisionNumber% /i /s /y
+xcopy %webDir% ..\dist\ColecticaCurationPackage\ColecticaCurationWeb /i /s /y
 
 REM Copy CurationAddins into the web distribution directory
 xcopy %serviceDir%\CurationAddins %webDir%\CurationAddins /i /s /y
 
 REM Copy ClamAV files
-set clamDir=..\dist\ColecticaCurationPackage-%revisionNumber%\clamav
+set clamDir=..\dist\ColecticaCurationPackage\clamav
 mkdir %clamDir%
 xcopy ..\src\clamav %clamDir% /i /e /y
 del %clamDir%\win64\EICAR-testfile.txt
@@ -86,10 +81,10 @@ del %clamDir%\win64\EICAR-testfile.txt
 
 
 REM ZIP everything
-%zip% a ..\dist\ColecticaCurationPackage-%revisionNumber%.zip ..\dist\ColecticaCurationPackage-%revisionNumber%
+%zip% a ..\dist\ColecticaCurationPackage.zip ..\dist\ColecticaCurationPackage
 
 REM Copy to the output directory
 mkdir ..\dist\artifacts
-move ..\dist\ColecticaCurationPackage-%revisionNumber%.zip ..\dist\artifacts\
+move ..\dist\ColecticaCurationPackage.zip ..\dist\artifacts\
 
 POPD
