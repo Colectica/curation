@@ -66,6 +66,7 @@ ren %serviceDir%\log4net.config log4net.config.dist
 ren %webDir%\ConnectionStrings.config.dist ConnectionStrings.config.dist
 ren %webDir%\Web.config Web.config.dist
 ren %webDir%\log4net.config log4net.config.dist
+ren %webDir%\dataverse.json dataverse.json.dist
 
 REM Copy spss-redist files to the web binary directory
 xcopy /e /y ..\src\Colectica.Curation.Web\bin\spss-redist %webDir%\bin\spss-dist\
