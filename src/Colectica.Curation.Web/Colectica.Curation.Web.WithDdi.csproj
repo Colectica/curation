@@ -149,6 +149,9 @@
     </PackageReference>
     <PackageReference Include="Twitter.Typeahead" Version="0.10.4" />
     <PackageReference Include="WebGrease" Version="1.5.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -259,6 +262,7 @@
     <Compile Include="Utility\OrganizationHelper.cs" />
     <Compile Include="Utility\SettingsHelper.cs" />
     <Compile Include="Utility\StringExtensions.cs" />
+    <Compile Include="Utility\DataverseConfigLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Ddi\js\Notes.js" />
@@ -428,6 +432,9 @@
     <Content Include="Scripts\inputmask\jquery.inputmask.date.extensions.js" />
     <Content Include="Scripts\inputmask\jquery.inputmask.extensions.js" />
     <Content Include="Scripts\inputmask\jquery.inputmask.js" />
+    <None Include="dataverse.json.dist">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Scripts\jquery-3.7.0-vsdoc.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -497,6 +504,9 @@
     <Content Include="Content\fonts\YaleNew\YaleNew-marks\yalemarks-webfont.ttf" />
     <Content Include="Content\fonts\YaleNew\YaleNew-normal-normal\yalenew-roman-webfont.ttf" />
     <Content Include="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="dataverse.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="ConnectionStrings.config.dist">

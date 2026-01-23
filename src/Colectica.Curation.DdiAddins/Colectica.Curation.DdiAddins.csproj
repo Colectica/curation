@@ -71,6 +71,7 @@
     <Compile Include="RdataImporter.cs" />
     <Compile Include="Actions\StudyUnitInitializer.cs" />
     <Compile Include="Utility\FormMappingHelper.cs" />
+    <Compile Include="Utility\DataverseSettings.cs" />
     <Compile Include="Utility\RepositoryHelper.cs" />
     <Compile Include="Utility\VersionableExtensions.cs" />
   </ItemGroup>

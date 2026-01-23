@@ -1,6 +1,7 @@
 ﻿using Colectica.Curation.Contracts;
 using Colectica.Curation.Data;
 using Colectica.Curation.Dataverse;
+using Colectica.Curation.DdiAddins.Utility;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -25,12 +26,12 @@ namespace Colectica.Curation.DdiAddins.Actions
 
         public void PublishRecord(CatalogRecord record, ApplicationUser user, ApplicationDbContext db, string ProcessingDirectory)
         {
-            string dataverseUrl = "";
-            string dataverseName = "";
-            string apiToken = "";
-            string publishedDataDirectory = "";
-            string debugDir = ";";
-            DataversePublisher dataversePublisher = new DataversePublisher(dataverseUrl, dataverseName, apiToken, publishedDataDirectory, debugDir);
+            DataversePublisher dataversePublisher = new DataversePublisher(
+                DataverseSettings.DataverseUrl,
+                DataverseSettings.DataverseName,
+                DataverseSettings.ApiToken,
+                DataverseSettings.PublishedDataDirectory,
+                DataverseSettings.DebugDirectory);
 
         }
     }

@@ -1,0 +1,9 @@
+{
+  "Dataverse": {
+    "Url": "",
+    "ApiToken": "",
+    "DataverseName": "",
+    "PublishedDataDirectory": "",
+    "DebugDirectory": ""
+  }
+}

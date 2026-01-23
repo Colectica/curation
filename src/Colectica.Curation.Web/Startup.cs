@@ -61,6 +61,7 @@ namespace Colectica.Curation.Web
             DdiAddins.Utility.RepositoryHelper.Password = WebConfigurationManager.AppSettings["repository:password"];
 #endif
 
+            Utility.DataverseConfigLoader.LoadConfiguration();
 
             Mapper.CreateMap<CatalogRecordGeneralViewModel, CatalogRecord>()
                 .ForMember(x => x.Organization, opt => opt.Ignore())
