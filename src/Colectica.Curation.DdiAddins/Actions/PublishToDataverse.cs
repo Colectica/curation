@@ -33,6 +33,12 @@ namespace Colectica.Curation.DdiAddins.Actions
                 DataverseSettings.PublishedDataDirectory,
                 DataverseSettings.DebugDirectory);
 
+            string datasetDoi = Task.Run(async () => await dataversePublisher.PublishRecord(record)).GetAwaiter().GetResult();
+
+            if (!string.IsNullOrEmpty(datasetDoi))
+            {
+                Task.Run(async () => await dataversePublisher.PublishFilesForRecord(record, datasetDoi, 1, 1)).GetAwaiter().GetResult();
+            }
         }
     }
 }
