@@ -169,7 +169,7 @@ namespace Colectica.Curation.Cli.Commands
                 // Match ManagedFiles to Dataverse files and create mappings
                 foreach (var managedFile in record.Files)
                 {
-                    if (!PublishToDataverse.IsFileToBePublished(record, managedFile))
+                    if (!DataversePublisher.IsFileToBePublished(record, managedFile))
                     {
                         Log.Debug("File {fileName} in record {number} is not marked for publication. Skipping.", managedFile.Name, record.Number);
                         continue;

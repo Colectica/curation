@@ -12,21 +12,21 @@ namespace Colectica.Curation.Dataverse
 {
     public class DatasetDto
     {
-        public DatasetVersionDto? DatasetVersion { get; set; }
+        public DatasetVersionDto DatasetVersion { get; set; }
 
         public static DatasetDto FromCatalogRecord(CatalogRecord record)
         {
-            DatasetDto datasetDto = new();
-            DatasetVersionDto datasetVersion = new();
+            DatasetDto datasetDto = new DatasetDto();
+            DatasetVersionDto datasetVersion = new DatasetVersionDto();
             datasetDto.DatasetVersion = datasetVersion;
 
-            MetadataBlocksDto metadataBlocks = new();
+            MetadataBlocksDto metadataBlocks = new MetadataBlocksDto();
             datasetVersion.MetadataBlocks = metadataBlocks;
 
             // ---- License fields ----
             if (record.TermsOfUse == "CC0 1.0")
             {
-                LicenseDto license = new();
+                LicenseDto license = new LicenseDto();
                 datasetVersion.License = license;
                 license.Name = "CC0 1.0";
                 license.Uri = "http://creativecommons.org/publicdomain/zero/1.0";
@@ -34,7 +34,7 @@ namespace Colectica.Curation.Dataverse
             }
             else if (record.TermsOfUse == "CC BY 4.0")
             {
-                LicenseDto license = new();
+                LicenseDto license = new LicenseDto();
                 datasetVersion.License = license;
                 license.Name = "CC BY 4.0";
                 license.Uri = "http://creativecommons.org/licenses/by/4.0";
@@ -50,29 +50,30 @@ namespace Colectica.Curation.Dataverse
             //datasetVersion.Restrictions = record.AccessStatement;
 
             // ---- Custom ISPS block ----
-            GenericBlockDto ispsBlock = new();
+            GenericBlockDto ispsBlock = new GenericBlockDto();
             metadataBlocks.CustomISPS = ispsBlock;
             ispsBlock.DisplayName = "ISPS Custom Metadata";
             ispsBlock.Name = "customISPS";
-            ispsBlock.Fields = [];
+            ispsBlock.Fields = new List<FieldDto>();
 
             if (record.ArchiveDate != null)
             {
-                ispsBlock.Fields.Add(new("ispsArchiveDate", record.ArchiveDate.Value.ToString("yyyy-MM-dd")));
+                ispsBlock.Fields.Add(new FieldDto("ispsArchiveDate", record.ArchiveDate.Value.ToString("yyyy-MM-dd")));
             }
 
             if (record.CertifiedDate != null)
             {
-                ispsBlock.Fields.Add(new("ispsCertifiedDate", record.CertifiedDate.Value.ToString("yyyy-MM-dd")));
+                ispsBlock.Fields.Add(new FieldDto("ispsCertifiedDate", record.CertifiedDate.Value.ToString("yyyy-MM-dd")));
             }
 
-            string[] measures = record.OutcomeMeasures.Split(",", StringSplitOptions.RemoveEmptyEntries);
-            ispsBlock.Fields.Add(new("ispsOutcomeMeasures", measures, multiple: true));
+            string[] measures = record.OutcomeMeasures.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-            ispsBlock.Fields.Add(new("ispsRandomizationProcedure", new List<string>() { record.RandomizationProcedure }, multiple:true));
+            ispsBlock.Fields.Add(new FieldDto("ispsOutcomeMeasures", measures, multiple: true));
 
-            string[] modes = record.ModeOfDataCollection.Split(",");
-            List<string> modesToAdd = [];
+            ispsBlock.Fields.Add(new FieldDto("ispsRandomizationProcedure", new List<string>() { record.RandomizationProcedure }, multiple:true));
+
+            string[] modes = record.ModeOfDataCollection.Split(',');
+            List<string> modesToAdd = new List<string>();
             foreach (string mode in modes)
             {
                 modesToAdd.Add(MapModeOfDataCollection(mode));
@@ -86,7 +87,7 @@ namespace Colectica.Curation.Dataverse
 
             if (!string.IsNullOrWhiteSpace(record.ResearchDesignOther))
             {
-                ispsBlock.Fields.Add(new("ispsOtherResearchDesign", new List<string>() { record.ResearchDesignOther }, multiple: true));
+                ispsBlock.Fields.Add(new FieldDto("ispsOtherResearchDesign", new List<string>() { record.ResearchDesignOther }, multiple: true));
             }
 
             string reviewType = "";
@@ -103,37 +104,37 @@ namespace Colectica.Curation.Dataverse
                 reviewType = "None";
             }
 
-            ispsBlock.Fields.Add(new("ispsReviewType", reviewType, typeClass: "controlledVocabulary"));
-            ispsBlock.Fields.Add(new("ispsTreatment", new List<string>() { record.Treatment }, multiple: true));
+            ispsBlock.Fields.Add(new FieldDto("ispsReviewType", reviewType, typeClass: "controlledVocabulary"));
+            ispsBlock.Fields.Add(new FieldDto("ispsTreatment", new List<string>() { record.Treatment }, multiple: true));
 
             AddMultipleControlledVocabularyField(ispsBlock, "ispsTreatmentAdministration", record.TreatmentAdministration, splitOnComma: true);
             if (!string.IsNullOrWhiteSpace(record.TreatmentAdministrationOther))
             {
-                ispsBlock.Fields.Add(new("ispsOtherTreatmentAdministration", new List<string>() { record.TreatmentAdministrationOther }, multiple: true));
+                ispsBlock.Fields.Add(new FieldDto("ispsOtherTreatmentAdministration", new List<string>() { record.TreatmentAdministrationOther }, multiple: true));
             }
 
             AddMultipleControlledVocabularyField(ispsBlock, "ispsUnitOfObservation", record.UnitOfObservation, splitOnComma: true);
             if (!string.IsNullOrWhiteSpace(record.UnitOfObservationOther))
             {
-                ispsBlock.Fields.Add(new("ispsOtherUnitOfObservation", new List<string>() { record.UnitOfObservationOther }, multiple: true));
+                ispsBlock.Fields.Add(new FieldDto("ispsOtherUnitOfObservation", new List<string>() { record.UnitOfObservationOther }, multiple: true));
             }
 
             AddMultipleControlledVocabularyField(ispsBlock, "ispsUnitOfRandomization", record.UnitOfRandomization, splitOnComma: true);
 
-            ispsBlock.Fields.Add(new("ispsVersion", record.Version.ToString()));
+            ispsBlock.Fields.Add(new FieldDto("ispsVersion", record.Version.ToString()));
 
             // ---- Geospatial fields -----
-            List<object> geoCoverageSubFields = [];
-            FieldDto geoCoverageField = new();
+            List<object> geoCoverageSubFields = new List<object>();
+            FieldDto geoCoverageField = new FieldDto();
             geoCoverageField.TypeName = "geographicCoverage";
             geoCoverageField.Multiple = true;
             geoCoverageField.TypeClass = "compound";
             geoCoverageField.Value = geoCoverageSubFields;
 
-            GeospatialDto geoBlock = new();
+            GeospatialDto geoBlock = new GeospatialDto();
             metadataBlocks.Geospatial = geoBlock;
             geoBlock.DisplayName = "Geospatial Metadata";
-            geoBlock.Fields = [geoCoverageField];
+            geoBlock.Fields = new List<FieldDto> { geoCoverageField };
 
             string locationTrimmed = record.Location?.Trim().Trim(',') ?? "";
 
@@ -160,33 +161,33 @@ namespace Colectica.Curation.Dataverse
             }
 
             // ---- Social Science fields ----
-            SocialScienceDto socialScienceBlock = new();
+            SocialScienceDto socialScienceBlock = new SocialScienceDto();
             metadataBlocks.SocialScience = socialScienceBlock;
             socialScienceBlock.DisplayName = "Social Science Metadata";
-            socialScienceBlock.Fields = [];
+            socialScienceBlock.Fields = new List<FieldDto>();
 
-            socialScienceBlock.Fields.Add(new("samplingProcedure", record.InclusionExclusionCriteria));
+            socialScienceBlock.Fields.Add(new FieldDto("samplingProcedure", record.InclusionExclusionCriteria));
 
             if (int.TryParse(record.SampleSize.Replace(",", ""), out int sampleSize))
             {
-                FieldDto actualSampleSizeField = new("targetSampleActualSize", sampleSize.ToString());
-                FieldDto targetSampleSizeField = new("targetSampleSize", new { TargetActualSampleSize = actualSampleSizeField }, typeClass: "compound");
+                FieldDto actualSampleSizeField = new FieldDto("targetSampleActualSize", sampleSize.ToString());
+                FieldDto targetSampleSizeField = new FieldDto("targetSampleSize", new { TargetActualSampleSize = actualSampleSizeField }, typeClass: "compound");
                 socialScienceBlock.Fields.Add(targetSampleSizeField);
             }
             else
             {
                 // When sample size is not numeric, use the formula field.
-                FieldDto formulaField = new("targetSampleSizeFormula", record.SampleSize);
-                FieldDto targetSampleSizeField = new("targetSampleSize", new { TargetSampleSizeFormula = formulaField }, typeClass: "compound");
+                FieldDto formulaField = new FieldDto("targetSampleSizeFormula", record.SampleSize);
+                FieldDto targetSampleSizeField = new FieldDto("targetSampleSize", new { TargetSampleSizeFormula = formulaField }, typeClass: "compound");
                 socialScienceBlock.Fields.Add(targetSampleSizeField);
             }
 
             if (!string.IsNullOrWhiteSpace(record.FieldDates))
             {
-                DateJsonModel? dateModel = JsonSerializer.Deserialize<DateJsonModel>(record.FieldDates);
+                DateJsonModel dateModel = JsonSerializer.Deserialize<DateJsonModel>(record.FieldDates);
                 if (dateModel != null)
                 {
-                    FieldDto dataCollectionField = new(); 
+                    FieldDto dataCollectionField = new FieldDto(); 
                     dataCollectionField.TypeName = "dateOfCollection";
                     dataCollectionField.Multiple = true;
                     dataCollectionField.TypeClass = "compound";
@@ -219,15 +220,15 @@ namespace Colectica.Curation.Dataverse
 
 
             // ---- Citation fields ----
-            CitationDto citationBlock = new();
+            CitationDto citationBlock = new CitationDto();
             metadataBlocks.Citation = citationBlock;
             citationBlock.DisplayName = "Citation Metadata";
-            citationBlock.Fields = [];
+            citationBlock.Fields = new List<FieldDto>();
 
             // Title
-            citationBlock.Fields.Add(new("title", record.Title));
+            citationBlock.Fields.Add(new FieldDto("title", record.Title));
 
-            FieldDto otherIdValueField = new()
+            FieldDto otherIdValueField = new FieldDto()
             {
                 TypeName = "otherId",
                 Multiple = true,
@@ -243,18 +244,18 @@ namespace Colectica.Curation.Dataverse
             };
             citationBlock.Fields.Add(otherIdValueField);
 
-            // citationBlock.Fields.Add(new("otherIdValue", record.Number));
+            // citationBlock.Fields.Add(new FieldDto("otherIdValue", record.Number));
 
             // Deposit Date
             if (record.CreatedDate != null)
             {
-                citationBlock.Fields.Add(new("dateOfDeposit", record.CreatedDate.Value.ToString("yyyy-MM-dd")));
+                citationBlock.Fields.Add(new FieldDto("dateOfDeposit", record.CreatedDate.Value.ToString("yyyy-MM-dd")));
             }
 
             // Time period covered
             if (!string.IsNullOrWhiteSpace(record.StudyTimePeriod))
             {
-                DateJsonModel? dateModel = JsonSerializer.Deserialize<DateJsonModel>(record.StudyTimePeriod);
+                DateJsonModel dateModel = JsonSerializer.Deserialize<DateJsonModel>(record.StudyTimePeriod);
                 if (dateModel != null)
                 {
                     object timePeriodObj = null;
@@ -274,7 +275,7 @@ namespace Colectica.Curation.Dataverse
                         };
                     }
 
-                    FieldDto timePeriodCoveredField = new("timePeriodCovered", new List<object>() { timePeriodObj }, true, "compound");;
+                    FieldDto timePeriodCoveredField = new FieldDto("timePeriodCovered", new List<object>() { timePeriodObj }, true, "compound");;
                     citationBlock.Fields.Add(timePeriodCoveredField);
                 }
             }
@@ -282,12 +283,12 @@ namespace Colectica.Curation.Dataverse
 
             if (!string.IsNullOrWhiteSpace(record.Funding) && record.Funding.ToLower() != "none known")
             {
-                FieldDto contactField = new();
+                FieldDto contactField = new FieldDto();
                 contactField.TypeName = "grantNumber";
                 contactField.Multiple = true;
                 contactField.TypeClass = "compound";
 
-                List<object> agencyEntries = [];
+                List<object> agencyEntries = new List<object>();
                 string[] fundingAgencies = record.Funding.Split(new[] { ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (string agency in fundingAgencies)
@@ -306,12 +307,12 @@ namespace Colectica.Curation.Dataverse
             // Authors
             if (record.Authors != null && record.Authors.Any())
             {
-                FieldDto authorsField = new();
+                FieldDto authorsField = new FieldDto();
                 authorsField.TypeName = "author";
                 authorsField.Multiple = true;
                 authorsField.TypeClass = "compound";
 
-                List<object> authorObjs = [];
+                List<object> authorObjs = new List<object>();
                 if (!string.IsNullOrWhiteSpace(record.AuthorsText))
                 {
                     // Parse AuthorsText to get the order of full names
@@ -369,7 +370,7 @@ namespace Colectica.Curation.Dataverse
                 string distUrl = distName == "Institution for Social and Policy Studies" ? "https://isps.yale.edu" : "";
 
 
-                FieldDto distributorField = new();
+                FieldDto distributorField = new FieldDto();
                 distributorField.TypeName = "distributor";
                 distributorField.Multiple = true;
                 distributorField.TypeClass = "compound";
@@ -395,7 +396,7 @@ namespace Colectica.Curation.Dataverse
                     orgName = "Institution for Social and Policy Studies";
                 }
 
-                FieldDto contactField = new();
+                FieldDto contactField = new FieldDto();
                 contactField.TypeName = "datasetContact";
                 contactField.Multiple = true;
                 contactField.TypeClass = "compound";
@@ -430,7 +431,7 @@ namespace Colectica.Curation.Dataverse
             }
 
             // Description
-            FieldDto descriptionField = new();
+            FieldDto descriptionField = new FieldDto();
             descriptionField.TypeName = "dsDescription";
             descriptionField.Multiple = true;
             descriptionField.TypeClass = "compound";
@@ -450,7 +451,7 @@ namespace Colectica.Curation.Dataverse
             citationBlock.Fields.Add(descriptionField);
 
             // Subject
-            FieldDto subjectField = new();
+            FieldDto subjectField = new FieldDto();
             subjectField.TypeName = "subject";
             subjectField.Multiple = true;
             subjectField.TypeClass = "controlledVocabulary";
@@ -458,20 +459,20 @@ namespace Colectica.Curation.Dataverse
             subjectField.Value = new List<string> { "Social Sciences" };
             
             // Keywords
-            FieldDto keywordField = new();
+            FieldDto keywordField = new FieldDto();
             keywordField.TypeName = "keyword";
             keywordField.Multiple = true;
             keywordField.TypeClass = "compound";
-            keywordField.Value = record.Keywords.Split(",")
+            keywordField.Value = record.Keywords.Split(',')
                 .Select(str => new { KeywordValue = new FieldDto("keywordValue", str.Trim()) } )
                 .ToArray();
             citationBlock.Fields.Add(keywordField);
 
             if (!string.IsNullOrWhiteSpace(record.RelatedDatabase))
             {
-                citationBlock.Fields.Add(new("relatedDatasets", new List<string>() { record.RelatedDatabase }, multiple: true));
+                citationBlock.Fields.Add(new FieldDto("relatedDatasets", new List<string>() { record.RelatedDatabase }, multiple: true));
             }
-            citationBlock.Fields.Add(new("relatedMaterial", new List<string>() {record.RelatedPublications }, multiple: true));
+            citationBlock.Fields.Add(new FieldDto("relatedMaterial", new List<string>() {record.RelatedPublications }, multiple: true));
 
             return datasetDto;
         }
@@ -483,7 +484,7 @@ namespace Colectica.Curation.Dataverse
             {
                 if (splitOnComma)
                 {
-                    string[] strings = value.Split(",", StringSplitOptions.RemoveEmptyEntries);
+                    string[] strings = value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     block.Fields.Add(new FieldDto(fieldName, strings.Select(s => s.Trim()).ToList(), multiple: true, typeClass: "controlledVocabulary"));
                 }
                 else
@@ -495,20 +496,40 @@ namespace Colectica.Curation.Dataverse
 
         private static string MapModeOfDataCollection(string originalMode)
         {
-            string result = originalMode switch
+            string result;
+            switch (originalMode)
             {
-                "Survey: Web based" => "Survey - Web",
-                "Content coding" => "Content Coding",
-                "Observation" => "Observation - Field",
-                "Self administered questionnaire" => "Self-Administered Questionnaire",
-                "Interview: web based" => "Interview - Web",
-                "Focus group" => "Focus Group",
-                "Interview: email" => "Interview - Email",
-                "Interview" => "Interview - Face to Face",
-                "Self-administered writing or diaries" => "Self-Administered Writing or Diaries",
-
-                _ => originalMode
-            };
+                case "Survey: Web based":
+                    result = "Survey - Web";
+                    break;
+                case "Content coding":
+                    result = "Content Coding";
+                    break;
+                case "Observation":
+                    result = "Observation - Field";
+                    break;
+                case "Self administered questionnaire":
+                    result = "Self-Administered Questionnaire";
+                    break;
+                case "Interview: web based":
+                    result = "Interview - Web";
+                    break;
+                case "Focus group":
+                    result = "Focus Group";
+                    break;
+                case "Interview: email":
+                    result = "Interview - Email";
+                    break;
+                case "Interview":
+                    result = "Interview - Face to Face";
+                    break;
+                case "Self-administered writing or diaries":
+                    result = "Self-Administered Writing or Diaries";
+                    break;
+                default:
+                    result = originalMode;
+                    break;
+            }
 
             result = result.Replace(": ", " - ");
             return result;
@@ -518,66 +539,66 @@ namespace Colectica.Curation.Dataverse
 
     public class DescriptionValueDto
     {
-        public FieldDto? DsDescriptionValue { get; set; }
+        public FieldDto DsDescriptionValue { get; set; }
     }
 
     public class DatasetContactValueDto
     {
-        public FieldDto? DatasetContactEmail { get; set; }
-        public FieldDto? DatasetContactName { get; set; }
-        public FieldDto? DatasetContactAffiliation { get; set; }
+        public FieldDto DatasetContactEmail { get; set; }
+        public FieldDto DatasetContactName { get; set; }
+        public FieldDto DatasetContactAffiliation { get; set; }
     }
 
 
     public class DatasetVersionDto
     {
-        public LicenseDto? License { get; set; }
-        public MetadataBlocksDto? MetadataBlocks { get; set; }
-        public string? TermsOfUse { get; set; }
-        public string? TermsOfAccess { get; set; }
-        public string? Restrictions { get; set; }
-        public string? DepositorRequirements { get; set; }
-        public string? OriginalArchive { get; set; }
+        public LicenseDto License { get; set; }
+        public MetadataBlocksDto MetadataBlocks { get; set; }
+        public string TermsOfUse { get; set; }
+        public string TermsOfAccess { get; set; }
+        public string Restrictions { get; set; }
+        public string DepositorRequirements { get; set; }
+        public string OriginalArchive { get; set; }
     }
 
     public class LicenseDto
     {
-        public string? Name { get; set; }
-        public string? Uri { get; set; }
-        public string? RightsIdentifier { get; set; }
+        public string Name { get; set; }
+        public string Uri { get; set; }
+        public string RightsIdentifier { get; set; }
     }
 
     public class MetadataBlocksDto
     {
-        public GenericBlockDto? Terms { get; set; }
-        public GenericBlockDto? CustomISPS { get; set; }
-        public CitationDto? Citation { get; set; }
-        public GeospatialDto? Geospatial { get; set; }
-        public SocialScienceDto? SocialScience { get; set; }
-        public AstrophysicsDto? Astrophysics { get; set; }
-        public BiomedicalDto? Biomedical { get; set; }
-        public JournalDto? Journal { get; set; }
+        public GenericBlockDto Terms { get; set; }
+        public GenericBlockDto CustomISPS { get; set; }
+        public CitationDto Citation { get; set; }
+        public GeospatialDto Geospatial { get; set; }
+        public SocialScienceDto SocialScience { get; set; }
+        public AstrophysicsDto Astrophysics { get; set; }
+        public BiomedicalDto Biomedical { get; set; }
+        public JournalDto Journal { get; set; }
     }
 
     public class GenericBlockDto
     {
-        public string? DisplayName { get; set; }
-        public string? Name { get; set; }
-        public List<FieldDto> Fields { get; set; } = [];
+        public string DisplayName { get; set; }
+        public string Name { get; set; }
+        public List<FieldDto> Fields { get; set; } = new List<FieldDto>();
     }
 
     public class CitationDto
     {
-        public string? DisplayName { get; set; }
-        public List<FieldDto> Fields { get; set; } = [];
+        public string DisplayName { get; set; }
+        public List<FieldDto> Fields { get; set; } = new List<FieldDto>();
     }
 
     public class FieldDto
     {
-        public string? TypeName { get; set; }
+        public string TypeName { get; set; }
         public bool Multiple { get; set; } = false;
-        public string? TypeClass { get; set; }
-        public object? Value { get; set; }
+        public string TypeClass { get; set; }
+        public object Value { get; set; }
 
         public FieldDto()
         {
@@ -595,33 +616,33 @@ namespace Colectica.Curation.Dataverse
 
     public class GeospatialDto
     {
-        public string? DisplayName { get; set; }
+        public string DisplayName { get; set; }
         public string Name => "geospatial";
-        public List<FieldDto> Fields { get; set; } = [];
+        public List<FieldDto> Fields { get; set; } = new List<FieldDto>();
     }
 
     public class SocialScienceDto
     {
-        public string? DisplayName { get; set; }
-        public List<FieldDto> Fields { get; set; } = [];
+        public string DisplayName { get; set; }
+        public List<FieldDto> Fields { get; set; } = new List<FieldDto>();
     }
 
     public class AstrophysicsDto
     {
-        public string? DisplayName { get; set; }
-        public List<FieldDto> Fields { get; set; } = [];
+        public string DisplayName { get; set; }
+        public List<FieldDto> Fields { get; set; } = new List<FieldDto>();
     }
 
     public class BiomedicalDto
     {
-        public string? DisplayName { get; set; }
-        public List<FieldDto> Fields { get; set; } = [];
+        public string DisplayName { get; set; }
+        public List<FieldDto> Fields { get; set; } = new List<FieldDto>();
     }
 
     public class JournalDto
     {
-        public string? DisplayName { get; set; }
-        public List<FieldDto> Fields { get; set; } = [];
+        public string DisplayName { get; set; }
+        public List<FieldDto> Fields { get; set; } = new List<FieldDto>();
     }
 
     public class DateJsonModel

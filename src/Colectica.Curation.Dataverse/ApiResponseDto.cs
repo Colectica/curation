@@ -6,13 +6,13 @@ namespace Colectica.Curation.Dataverse
     public class ApiResponseDto
     {
         [JsonPropertyName("status")]
-        public string? Status { get; set; }
+        public string Status { get; set; }
 
         [JsonPropertyName("message")]
         public JsonElement Message { get; set; }
 
         [JsonPropertyName("data")]
-        public ApiResponseDataDto? Data { get; set; }
+        public ApiResponseDataDto Data { get; set; }
 
         public string MessageText
         {
@@ -41,9 +41,9 @@ namespace Colectica.Curation.Dataverse
         public int? DatasetId { get; set; }
 
         [JsonPropertyName("persistentId")]
-        public string? PersistentId { get; set; }
+        public string PersistentId { get; set; }
 
         [JsonPropertyName("datasetPersistentId")]
-        public string? DatasetPersistentId { get; set; }
+        public string DatasetPersistentId { get; set; }
     }
 }

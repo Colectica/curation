@@ -6,67 +6,68 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Colectica.Curation.Dataverse;
-
-public class FileDto
+namespace Colectica.Curation.Dataverse
 {
-    public static FileDto FromManagedFile(ManagedFile managedFile)
+    public class FileDto
     {
-        FileDto fileDto = new();
-
-        string sourceInformationSegment = "";
-        if (managedFile.Source == "Curation System")
+        public static FileDto FromManagedFile(ManagedFile managedFile)
         {
-            sourceInformationSegment = $"Source information: {managedFile.CatalogRecord.Organization.ContactInformation}; ";
-        }
+            FileDto fileDto = new FileDto();
 
-        string publishedSegment = "";
-        if (managedFile.CatalogRecord.ArchiveDate.HasValue)
-        {
-            publishedSegment = $"Published {managedFile.CatalogRecord.ArchiveDate.Value.ToShortDateString()}; ";
-        }
-
-        fileDto.Title = managedFile.Title;
-        fileDto.Label = managedFile.Name;
-        fileDto.Description = $"{managedFile.Title}; ISPS number {managedFile.Number}; {publishedSegment}Source: {managedFile.Source}; {sourceInformationSegment}Created with: {managedFile.Software} {managedFile.SoftwareVersion}";
-        fileDto.Source = managedFile.Source;
-        fileDto.Restricted = !managedFile.IsPublicAccess;
-
-        if (managedFile.Type == "Data")
-        {
-            if (!string.IsNullOrWhiteSpace(managedFile.KindOfData) && string.Compare(managedFile.KindOfData, "Not Selected", StringComparison.OrdinalIgnoreCase) != 0)
+            string sourceInformationSegment = "";
+            if (managedFile.Source == "Curation System")
             {
-                fileDto.Categories.Add(managedFile.KindOfData);
+                sourceInformationSegment = $"Source information: {managedFile.CatalogRecord.Organization.ContactInformation}; ";
             }
+
+            string publishedSegment = "";
+            if (managedFile.CatalogRecord.ArchiveDate.HasValue)
+            {
+                publishedSegment = $"Published {managedFile.CatalogRecord.ArchiveDate.Value.ToShortDateString()}; ";
+            }
+
+            fileDto.Title = managedFile.Title;
+            fileDto.Label = managedFile.Name;
+            fileDto.Description = $"{managedFile.Title}; ISPS number {managedFile.Number}; {publishedSegment}Source: {managedFile.Source}; {sourceInformationSegment}Created with: {managedFile.Software} {managedFile.SoftwareVersion}";
+            fileDto.Source = managedFile.Source;
+            fileDto.Restricted = !managedFile.IsPublicAccess;
+
+            if (managedFile.Type == "Data")
+            {
+                if (!string.IsNullOrWhiteSpace(managedFile.KindOfData) && string.Compare(managedFile.KindOfData, "Not Selected", StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    fileDto.Categories.Add(managedFile.KindOfData);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(managedFile.Type))
+            {
+                fileDto.Categories.Add(managedFile.Type);
+            }
+
+            if (managedFile.CertifiedDate.HasValue)
+            {
+                fileDto.DataFile.PublicationDate = new DateTime(managedFile.CertifiedDate.Value.Year, managedFile.CertifiedDate.Value.Month, managedFile.CertifiedDate.Value.Day);
+            }
+
+            return fileDto;
         }
 
-        if (!string.IsNullOrWhiteSpace(managedFile.Type))
-        {
-            fileDto.Categories.Add(managedFile.Type);
-        }
+        public string DataFileId { get; set; }
+        public string Description { get; set; } = string.Empty;
+        public string Label { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Source { get; set; } = string.Empty;
+        public bool Restricted { get; set; }
+        public List<string> Categories { get; set; } = new List<string>();
 
-        if (managedFile.CertifiedDate.HasValue)
-        {
-            fileDto.DataFile.PublicationDate = new DateOnly(managedFile.CertifiedDate.Value.Year, managedFile.CertifiedDate.Value.Month, managedFile.CertifiedDate.Value.Day);
-        }
+        public string TabIngest => "true";
 
-        return fileDto;
+        public DataFileDto DataFile { get; set; } = new DataFileDto();
     }
 
-    public string? DataFileId { get; set; }
-    public string Description { get; set; } = string.Empty;
-    public string Label { get; set; } = string.Empty;
-    public string Title { get; set; } = string.Empty;
-    public string Source { get; set; } = string.Empty;
-    public bool Restricted { get; set; }
-    public List<string> Categories { get; set; } = [];
-
-    public string TabIngest => "true";
-
-    public DataFileDto DataFile { get; set; } = new();
-}
-
-public class DataFileDto
-{
-    public DateOnly? PublicationDate { get; set; }
+    public class DataFileDto
+    {
+        public DateTime? PublicationDate { get; set; }
+    }
 }

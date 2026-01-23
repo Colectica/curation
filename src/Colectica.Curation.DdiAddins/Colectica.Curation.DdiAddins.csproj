@@ -60,6 +60,7 @@
     <Compile Include="Actions\CreateHandles.cs" />
     <Compile Include="Actions\CreatePhysicalInstances.cs" />
     <Compile Include="Actions\CreatePreservationFormatsWithStatTransfer.cs" />
+    <Compile Include="Actions\PublishToDataverse.cs" />
     <Compile Include="Actions\RecalculateSummaryStatistics.cs" />
     <Compile Include="DdiAddinManifest.cs" />
     <Compile Include="Mappers\CatalogRecordToStudyUnitMapper.cs" />
@@ -85,6 +86,10 @@
     <ProjectReference Include="..\Colectica.Curation.Contracts\Colectica.Curation.Contracts.csproj">
       <Project>{4f74cd1c-0913-4f68-9bf2-df6f786ca916}</Project>
       <Name>Colectica.Curation.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Colectica.Curation.Dataverse\Colectica.Curation.Dataverse.csproj">
+      <Project>{14b0e639-c65b-4c6d-86e7-db7156c4613d}</Project>
+      <Name>Colectica.Curation.Dataverse</Name>
     </ProjectReference>
     <ProjectReference Include="..\Colectica.Curation.Data\Colectica.Curation.Data.csproj">
       <Project>{aaac1795-727a-4920-bca8-644e96240604}</Project>
