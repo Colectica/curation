@@ -1,6 +1,5 @@
 set zip="c:\Program Files\7-Zip\7z.exe"
-set msbuild="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
-set msbuild22="C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe"
+set msbuild="C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe"
 
 set WORKSPACE=c:\svn\curation
 IF "%computername%"=="MARGOT" (
@@ -20,9 +19,7 @@ rmdir /Q /S ..\dist
 mkdir ..\dist
 
 REM Restore nuget packages
-PUSHD ..\src
-dotnet restore ColecticaCurationTools-WithColecticaSDK.sln
-POPD
+%msbuild% ..\src\ColecticaCurationTools-WithColecticaSDK.sln /t:Restore /P:Configuration=Release
 
 REM Build the WebDeploy packages.
 %msbuild% ..\src\Colectica.Curation.Web\Colectica.Curation.Web.WithDdi.csproj  /P:Configuration=Release /P:Platform=AnyCPU /P:DeployOnBuild=true /P:PublishProfile=FileBundle /P:SolutionDir=%WORKSPACE%\src\
@@ -46,7 +43,7 @@ ren ..\dist\ColecticaCurationWeb ColecticaCurationWeb-%revisionNumber%
 
 REM Build and copy CLI application
 PUSHD ..\src\Colectica.Curation.Cli
-%msbuild22% /P:Configuration=Release /P:Platform=AnyCPU 
+%msbuild% /P:Configuration=Release /P:Platform=AnyCPU 
 xcopy /e /y bin\Release\net6.0 ..\..\dist\ColecticaCurationPackage-%revisionNumber%\ColecticaCurationCli\
 POPD
 if %errorlevel% neq 0 exit /b %errorlevel%

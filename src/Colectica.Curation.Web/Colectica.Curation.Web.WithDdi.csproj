@@ -45,7 +45,6 @@
     <DefineConstants>TRACE;ISPRO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <MSBuildExtensionsPath>c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\</MSBuildExtensionsPath>
     <RuntimeIdentifier>win</RuntimeIdentifier>
   </PropertyGroup>
   <ItemGroup>
