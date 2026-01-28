@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Colectica.Curation.DdiAddins.Actions
 {
     [Export(typeof(IPublishAction))]
-    public class PublishToDataverse
+    public class PublishToDataverse : IPublishAction
     {
         ILog logger;
 
