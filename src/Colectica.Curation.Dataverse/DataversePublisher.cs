@@ -409,6 +409,41 @@ namespace Colectica.Curation.Dataverse
                 //     }
                 // }
             }
+
+            // Delete files from Dataverse that are no longer marked for publication.
+            if (existingFiles?.Data != null)
+            {
+                List<int> fileIdsToDelete = new List<int>();
+                foreach (var file in record.Files)
+                {
+                    if (!IsFileToBePublished(record, file))
+                    {
+                        ExistingFileItemDto existingMatch = existingFiles.Data
+                            .FirstOrDefault(ef => ef.Label == file.Name);
+                        if (existingMatch != null)
+                        {
+                            fileIdsToDelete.Add(existingMatch.DataFile.Id);
+                            LogInfo($"File '{file.Name}' is no longer published. Queuing for deletion from Dataverse (ID: {existingMatch.DataFile.Id}).");
+                        }
+                    }
+                }
+
+                if (fileIdsToDelete.Count > 0)
+                {
+                    try
+                    {
+                        string deleteUrl = $"{dataverseUrl}/api/datasets/{datasetId}/deleteFiles";
+                        string deleteJson = JsonSerializer.Serialize(fileIdsToDelete);
+                        StringContent deleteContent = new StringContent(deleteJson, Encoding.UTF8, "application/json");
+                        string deleteResponse = await PutJsonToApiAsync(deleteUrl, apiToken, deleteContent);
+                        LogInfo($"Deleted {fileIdsToDelete.Count} unpublished file(s) from Dataverse for record {record.Number}. Response: {deleteResponse}");
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError($"Failed to delete unpublished files from Dataverse for record {record.Number}.", ex);
+                    }
+                }
+            }
         }
 
         private string GetFileIdFromSearchResult(string json, string fileNumber, CatalogRecord record)
