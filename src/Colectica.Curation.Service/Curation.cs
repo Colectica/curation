@@ -85,7 +85,7 @@ namespace Colectica.Curation.Service
             timer.Enabled = false;
         }
 
-        void timer_Elapsed(object sender, ElapsedEventArgs e)
+        async void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             while (true)
             {
@@ -116,7 +116,7 @@ namespace Colectica.Curation.Service
                         // Perform the operation, with error handling.
                         try
                         {
-                            success = operation.Execute();
+                            success = await operation.Execute();
                         }
                         catch (EmptyCommitException emptyCommitException)
                         {

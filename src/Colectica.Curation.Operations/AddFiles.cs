@@ -74,7 +74,7 @@ namespace Colectica.Curation.Operations
             logger = LogManager.GetLogger("Curation");
         }
 
-        public bool Execute()
+        public async Task<bool> Execute()
         {
             string path = Path.Combine(GitRepositoryPath, CatalogRecordId.ToString());
             //path = Path.Combine(path, ".git");

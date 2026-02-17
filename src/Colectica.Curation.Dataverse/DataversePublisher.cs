@@ -1,6 +1,5 @@
 ﻿using Colectica.Curation.Data;
 using Polly;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,8 +24,15 @@ namespace Colectica.Curation.Dataverse
         private readonly IAsyncPolicy<HttpResponseMessage> retryPolicy;
         private readonly JsonSerializerOptions jsonOptions;
         private Dictionary<CatalogRecord, string> datasetIdMap = new Dictionary<CatalogRecord, string>();
+        private readonly Action<string, string, Exception> log;
 
-        public DataversePublisher(string dataverseUrl, string dataverseName, string apiToken, string publishedDataDirectory, string debugDir)
+        private void LogDebug(string message) => log?.Invoke("Debug", message, null);
+        private void LogInfo(string message) => log?.Invoke("Info", message, null);
+        private void LogWarn(string message, Exception ex = null) => log?.Invoke("Warn", message, ex);
+        private void LogError(string message, Exception ex = null) => log?.Invoke("Error", message, ex);
+
+        public DataversePublisher(string dataverseUrl, string dataverseName, string apiToken, string publishedDataDirectory, string debugDir,
+            Action<string, string, Exception> log = null)
         {
             // Configure JsonSerializer to ignore null values and use camelCase
             jsonOptions = new JsonSerializerOptions
@@ -46,11 +52,9 @@ namespace Colectica.Curation.Dataverse
                     sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), // Exponential backoff
                     onRetry: (outcome, duration, retryCount, context) =>
                     {
-                        Log.Warning("Retry {retryCount} for {url} in {duration}ms. Reason: {reason}",
-                            retryCount,
-                            context.TryGetValue("url", out var urlValue) ? urlValue : "unknown",
-                            duration.TotalMilliseconds,
-                            outcome.Exception?.Message ?? outcome.Result?.ReasonPhrase ?? "Unknown");
+                        string url = context.TryGetValue("url", out var urlValue) ? urlValue?.ToString() : "unknown";
+                        string reason = outcome.Exception?.Message ?? outcome.Result?.ReasonPhrase ?? "Unknown";
+                        LogWarn($"Retry {retryCount} for {url} in {duration.TotalMilliseconds}ms. Reason: {reason}");
                     });
 
             // Create HttpClient with timeout
@@ -63,11 +67,12 @@ namespace Colectica.Curation.Dataverse
             this.dataverseUrl = dataverseUrl;
             this.dataverseName = dataverseName;
             this.debugDir = debugDir;
+            this.log = log;
         }
 
         public async Task<string> PublishRecord(CatalogRecord record)
         {
-            Log.Debug("Processing record {recordNumber} {recordId} {recordTitle}", record.Number, record.Id, record.Title);
+            LogDebug($"Processing record {record.Number} {record.Id} {record.Title}");
 
             // Check to see if the record is already in Dataverse.
             string checkUrl = $"{dataverseUrl}/api/search?q={record.Number}&type=dataset&metadata_fields=otherIdValue";
@@ -84,7 +89,7 @@ namespace Colectica.Curation.Dataverse
             {
                 if (existingPersistentId != null)
                 {
-                    Log.Information("Updating existing dataset");
+                    LogInfo("Updating existing dataset");
                     // Update the existing dataset.
                     string datasetJson = JsonSerializer.Serialize(datasetDto.DatasetVersion, jsonOptions);
                     StringContent datasetContent = new StringContent(datasetJson, Encoding.UTF8, "application/json");
@@ -99,7 +104,7 @@ namespace Colectica.Curation.Dataverse
                 }
                 else
                 {
-                    Log.Information("Creating new dataset");
+                    LogInfo("Creating new dataset");
 
                     // Create a new dataset.
                     string datasetJson = JsonSerializer.Serialize(datasetDto, jsonOptions);
@@ -118,21 +123,21 @@ namespace Colectica.Curation.Dataverse
 
                 if (datasetApiResponse == null)
                 {
-                    Log.Error("Failed to deserialize API response. Response: {response}", datasetResponse);
+                    LogError($"Failed to deserialize API response. Response: {datasetResponse}");
                     return null;
                 }
 
                 if (datasetApiResponse.Status != "OK")
                 {
-                    Log.Error("Failed to create or update dataset {id}. Message: {message}. Response: {response}", record.Number, datasetApiResponse.MessageText, datasetResponse);
+                    LogError($"Failed to create or update dataset {record.Number}. Message: {datasetApiResponse.MessageText}. Response: {datasetResponse}");
                     return null;
                 }
 
-                Log.Debug("Success");
+                LogDebug("Success");
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to create dataset {id}. Response: {response}", existingPersistentId, datasetResponse);
+                LogError($"Failed to create dataset {existingPersistentId}. Response: {datasetResponse}", ex);
                 return null;
             }
 
@@ -152,7 +157,7 @@ namespace Colectica.Curation.Dataverse
             }
             else
             {
-                Log.Warning("No dataset ID returned in response for record {recordNumber}. Response: {response}", record.Number, datasetResponse);
+                LogWarn($"No dataset ID returned in response for record {record.Number}. Response: {datasetResponse}");
             }
 
             // Use the ispsArchiveDate field as the date in the citation.
@@ -163,7 +168,7 @@ namespace Colectica.Curation.Dataverse
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to set citation date for dataset {datasetDoi}", datasetDoi);
+                LogError($"Failed to set citation date for dataset {datasetDoi}", ex);
                 return datasetDoi;
             }
 
@@ -172,14 +177,14 @@ namespace Colectica.Curation.Dataverse
 
         public async Task PublishFilesForRecord(CatalogRecord record, string datasetDoi, int currentNumber, int totalNumber)
         {
-            Log.Information("Publishing files for record {recordNumber} ({currentNumber}/{totalNumber}) to dataset {datasetDoi}", record.Number, currentNumber, totalNumber, datasetDoi);
+            LogInfo($"Publishing files for record {record.Number} ({currentNumber}/{totalNumber}) to dataset {datasetDoi}");
 
             // Add all files.
             string addFileUrl = $"{dataverseUrl}/api/datasets/:persistentId/add?persistentId={datasetDoi}";
 
             if (!datasetIdMap.TryGetValue(record, out string datasetId) || string.IsNullOrWhiteSpace(datasetId))
             {
-                Log.Error("No dataset ID found for record {recordNumber}. Cannot publish files.", record.Number);
+                LogError($"No dataset ID found for record {record.Number}. Cannot publish files.");
                 return;
             }
 
@@ -192,7 +197,7 @@ namespace Colectica.Curation.Dataverse
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to retrieve existing files for record {recordNumber}.", record.Number);
+                LogError($"Failed to retrieve existing files for record {record.Number}.", ex);
                 return;
             }
 
@@ -202,13 +207,13 @@ namespace Colectica.Curation.Dataverse
             {
                 if (!IsFileToBePublished(record, file))
                 {
-                    Log.Information("Skipping file. {recordNumber}, {fileName}", record.Number, Path.GetFileName(file.Name));
+                    LogInfo($"Skipping file. {record.Number}, {Path.GetFileName(file.Name)}");
                     continue;
                 }
 
                 fileCount++;
 
-                Log.Debug("Processing file {count} of {total} - {file}", fileCount, totalFileCount, file.Name);
+                LogDebug($"Processing file {fileCount} of {totalFileCount} - {file.Name}");
 
                 // Create a new file, and upload it.
                 string filePath = Path.Combine(
@@ -217,7 +222,7 @@ namespace Colectica.Curation.Dataverse
                     file.Name);
                 if (!System.IO.File.Exists(filePath))
                 {
-                    Log.Error("File not found for record {recordNumber}: {filePath}", record.Number, filePath);
+                    LogError($"File not found for record {record.Number}: {filePath}");
                     continue;
                 }
 
@@ -230,11 +235,11 @@ namespace Colectica.Curation.Dataverse
                     (!string.IsNullOrWhiteSpace(f.DataFile.Md5) && f.DataFile.Md5.Equals(localMd5, StringComparison.OrdinalIgnoreCase)));
                 if (existingFileList?.Count() > 1)
                 {
-                    Log.Error("Multiple existing files found with label {label} in record {recordNumber}. Using the first one.", file.Name, record.Number);
+                    LogError($"Multiple existing files found with label {file.Name} in record {record.Number}. Using the first one.");
 
                     foreach (var existingFile in existingFileList)
                     {
-                        Log.Error(" - Existing file ID: {id}, Label: {label}, MD5: {md5}", existingFile.DataFile.Id, existingFile.Label, existingFile.DataFile.Md5);
+                        LogError($" - Existing file ID: {existingFile.DataFile.Id}, Label: {existingFile.Label}, MD5: {existingFile.DataFile.Md5}");
                     }
 
                 }
@@ -263,18 +268,18 @@ namespace Colectica.Curation.Dataverse
                             string fileResponseStr = await PostToApiAsync(updateFileUrl, apiToken, multipartContent);
                             if (fileResponseStr.StartsWith("File Metadata update has been completed:"))
                             {
-                                Log.Debug("File metadata updated successfully: {file}", file.Name);
+                                LogDebug($"File metadata updated successfully: {file.Name}");
                             }
                             else
                             {
-                                Log.Error("Failed to update file metadata in record {recordNumber}. Response: {response}", record.Number, fileResponseStr);
+                                LogError($"Failed to update file metadata in record {record.Number}. Response: {fileResponseStr}");
                                 continue;
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Exception while updating file metadata in record {recordNumber}. {file}", record.Number, file.Name);
+                        LogError($"Exception while updating file metadata in record {record.Number}. {file.Name}", ex);
                     }
 
                 }
@@ -300,7 +305,7 @@ namespace Colectica.Curation.Dataverse
                             {
                                 if (lockCheckCount % 20 == 0)
                                 {
-                                    Log.Debug("Checking lock status for dataset {datasetId} for record {recordNumber}, attempt {attempt}", datasetId, record.Number, lockCheckCount + 1);
+                                    LogDebug($"Checking lock status for dataset {datasetId} for record {record.Number}, attempt {lockCheckCount + 1}");
                                 }
 
                                 lockResponse = await GetFromApiAsync(lockUrl, apiToken);
@@ -310,13 +315,13 @@ namespace Colectica.Curation.Dataverse
                                     break;
                                 }
 
-                                Task.Delay(5000).Wait();
+                                await Task.Delay(5000);
                                 lockCheckCount++;
                             }
 
                             if (!isLockOkay)
                             {
-                                Log.Error("Dataset {number} is locked after multiple attempts. Skipping file upload for record. {response}", record.Number, lockResponse);
+                                LogError($"Dataset {record.Number} is locked after multiple attempts. Skipping file upload for record. {lockResponse}");
                                 continue;
                             }
 
@@ -326,21 +331,21 @@ namespace Colectica.Curation.Dataverse
 
                             if (fileResponseObj == null)
                             {
-                                Log.Error("Failed to deserialize API response. Response: {response}", fileResponseStr);
+                                LogError($"Failed to deserialize API response. Response: {fileResponseStr}");
                                 continue;
                             }
 
                             if (fileResponseObj.Status != "OK")
                             {
-                                Log.Error("Failed to create file. Message: {message}. Response: {response}", fileResponseObj.MessageText, fileResponseStr);
+                                LogError($"Failed to create file. Message: {fileResponseObj.MessageText}. Response: {fileResponseStr}");
                                 continue;
                             }
-                            Log.Information("File uploaded successfully: {file}", file.Name);
+                            LogInfo($"File uploaded successfully: {file.Name}");
                         }
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Failed to upload file: {file}", file.Name);
+                        LogError($"Failed to upload file: {file.Name}", ex);
                         continue;
                     }
                 }
@@ -418,14 +423,14 @@ namespace Colectica.Curation.Dataverse
                     {
                         if (itemsElement.GetArrayLength() > 1)
                         {
-                            Log.Error("Record {recordNumber} has multiple files found with file number {fileNumber}. Using the first one.", record.Number, fileNumber);
+                            LogError($"Record {record.Number} has multiple files found with file number {fileNumber}. Using the first one.");
                         }
 
                         JsonElement firstItem = itemsElement[0];
                         if (firstItem.TryGetProperty("file_id", out JsonElement idElement))
                         {
                             string id = idElement.ToString();
-                            Log.Debug("Found existing file with ID: {id}", id);
+                            LogDebug($"Found existing file with ID: {id}");
                             return id;
                         }
                     }
@@ -433,7 +438,7 @@ namespace Colectica.Curation.Dataverse
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Failed to parse search result JSON: {json}", json);
+                LogError($"Failed to parse search result JSON: {json}", ex);
             }
 
             return null;
@@ -454,7 +459,7 @@ namespace Colectica.Curation.Dataverse
                         if (firstItem.TryGetProperty("global_id", out JsonElement idElement))
                         {
                             string id = idElement.ToString();
-                            Log.Debug("Found existing dataset with ID: {id}", id);
+                            LogDebug($"Found existing dataset with ID: {id}");
                             return id;
                         }
                     }
@@ -462,7 +467,7 @@ namespace Colectica.Curation.Dataverse
             }
             catch (Exception ex)
             {
-                Log.Warning(ex, "Failed to parse search result JSON: {json}", searchResultJson);
+                LogWarn($"Failed to parse search result JSON: {searchResultJson}", ex);
             }
 
             return null;
@@ -484,11 +489,13 @@ namespace Colectica.Curation.Dataverse
         private async Task<string> PutToApiAsync(string url, string apiToken, string value, string doi)
         {
             var context = new Context(url) { ["url"] = url };
-            StringContent content = new StringContent(value, Encoding.UTF8, "application/x-www-form-urlencoded");
+            byte[] contentBytes = Encoding.UTF8.GetBytes(value);
 
             HttpResponseMessage response = await retryPolicy.ExecuteAsync(async (ctx) =>
             {
-                return await httpClient.PutAsync(url, content);
+                ByteArrayContent retryContent = new ByteArrayContent(contentBytes);
+                retryContent.Headers.TryAddWithoutValidation("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+                return await httpClient.PutAsync(url, retryContent);
             }, context);
 
             string responseBody = await response.Content.ReadAsStringAsync();
@@ -498,10 +505,17 @@ namespace Colectica.Curation.Dataverse
         public async Task<string> PutJsonToApiAsync(string url, string apiToken, HttpContent content)
         {
             var context = new Context(url) { ["url"] = url };
+            byte[] contentBytes = await content.ReadAsByteArrayAsync();
+            string contentType = content.Headers.ContentType?.ToString();
 
             HttpResponseMessage response = await retryPolicy.ExecuteAsync(async (ctx) =>
             {
-                return await httpClient.PutAsync(url, content);
+                ByteArrayContent retryContent = new ByteArrayContent(contentBytes);
+                if (contentType != null)
+                {
+                    retryContent.Headers.TryAddWithoutValidation("Content-Type", contentType);
+                }
+                return await httpClient.PutAsync(url, retryContent);
             }, context);
 
             string responseBody = await response.Content.ReadAsStringAsync();
@@ -511,10 +525,17 @@ namespace Colectica.Curation.Dataverse
         public async Task<string> PostToApiAsync(string url, string apiToken, HttpContent content)
         {
             var context = new Context(url) { ["url"] = url };
+            byte[] contentBytes = await content.ReadAsByteArrayAsync();
+            string contentType = content.Headers.ContentType?.ToString();
 
             HttpResponseMessage response = await retryPolicy.ExecuteAsync(async (ctx) =>
             {
-                return await httpClient.PostAsync(url, content);
+                ByteArrayContent retryContent = new ByteArrayContent(contentBytes);
+                if (contentType != null)
+                {
+                    retryContent.Headers.TryAddWithoutValidation("Content-Type", contentType);
+                }
+                return await httpClient.PostAsync(url, retryContent);
             }, context);
 
             string responseBody = await response.Content.ReadAsStringAsync();

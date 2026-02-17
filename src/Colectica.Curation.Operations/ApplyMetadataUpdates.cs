@@ -56,7 +56,7 @@ namespace Colectica.Curation.Operations
             logger = LogManager.GetLogger("Curation");
         }
 
-        public bool Execute()
+        public async Task<bool> Execute()
         {
             logger.Debug("Applying metadata updates");
 

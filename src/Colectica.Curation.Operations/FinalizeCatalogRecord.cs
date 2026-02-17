@@ -86,7 +86,7 @@ namespace Colectica.Curation.Operations
             logger = LogManager.GetLogger("Curation");
         }
 
-        public bool Execute()
+        public async Task<bool> Execute()
         {
             using (this.db = ApplicationDbContext.Create())
             {
@@ -113,7 +113,7 @@ namespace Colectica.Curation.Operations
 
                 CreateArchivePackage();
 
-                CopyToPublishTarget(); // IPublishAction
+                await CopyToPublishTarget(); // IPublishAction
 
 
                 if (hasFailure)
@@ -294,7 +294,7 @@ namespace Colectica.Curation.Operations
             LogEvent(EventTypes.CreateArchivePackage, "Created Archive Package");
         }
 
-        void CopyToPublishTarget()
+        async Task CopyToPublishTarget()
         {
             if (hasFailure)
             {
@@ -306,7 +306,7 @@ namespace Colectica.Curation.Operations
             {
                 try
                 {
-                    addin.PublishRecord(record, user, db, ProcessingDirectory);
+                    await addin.PublishRecord(record, user, db, ProcessingDirectory);
                 }
                 catch (Exception ex)
                 {

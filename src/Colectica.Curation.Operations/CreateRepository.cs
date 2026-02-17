@@ -38,7 +38,7 @@ namespace Colectica.Curation.Operations
 
         public string GitRepositoryPath { get; set; }
 
-        public bool Execute()
+        public Task<bool> Execute()
         {
             string path = Path.Combine(GitRepositoryPath, CatalogRecordId.ToString());
             if (!Directory.Exists(path))
@@ -47,7 +47,7 @@ namespace Colectica.Curation.Operations
             }
             string rootedPath = Repository.Init(path);
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

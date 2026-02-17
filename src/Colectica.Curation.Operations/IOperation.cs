@@ -43,7 +43,7 @@ namespace Colectica.Curation.Operations
         /// <summary>
         /// Execute the operation
         /// </summary>
-        bool Execute();
+        Task<bool> Execute();
         
     }
 }

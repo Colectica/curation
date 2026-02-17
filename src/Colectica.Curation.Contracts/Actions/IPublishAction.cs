@@ -31,6 +31,6 @@ namespace Colectica.Curation.Contracts
     {
         string Name { get; }
 
-        void PublishRecord(Data.CatalogRecord record, Data.ApplicationUser user, Data.ApplicationDbContext db, string ProcessingDirectory);
+        Task PublishRecord(Data.CatalogRecord record, Data.ApplicationUser user, Data.ApplicationDbContext db, string ProcessingDirectory);
     }
 }

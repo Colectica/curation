@@ -42,7 +42,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             logger = LogManager.GetLogger("Curation");
         }
 
-        public void PublishRecord(CatalogRecord record, ApplicationUser user, ApplicationDbContext db, string ProcessingDirectory)
+        public Task PublishRecord(CatalogRecord record, ApplicationUser user, ApplicationDbContext db, string ProcessingDirectory)
         {
             var settings = GetSiteSettings();
             string destination = settings.PublishedFilesDirectory;
@@ -50,7 +50,7 @@ namespace Colectica.Curation.DdiAddins.Actions
             if (!Directory.Exists(destination))
             {
                 logger.Warn("Destination folder does not exist. Exiting.");
-                return;
+                return Task.CompletedTask;
             }
 
             logger.Debug($"Copying published files for record {record.Id} {record.Title}");
@@ -92,6 +92,8 @@ namespace Colectica.Curation.DdiAddins.Actions
             }
 
             logger.Debug("Done copying files");
+
+            return Task.CompletedTask;
 
             SiteSettings GetSiteSettings()
             {

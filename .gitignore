@@ -19,3 +19,4 @@ src/Colectica.Curation.Web/CurationAddins
 /src/Colectica.Curation.Service/ConnectionStrings.config
 *.http
 /src/Colectica.Curation.Web/dataverse.json
+/src/Colectica.Curation.Service/dataverse.json

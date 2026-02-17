@@ -54,7 +54,7 @@ namespace Colectica.Curation.Operations
             logger = LogManager.GetLogger("Curation");
         }
 
-        public bool Execute()
+        public async Task<bool> Execute()
         {
             using (db = ApplicationDbContext.Create())
             {
