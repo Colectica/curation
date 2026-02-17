@@ -513,6 +513,8 @@ namespace Colectica.Curation.Web.Controllers
                     RequireContent(record.AccessStatement, new RequiredInformationModel(generalUrl, "Access Statement"), model);
                     RequireContent(record.ConfidentialityStatement, new RequiredInformationModel(generalUrl, "Confidentiality Statement"), model);
                     RequireContent(record.EmbargoStatement, new RequiredInformationModel(generalUrl, "Embargo Statement"), model);
+                    RequireContent(record.TermsOfUse, new RequiredInformationModel(generalUrl, "Terms of Use"), model);
+                    RequireContent(record.RelatedPublications, new RequiredInformationModel(generalUrl, "Related Publications"), model);
 
                     RequireContent(record.ResearchDesign, new RequiredInformationModel(methodsUrl, "Research Design"), model);
                     RequireContent(record.ModeOfDataCollection, new RequiredInformationModel(methodsUrl, "Mode of Data Collection"), model);
@@ -540,15 +542,10 @@ namespace Colectica.Curation.Web.Controllers
                     }
 
                     RequireContent(record.RelatedPublications, new RequiredInformationModel(generalUrl, "Related Publications"), model);
-                    RequireContent(record.RelatedProjects, new RequiredInformationModel(generalUrl, "Related Projects"), model);
 
                     RequireContent(record.UnitOfObservation, new RequiredInformationModel(methodsUrl, "Unit of Observation"), model);
                     RequireContent(record.SampleSize, new RequiredInformationModel(methodsUrl, "Sample Size"), model);
                     RequireContent(record.InclusionExclusionCriteria, new RequiredInformationModel(methodsUrl, "Inclusion/Exclusion Criteria"), model);
-                    RequireContent(record.RandomizationProcedure, new RequiredInformationModel(methodsUrl, "Randomization Procedure"), model);
-                    RequireContent(record.UnitOfRandomization, new RequiredInformationModel(methodsUrl, "Unit of Randomization"), model);
-                    RequireContent(record.Treatment, new RequiredInformationModel(methodsUrl, "Intervention"), model);
-                    RequireContent(record.TreatmentAdministration, new RequiredInformationModel(methodsUrl, "Intervention Administration"), model);
                     RequireContent(record.OutcomeMeasures, new RequiredInformationModel(methodsUrl, "Outcome Measures"), model);
 
                     RequireContent(record.ReviewType, new RequiredInformationModel(generalUrl, "Review Type"), model);

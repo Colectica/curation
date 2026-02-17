@@ -124,29 +124,29 @@
 
         <!-- Randomization procedure -->
         @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "RandomizationProcedure", "text", "Randomization Procedure", Model.RandomizationProcedure, FieldDefinitions.RandomizationProcedure,
-            isRequired: Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+            isRequired: false,
             isReadOnly: Model.IsReadOnly)
 
         <!-- Unit of randomization -->
         @FormHelpers.MultipleSelectField(url, Model.CatalogRecord.Id,
             "UnitOfRandomization", "Unit of Randomization", Model.UnitOfRandomization,
             FieldDefinitions.UnitOfRandomization,
-            Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
-            Model.IsReadOnly,
-            Model.UnitOfObservationChoices)
+            isRequired: false,
+            isReadOnly: Model.IsReadOnly,
+            choices: Model.UnitOfObservationChoices)
 
 
         <!-- Intervention -->
         @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "Treatment", "text", "Intervention", Model.Treatment, FieldDefinitions.Intervention,
-            isRequired: Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
+            isRequired: false,
             isReadOnly: Model.IsReadOnly)
 
         <!-- Intervention administration -->
         @FormHelpers.MultipleSelectField(url, Model.CatalogRecord.Id,
             "TreatmentAdministration", "Intervention Administration", Model.TreatmentAdministration,
             FieldDefinitions.InterventionAdministration,
-            Model.CatalogRecord.Status != Colectica.Curation.Data.CatalogRecordStatus.New,
-            Model.IsReadOnly,
+            isRequired: false,
+            isReadOnly: Model.IsReadOnly,
             choices:Model.TreatmentAdministrationChoices)
         @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "TreatmentAdministrationOther", "text", "Other Intervention Administration", Model.TreatmentAdministrationOther, FieldDefinitions.InterventionAdministration,
             isRequired: false,

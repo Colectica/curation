@@ -221,7 +221,7 @@ else
                 <h3>Message</h3>
 
                 <div class="form-group">
-                    @Html.LabelFor(m => m.ActionType, "Action Type", new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.ActionType, "Action Type *", new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
                         <select id="ActionType" name="ActionType" class="form-control">
                             <option value="Initial Upload" selected="selected">Initial Upload</option>
@@ -235,7 +235,7 @@ else
                 </div>
 
                 <div class="form-group">
-                    @Html.LabelFor(m => m.Notes, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.Notes, "Notes *", new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
                         @Html.TextAreaFor(m => m.Notes, new { @class = "form-control", data_bind="value: notes" })
                         @Html.ValidationMessageFor(m => m.Notes)

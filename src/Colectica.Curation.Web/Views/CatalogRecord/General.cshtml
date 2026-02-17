@@ -258,7 +258,7 @@
             isRequired: true, isReadOnly: Model.IsReadOnly)
 
         @FormHelpers.EditableField(url, Model.CatalogRecord.Id, "RelatedProjects", "textarea", "Related Projects", Model.RelatedProjects, FieldDefinitions.RelatedProjects,
-            isRequired: true, isReadOnly: Model.IsReadOnly)
+            isRequired: false, isReadOnly: Model.IsReadOnly)
 
         @if (!Model.IsReadOnly)
         {

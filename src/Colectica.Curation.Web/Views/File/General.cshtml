@@ -208,9 +208,10 @@
         @FormHelpers.EditableField(url, Model.File.Id, "Rights", "text", "Rights", Model.File.Rights, FieldDefinitions.Rights, isReadOnly: Model.IsReadOnly)
 
         <!-- Public access? -->
-        @FormHelpers.SelectField(url, Model.File.Id, "IsPublicAccess", "Public Access", Model.IsPublicAccess, FieldDefinitions.IsPublicAccess, false,
-            Model.IsReadOnly,
-            "Yes", "No")
+        @FormHelpers.SelectField(url, Model.File.Id, "IsPublicAccess", "Public Access", Model.IsPublicAccess, FieldDefinitions.IsPublicAccess,
+            isRequired: true,
+            isReadOnly: Model.IsReadOnly,
+            choices: new string[] { "Yes", "No" })
 
         @if (!Model.IsReadOnly)
         {
