@@ -86,7 +86,18 @@ namespace Colectica.Curation.Cli.Commands
                 return;
             }
 
-            DataversePublisher dataversePublisher = new DataversePublisher(dataverseUrl, dataverseName, apiToken, publishedDataDirectory, debugDir);
+            DataversePublisher dataversePublisher = new DataversePublisher(dataverseUrl, dataverseName, apiToken, publishedDataDirectory, debugDir,
+             (type, message, ex) =>
+             {
+                 if (ex != null)
+                 {
+                     Log.Error(ex, "{type}: {message}", type, message);
+                 }
+                 else
+                 {
+                     Log.Information("{type}: {message}", type, message);
+                 }
+            });
 
             Dictionary<CatalogRecord, string> datasetDoiMap = [];
             foreach (var record in recordsToPublish)
