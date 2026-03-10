@@ -231,8 +231,7 @@ namespace Colectica.Curation.Dataverse
 
                 // Check for an existing file by label or MD5 match.
                 var existingFileList = existingFiles?.Data?.Where(f => 
-                    f.Label == file.Name ||
-                    (!string.IsNullOrWhiteSpace(f.DataFile.Md5) && f.DataFile.Md5.Equals(localMd5, StringComparison.OrdinalIgnoreCase)));
+                    f.Label == file.Name);
                 if (existingFileList?.Count() > 1)
                 {
                     LogError($"Multiple existing files found with label {file.Name} in record {record.Number}. Using the first one.");
