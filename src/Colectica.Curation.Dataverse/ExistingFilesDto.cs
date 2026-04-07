@@ -51,6 +51,9 @@ namespace Colectica.Curation.Dataverse
         [JsonPropertyName("filename")]
         public string Filename { get; set; } = string.Empty;
 
+        [JsonPropertyName("originalFileName")]
+        public string OriginalFileName { get; set; } = string.Empty;
+
         [JsonPropertyName("contentType")]
         public string ContentType { get; set; } = string.Empty;
 

@@ -67,7 +67,7 @@ namespace Colectica.Curation.Cli
             copyPublishedFilesCommand.Handler = CommandHandler.Create<string>(CopyPublishedFiles);
             root.Add(copyPublishedFilesCommand);
 
-            // publish-all-to-dataverse
+            // publish-to-dataverse
             var publishAllToDataverseCommand = new Command("publish-to-dataverse", "Publish records to Dataverse");
             publishAllToDataverseCommand.Add(new Option<string>("--environment", "The Dataverse environment to use (as defined in appsettings)") { IsRequired = true });
             publishAllToDataverseCommand.Add(new Option<string>("--catalog-record-number", "The number of the catalog record to publish; if not specified, all records are published"));

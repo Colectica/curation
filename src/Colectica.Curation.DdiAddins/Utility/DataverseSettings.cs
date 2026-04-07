@@ -23,6 +23,6 @@ namespace Colectica.Curation.DdiAddins.Utility
         public static string DataverseName { get; set; } = "";
         public static string ApiToken { get; set; } = "";
         public static string PublishedDataDirectory { get; set; } = "";
-        public static string DebugDirectory { get; set; } = "";
+        public static string DebugDirectory { get; set; } = null;
     }
 }

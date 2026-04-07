@@ -194,6 +194,11 @@ namespace Colectica.Curation.Dataverse
                 string getFilesUrl = $"{dataverseUrl}/api/datasets/{datasetId}/versions/:latest/files";
                 string getFilesJson = await GetFromApiAsync(getFilesUrl, apiToken);
                 existingFiles = JsonSerializer.Deserialize<ExistingFilesDto>(getFilesJson, jsonOptions);
+
+                if (debugDir != null)
+                {
+                    File.WriteAllText(Path.Combine(debugDir, record.Id.ToString() + "_existing_files.json"), getFilesJson);
+                }
             }
             catch (Exception ex)
             {
@@ -231,29 +236,39 @@ namespace Colectica.Curation.Dataverse
 
                 // Check for an existing file by label or MD5 match.
                 var existingFileList = existingFiles?.Data?.Where(f => 
-                    f.Label == file.Name);
+                    f.Label == file.Name || f.DataFile?.OriginalFileName == file.Name);
                 if (existingFileList?.Count() > 1)
                 {
                     LogError($"Multiple existing files found with label {file.Name} in record {record.Number}. Using the first one.");
 
-                    foreach (var existingFile in existingFileList)
+                    foreach (var x in existingFileList)
                     {
-                        LogError($" - Existing file ID: {existingFile.DataFile.Id}, Label: {existingFile.Label}, MD5: {existingFile.DataFile.Md5}");
+                        LogError($" - Existing file ID: {x.DataFile.Id}, Label: {x.Label}, MD5: {x.DataFile.Md5}");
                     }
 
                 }
 
-                string existingFileId = existingFileList?.FirstOrDefault()?.DataFile.Id.ToString();
+                ExistingFileItemDto existingFile = existingFileList?.FirstOrDefault();
                 FileDto fileDto = FileDto.FromManagedFile(file);
 
-                if (existingFileId != null)
+                if (existingFile != null)
                 {
+                    string existingFileId = existingFile.DataFile.Id.ToString();
+
                     // Update the existing file.
                     try
                     {
                         string updateFileUrl = $"{dataverseUrl}/api/files/{existingFileId}/metadata";
 
                         fileDto.DataFileId = existingFileId;
+
+                        // If Dataverse changed the name of the file, let's use Dataverse's new name.
+                        if (fileDto.Label != existingFile.Label)
+                        {
+                            fileDto.Label = existingFile.Label;
+                        }
+
+
                         string fileJson = JsonSerializer.Serialize(fileDto, jsonOptions);
                         StringContent fileMetadataContent = new StringContent(fileJson, Encoding.UTF8, "application/json");
 
