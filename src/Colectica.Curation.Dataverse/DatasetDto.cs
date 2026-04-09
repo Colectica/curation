@@ -70,7 +70,10 @@ namespace Colectica.Curation.Dataverse
 
             ispsBlock.Fields.Add(new FieldDto("ispsOutcomeMeasures", measures, multiple: true));
 
-            ispsBlock.Fields.Add(new FieldDto("ispsRandomizationProcedure", new List<string>() { record.RandomizationProcedure }, multiple:true));
+            if (!string.IsNullOrWhiteSpace(record.RandomizationProcedure))
+            {
+                ispsBlock.Fields.Add(new FieldDto("ispsRandomizationProcedure", new List<string>() { record.RandomizationProcedure }, multiple: true));
+            }
 
             string[] modes = record.ModeOfDataCollection.Split(',');
             List<string> modesToAdd = new List<string>();
