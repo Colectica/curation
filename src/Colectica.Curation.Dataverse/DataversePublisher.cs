@@ -298,7 +298,9 @@ namespace Colectica.Curation.Dataverse
                             using (MultipartFormDataContent replaceContent = new MultipartFormDataContent())
                             {
                                 replaceContent.Add(fileMetadataContentForReplace, "jsonData");
-                                replaceContent.Add(new StreamContent(System.IO.File.OpenRead(filePath)), "file", file.Name);
+                                StreamContent replaceFileContent = new StreamContent(System.IO.File.OpenRead(filePath));
+                                replaceFileContent.Headers.TryAddWithoutValidation("Content-Disposition", $"form-data; name=\"file\"; filename=\"{file.Name}\"");
+                                replaceContent.Add(replaceFileContent);
                                 string replaceResponseStr = await PostToApiAsync(replaceUrl, apiToken, replaceContent);
                                 ApiResponseDto replaceResponseObj = JsonSerializer.Deserialize<ApiResponseDto>(replaceResponseStr, jsonOptions);
                                 if (replaceResponseObj?.Status != "OK")
@@ -349,7 +351,9 @@ namespace Colectica.Curation.Dataverse
                         using (var multipartContent = new MultipartFormDataContent())
                         {
                             multipartContent.Add(fileMetadataContent, "jsonData");
-                            multipartContent.Add(new StreamContent(System.IO.File.OpenRead(filePath)), "file", file.Name);
+                            StreamContent newFileContent = new StreamContent(System.IO.File.OpenRead(filePath));
+                            newFileContent.Headers.TryAddWithoutValidation("Content-Disposition", $"form-data; name=\"file\"; filename=\"{file.Name}\"");
+                            multipartContent.Add(newFileContent);
                             // First, see if the dataset is locked. If so, wait a bit and try again.
                             string lockUrl = $"{dataverseUrl}/api/datasets/{datasetId}/locks";
 
