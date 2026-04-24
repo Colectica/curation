@@ -68,7 +68,10 @@ namespace Colectica.Curation.Dataverse
 
             string[] measures = record.OutcomeMeasures.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-            ispsBlock.Fields.Add(new FieldDto("ispsOutcomeMeasures", measures, multiple: true));
+            if (measures.Length > 0)
+            {
+                ispsBlock.Fields.Add(new FieldDto("ispsOutcomeMeasures", measures, multiple: true));
+            }
 
             if (!string.IsNullOrWhiteSpace(record.RandomizationProcedure))
             {
@@ -81,7 +84,11 @@ namespace Colectica.Curation.Dataverse
             {
                 modesToAdd.Add(MapModeOfDataCollection(mode));
             }
-            ispsBlock.Fields.Add(new FieldDto("ispsModeOfDataCollection", modesToAdd, multiple: true, typeClass: "controlledVocabulary"));
+
+            if (modesToAdd.Any())
+            {
+                ispsBlock.Fields.Add(new FieldDto("ispsModeOfDataCollection", modesToAdd, multiple: true, typeClass: "controlledVocabulary"));
+            }
 
             if (record.ResearchDesign != "Multiple")
             {
@@ -107,8 +114,15 @@ namespace Colectica.Curation.Dataverse
                 reviewType = "None";
             }
 
-            ispsBlock.Fields.Add(new FieldDto("ispsReviewType", reviewType, typeClass: "controlledVocabulary"));
-            ispsBlock.Fields.Add(new FieldDto("ispsTreatment", new List<string>() { record.Treatment }, multiple: true));
+            if (!string.IsNullOrWhiteSpace(reviewType))
+            {
+                ispsBlock.Fields.Add(new FieldDto("ispsReviewType", reviewType, typeClass: "controlledVocabulary"));
+            }
+
+            if (!string.IsNullOrWhiteSpace(record.Treatment))
+            {
+                ispsBlock.Fields.Add(new FieldDto("ispsTreatment", new List<string>() { record.Treatment }, multiple: true));
+            }
 
             AddMultipleControlledVocabularyField(ispsBlock, "ispsTreatmentAdministration", record.TreatmentAdministration, splitOnComma: true);
             if (!string.IsNullOrWhiteSpace(record.TreatmentAdministrationOther))
