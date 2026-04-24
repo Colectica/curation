@@ -254,20 +254,31 @@ namespace Colectica.Curation.Dataverse
                 if (existingFile != null)
                 {
                     string existingFileId = existingFile.DataFile.Id.ToString();
+                    fileDto.DataFileId = existingFileId;
 
-                    // Update the existing file.
+                    // If Dataverse changed the name of the file, let's use Dataverse's new name.
+                    //if (fileDto.Label != existingFile.Label)
+                    //{
+                    //    fileDto.Label = existingFile.Label;
+                    //}
+
+
+                    // There is an existing file. If the MD5s match, we can just update the metadata. If not, we need to replace the file content as well.
                     try
                     {
-                        string updateFileUrl = $"{dataverseUrl}/api/files/{existingFileId}/metadata";
 
-                        fileDto.DataFileId = existingFileId;
-
-                        // If Dataverse changed the name of the file, let's use Dataverse's new name.
-                        if (fileDto.Label != existingFile.Label)
+                        // Compare MD5 checksums and replace file content if it has changed.
+                        string serverMd5 = existingFile.DataFile?.Md5;
+                        if (string.IsNullOrWhiteSpace(serverMd5) && existingFile.DataFile?.Checksum != null)
                         {
-                            fileDto.Label = existingFile.Label;
+                            serverMd5 = existingFile.DataFile.Checksum.Value;
                         }
 
+                        if (string.IsNullOrWhiteSpace(serverMd5))
+                        {
+                            LogWarn($"No server MD5 available for '{file.Name}'; skipping file content replacement.");
+                            return;
+                        }
 
                         string fileJson = JsonSerializer.Serialize(fileDto, jsonOptions);
                         StringContent fileMetadataContent = new StringContent(fileJson, Encoding.UTF8, "application/json");
@@ -277,17 +288,47 @@ namespace Colectica.Curation.Dataverse
                             File.WriteAllText(Path.Combine(debugDir, record.Number.ToString() + "_" + file.Number?.ToString() + "_" + ".json"), fileJson);
                         }
 
-                        using (var multipartContent = new MultipartFormDataContent { { fileMetadataContent, "jsonData" } })
+
+                        if (!string.Equals(localMd5, serverMd5, StringComparison.OrdinalIgnoreCase) && !file.Name.EndsWith(".zip"))
                         {
-                            string fileResponseStr = await PostToApiAsync(updateFileUrl, apiToken, multipartContent);
-                            if (fileResponseStr.StartsWith("File Metadata update has been completed:"))
+                            // Upload changed file and metadata.
+                            LogInfo($"MD5 mismatch for file '{file.Name}' (local: {localMd5}, server: {serverMd5}). Replacing file content.");
+                            string replaceUrl = $"{dataverseUrl}/api/files/:persistentId/replace?persistentId={datasetDoi}";
+                            StringContent fileMetadataContentForReplace = new StringContent(fileJson, Encoding.UTF8, "application/json");
+                            using (MultipartFormDataContent replaceContent = new MultipartFormDataContent())
                             {
-                                LogDebug($"File metadata updated successfully: {file.Name}");
+                                replaceContent.Add(fileMetadataContentForReplace, "jsonData");
+                                replaceContent.Add(new StreamContent(System.IO.File.OpenRead(filePath)), "file", file.Name);
+                                string replaceResponseStr = await PostToApiAsync(replaceUrl, apiToken, replaceContent);
+                                ApiResponseDto replaceResponseObj = JsonSerializer.Deserialize<ApiResponseDto>(replaceResponseStr, jsonOptions);
+                                if (replaceResponseObj?.Status != "OK")
+                                {
+                                    LogError($"Failed to replace file content for '{file.Name}' in record {record.Number}. Response: {replaceResponseStr}");
+                                }
+                                else
+                                {
+                                    LogInfo($"File content replaced successfully: {file.Name}");
+                                }
                             }
-                            else
+                        }
+                        else
+                        {
+                            // Send new metadata only.
+                            LogDebug($"MD5 match for file '{file.Name}'. No file content replacement needed.");
+
+                            using (var multipartContent = new MultipartFormDataContent { { fileMetadataContent, "jsonData" } })
                             {
-                                LogError($"Failed to update file metadata in record {record.Number}. Response: {fileResponseStr}");
-                                continue;
+                                string updateFileUrl = $"{dataverseUrl}/api/files/{existingFileId}/metadata";
+                                string fileResponseStr = await PostToApiAsync(updateFileUrl, apiToken, multipartContent);
+                                if (fileResponseStr.StartsWith("File Metadata update has been completed:"))
+                                {
+                                    LogDebug($"File metadata updated successfully: {file.Name}");
+                                }
+                                else
+                                {
+                                    LogError($"Failed to update file metadata in record {record.Number}. Response: {fileResponseStr}");
+                                    continue;
+                                }
                             }
                         }
                     }
