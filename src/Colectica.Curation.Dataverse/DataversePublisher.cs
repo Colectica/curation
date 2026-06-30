@@ -293,7 +293,7 @@ namespace Colectica.Curation.Dataverse
                         {
                             // Upload changed file and metadata.
                             LogInfo($"MD5 mismatch for file '{file.Name}' (local: {localMd5}, server: {serverMd5}). Replacing file content.");
-                            string replaceUrl = $"{dataverseUrl}/api/files/:persistentId/replace?persistentId={datasetDoi}";
+                            string replaceUrl = $"{dataverseUrl}/api/files/{existingFileId}/replace";
                             StringContent fileMetadataContentForReplace = new StringContent(fileJson, Encoding.UTF8, "application/json");
                             using (MultipartFormDataContent replaceContent = new MultipartFormDataContent())
                             {
