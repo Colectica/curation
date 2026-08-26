@@ -54,6 +54,7 @@ namespace Colectica.Curation.Dataverse
         }
 
         public string DataFileId { get; set; }
+        public bool? ForceReplace { get; set; }
         public string Description { get; set; } = string.Empty;
         public string Label { get; set; }
         public string Title { get; set; } = string.Empty;

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -294,11 +295,19 @@ namespace Colectica.Curation.Dataverse
                             // Upload changed file and metadata.
                             LogInfo($"MD5 mismatch for file '{file.Name}' (local: {localMd5}, server: {serverMd5}). Replacing file content.");
                             string replaceUrl = $"{dataverseUrl}/api/files/{existingFileId}/replace";
-                            StringContent fileMetadataContentForReplace = new StringContent(fileJson, Encoding.UTF8, "application/json");
+
+                            // Dataverse refuses a replacement whose file type differs from the type it
+                            // recorded for the original file. Declare the type Dataverse already has on
+                            // record, and force the replace so that a mismatch is only a warning.
+                            fileDto.ForceReplace = true;
+                            string replaceJson = JsonSerializer.Serialize(fileDto, jsonOptions);
+
+                            StringContent fileMetadataContentForReplace = new StringContent(replaceJson, Encoding.UTF8, "application/json");
                             using (MultipartFormDataContent replaceContent = new MultipartFormDataContent())
                             {
                                 replaceContent.Add(fileMetadataContentForReplace, "jsonData");
                                 StreamContent replaceFileContent = new StreamContent(System.IO.File.OpenRead(filePath));
+                                SetFileContentType(replaceFileContent, GetExistingFileType(existingFile), file.Name);
                                 replaceFileContent.Headers.TryAddWithoutValidation("Content-Disposition", $"form-data; name=\"file\"; filename=\"{file.Name}\"");
                                 replaceContent.Add(replaceFileContent);
                                 string replaceResponseStr = await PostToApiAsync(replaceUrl, apiToken, replaceContent);
@@ -662,6 +671,36 @@ namespace Colectica.Curation.Dataverse
             }
 
             return true;
+        }
+
+        private static string GetExistingFileType(ExistingFileItemDto existingFile)
+        {
+            // For files that Dataverse ingested into tabular data, the comparison is made
+            // against the original, pre-ingest format rather than the current content type.
+            string originalFormat = existingFile?.DataFile?.OriginalFileFormat;
+            if (!string.IsNullOrWhiteSpace(originalFormat))
+            {
+                return originalFormat;
+            }
+
+            return existingFile?.DataFile?.ContentType;
+        }
+
+        private void SetFileContentType(StreamContent fileContent, string contentType, string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(contentType))
+            {
+                return;
+            }
+
+            if (MediaTypeHeaderValue.TryParse(contentType, out MediaTypeHeaderValue mediaTypeHeader))
+            {
+                fileContent.Headers.ContentType = mediaTypeHeader;
+            }
+            else
+            {
+                LogWarn($"Could not set Dataverse content type '{contentType}' for replacement file '{fileName}'.");
+            }
         }
 
         public void Dispose()

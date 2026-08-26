@@ -57,6 +57,9 @@ namespace Colectica.Curation.Dataverse
         [JsonPropertyName("contentType")]
         public string ContentType { get; set; } = string.Empty;
 
+        [JsonPropertyName("originalFileFormat")]
+        public string OriginalFileFormat { get; set; } = string.Empty;
+
         [JsonPropertyName("friendlyType")]
         public string FriendlyType { get; set; } = string.Empty;
 
